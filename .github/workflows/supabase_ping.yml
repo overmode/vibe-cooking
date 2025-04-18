@@ -19,6 +19,7 @@ jobs:
           PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
         run: |
           echo "Pinging Supabase using user 'postgres'..."
+          echo "$POSTGRES_PASSWORD"
           psql \
             -h aws-0-eu-west-3.pooler.supabase.com \
             -p 5432 \
