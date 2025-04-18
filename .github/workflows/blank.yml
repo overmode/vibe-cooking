@@ -1,0 +1,27 @@
+name: Ping Supabase to Prevent Pausing
+
+on:
+  schedule:
+    - cron: '0 9 * * 1,4' # Every Monday and Thursday at 9:00 AM UTC
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install PostgreSQL client
+        run: sudo apt-get install -y postgresql-client
+
+      - name: Ping Supabase using postgres user
+        env:
+          PGUSER: postgres
+          PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        run: |
+          echo "Pinging Supabase using user 'postgres'..."
+          psql \
+            -h aws-0-eu-west-3.pooler.supabase.com \
+            -p 5432 \
+            -d postgres \
+            -U postgres \
+            -c '\dt'
