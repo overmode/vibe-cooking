@@ -10,8 +10,7 @@ export default function Home() {
       initialMessages: [
         {
           id: "1",
-          content:
-            "Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲",
+          content: "Welcome to Vibe Cooking! How can I help you today? 🍲🌴 ",
           role: "assistant",
         },
         // {
