@@ -33,8 +33,8 @@ ChatMessageProps) {
       >
         {!isUser && (
           <Avatar className="h-8 w-8 flex-shrink-0">
-            <AvatarFallback className="bg-primary text-primary-foreground">
-              AI
+            <AvatarFallback className="bg-orange-200 text-primary-foreground">
+              🍳
             </AvatarFallback>
           </Avatar>
         )}
