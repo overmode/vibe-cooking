@@ -14,7 +14,7 @@ export function ChatWindow({ messages }: ChatWindowProps) {
   }, [messages]);
 
   return (
-    <ScrollArea className="h-[600px] pr-4">
+    <ScrollArea className="h-[600px] pr-4 pt-4">
       <div className="flex-grow overflow-y-auto p-4 space-y-4 bg-muted/20 rounded-lg">
         {messages.map((message) => (
           <ChatMessage key={message.id} message={message} />
