@@ -26,11 +26,11 @@ export function ChatInput({
   return (
     <form
       onSubmit={handleSubmit}
-      className="p-4 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+      className="p-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
     >
       <div className="flex gap-3 items-end">
         <Textarea
-          placeholder="Type your message... (Press Enter to send)"
+          placeholder="Ask anything"
           value={input}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}

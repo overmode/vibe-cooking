@@ -16,7 +16,7 @@ export function TopNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="sticky top-16 z-40 flex items-center justify-between border-b border-border px-4 py-3 bg-card/80 backdrop-blur-md">
+    <nav className="sticky top-16 z-40 h-12 flex items-center justify-between border-b border-border px-4 py-3 bg-card/80 backdrop-blur-md">
       <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
         {navItems.map((item) => {
           const isActive = pathname === item.href;

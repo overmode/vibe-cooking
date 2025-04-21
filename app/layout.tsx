@@ -36,10 +36,10 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gradient-to-br from-lime-50 to-amber-50 dark:from-background dark:to-background`}
+          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gradient-to-br from-lime-50 to-amber-50 dark:from-background dark:to-background min-h-screen flex flex-col`}
         >
           {/* Sticky global header (logo + auth controls) */}
-          <header className="sticky top-0 z-50 flex justify-between items-center px-4 py-3 h-16 border-b border-border bg-card/80 backdrop-blur-md">
+          <header className="sticky top-0 z-50 h-16 flex justify-between items-center px-4 py-3 border-b border-border bg-card/80 backdrop-blur-md">
             <HeaderLogo />
             <div className="flex items-center gap-4">
               <SignedOut>

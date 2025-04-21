@@ -24,7 +24,7 @@ ChatMessageProps) {
   const isUser = message.role === "user";
 
   return (
-    <div className="flex w-full">
+    <div className="flex w-full mt-4">
       <div
         className={cn(
           "flex w-full max-w-[80%] items-start gap-3",

@@ -1,7 +1,7 @@
 import { Message } from "ai";
 import { ChatMessage } from "./chat-message";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEffect, useRef } from "react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 interface ChatWindowProps {
   messages: Message[];
 }
@@ -14,13 +14,13 @@ export function ChatWindow({ messages }: ChatWindowProps) {
   }, [messages]);
 
   return (
-    <ScrollArea className="h-[600px] pr-4 pt-4">
-      <div className="flex-grow overflow-y-auto p-4 space-y-4 bg-muted/20 rounded-lg">
+    <ScrollArea className="h-[calc(100vh-16rem)]">
+      <div className="flex-grow p-4 space-y-4 bg-muted/20 rounded-lg">
         {messages.map((message) => (
           <ChatMessage key={message.id} message={message} />
         ))}
+        <div ref={messagesEndRef} />
       </div>
-      <div ref={messagesEndRef} />
     </ScrollArea>
   );
 }
