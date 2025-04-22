@@ -3,7 +3,7 @@ import {
   createRecipeInputSchema,
 } from "@/lib/validators/recipe";
 import { auth } from "@clerk/nextjs/server";
-import { createRecipe, deleteRecipe } from "@/lib/data-access/recipe";
+import { createRecipeAction, deleteRecipeAction } from "@/lib/actions/recipe";
 import { z } from "zod";
 
 export const createRecipeTool = {
@@ -14,10 +14,7 @@ export const createRecipeTool = {
     if (!userId) {
       throw new Error("Unauthorized");
     }
-    const recipe = await createRecipe({
-      userId,
-      data: parameters,
-    });
+    const recipe = await createRecipeAction(parameters);
     return recipe;
   },
 };
@@ -32,7 +29,7 @@ export const deleteRecipeTool = {
     if (!userId) {
       throw new Error("Unauthorized");
     }
-    await deleteRecipe({ id: parameters.id, userId });
+    await deleteRecipeAction(parameters.id);
     return "Recipe deleted successfully";
   },
 };
