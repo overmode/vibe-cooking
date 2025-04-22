@@ -2,26 +2,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { Message } from "@ai-sdk/react";
 import { MemoizedMarkdown } from "@/components/chat/memoized-markdown";
-import { RecipePreviewCard } from "../recipe/recipe-preview-card";
-// import { AskForConfirmation } from "@/components/chat/tool-renders/ask-for-confirmation";
-
-// type AddToolResult = ({
-//   toolCallId,
-//   result,
-// }: {
-//   toolCallId: string;
-//   result: string;
-// }) => void;
+import { renderToolInvocation } from "@/lib/ai/tool-renderers";
 
 interface ChatMessageProps {
   message: Message;
-  //   addToolResult: AddToolResult;
 }
 
-export function ChatMessage({
-  message,
-}: //   addToolResult,
-ChatMessageProps) {
+export function ChatMessage({ message }: ChatMessageProps) {
   const isUser = message.role === "user";
 
   return (
@@ -52,21 +39,7 @@ ChatMessageProps) {
                 );
                 break;
               case "tool-invocation":
-                const callId = part.toolInvocation.toolCallId;
-                if (
-                  part.toolInvocation.toolName === "renderRecipePreviewTool"
-                ) {
-                  //In all cases, we display a preview of the recipe
-                  content = (
-                    <div className="w-full">
-                      <RecipePreviewCard
-                        cardData={part.toolInvocation.args}
-                        id={callId}
-                      />
-                    </div>
-                  );
-                  break;
-                }
+                content = renderToolInvocation(part.toolInvocation);
                 break;
             }
 

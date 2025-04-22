@@ -6,14 +6,12 @@ interface ChatInputProps {
   input: string;
   handleInputChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  isLoading?: boolean;
 }
 
 export function ChatInput({
   input,
   handleInputChange,
   handleSubmit,
-  isLoading,
 }: ChatInputProps) {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -40,7 +38,7 @@ export function ChatInput({
         <Button
           type="submit"
           size="icon"
-          disabled={isLoading}
+          disabled={input.trim().length === 0}
           className="h-[60px] w-[60px] rounded-xl bg-primary hover:bg-primary/90"
         >
           <SendHorizontal className="h-5 w-5" />

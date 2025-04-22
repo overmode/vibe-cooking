@@ -5,36 +5,21 @@ import { ChatWindow } from "@/components/chat/chat-window";
 import { ChatInput } from "@/components/chat/chat-input";
 
 export default function Home() {
-  const { messages, input, handleInputChange, handleSubmit, isLoading } =
-    useChat({
-      initialMessages: [
-        {
-          id: "1",
-          content: "Welcome to Vibe Cooking! How can I help you today? 🍲🌴 ",
-          role: "assistant",
-        },
-        // {
-        //   id: "2",
-        //   content:
-        //     "Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲",
-        //   role: "assistant",
-        // },
-        // {
-        //   id: "3",
-        //   content:
-        //     "Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲 Hey, I'm your Vibe Cooking assistant. How can I help you today? 🍲",
-        //   role: "assistant",
-        // },
-      ],
-      // run client-side tools that are automatically executed:
-      async onToolCall({ toolCall }) {
-        if (toolCall.toolName === "renderRecipePreviewTool") {
-          return "The recipe was successfully rendered";
-        }
+  const { messages, input, handleInputChange, handleSubmit } = useChat({
+    initialMessages: [
+      {
+        id: "1",
+        content: "Welcome to Vibe Cooking! How can I help you today? 🍲🌴 ",
+        role: "assistant",
       },
-    });
-
-  console.log(messages);
+    ],
+    // run client-side tools that are automatically executed:
+    async onToolCall({ toolCall }) {
+      if (toolCall.toolName === "renderRecipePreviewTool") {
+        return "The recipe was successfully rendered";
+      }
+    },
+  });
 
   return (
     <div className="flex flex-col h-[calc(100vh-7rem)]">
@@ -46,7 +31,6 @@ export default function Home() {
           input={input}
           handleInputChange={handleInputChange}
           handleSubmit={handleSubmit}
-          isLoading={isLoading}
         />
       </div>
     </div>
