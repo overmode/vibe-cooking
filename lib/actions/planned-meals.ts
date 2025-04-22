@@ -4,6 +4,7 @@ import {
   createPlannedMeal,
   deletePlannedMeal,
   getPlannedMealById,
+  getPlannedMeals,
   getPlannedMealsMetadata,
   updatePlannedMeal,
 } from "@/lib/data-access/plannedMeal";
@@ -20,6 +21,16 @@ export const getPlannedMealsMetadataAction = async () => {
   const plannedMeals = await getPlannedMealsMetadata({ userId });
   return plannedMeals;
 };
+
+export const getPlannedMealsAction = async () => {
+  const { userId } = await auth();
+  if (!userId) {
+    handleActionError("Unauthorized", "getPlannedMealsAction");
+  }
+  const plannedMeals = await getPlannedMeals({ userId });
+  return plannedMeals;
+};
+
 export const createPlannedMealAction = async (
   plannedMealData: CreatePlannedMealInput
 ) => {

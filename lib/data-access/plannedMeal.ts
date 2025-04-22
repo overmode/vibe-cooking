@@ -5,6 +5,7 @@ import {
 } from "@/lib/validators/plannedMeals";
 import { PlannedMealStatus } from "@prisma/client";
 import { handleDbError } from "@/lib/utils/error";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 export async function createPlannedMeal({
   userId,
   data,
@@ -46,7 +47,7 @@ export async function getPlannedMealsMetadata({ userId }: { userId: string }) {
   try {
     // TODO: Add pagination
     const plannedMeals = await prisma.plannedMeal.findMany({
-      where: { userId },
+      where: { userId, status: PlannedMealStatus.PLANNED },
       select: {
         id: true,
         overrideName: true,
@@ -62,6 +63,17 @@ export async function getPlannedMealsMetadata({ userId }: { userId: string }) {
     return plannedMeals;
   } catch (error) {
     handleDbError(error, "get planned meals metadata");
+  }
+}
+
+export async function getPlannedMeals({ userId }: { userId: string }) {
+  try {
+    const plannedMeals = await prisma.plannedMeal.findMany({
+      where: { userId, status: PlannedMealStatus.PLANNED },
+    });
+    return plannedMeals;
+  } catch (error) {
+    handleDbError(error, "get planned meals");
   }
 }
 
@@ -133,6 +145,12 @@ export async function deletePlannedMeal({
     });
     return true;
   } catch (error) {
+    if (error instanceof PrismaClientKnownRequestError) {
+      // 2025 is the code for the planned meal not found error
+      if (error.code === "2025") {
+        return true;
+      }
+    }
     handleDbError(error, "delete planned meal");
   }
 }

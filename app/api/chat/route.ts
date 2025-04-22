@@ -12,6 +12,7 @@ import {
   updatePlannedMealTool,
   deletePlannedMealTool,
   getPlannedMealByIdTool,
+  getPlannedMealsTool,
 } from "@/lib/ai/tools";
 import { getPrompt } from "@/lib/ai/prompts";
 // Allow streaming responses up to 30 seconds
@@ -22,7 +23,7 @@ export async function POST(req: Request) {
 
   const prompt = await getPrompt({
     promptName: "main-cook-assistant",
-    promptVars: {},
+    promptVars: { date: new Date().toISOString() },
   });
 
   const result = streamText({
@@ -43,6 +44,7 @@ export async function POST(req: Request) {
 
       // planned meal crud operations
       getPlannedMealsMetadataTool: getPlannedMealsMetadataTool,
+      getPlannedMealsTool: getPlannedMealsTool,
       createPlannedMealTool: createPlannedMealTool,
       updatePlannedMealTool: updatePlannedMealTool,
       deletePlannedMealTool: deletePlannedMealTool,

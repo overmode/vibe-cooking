@@ -20,6 +20,7 @@ import {
   deletePlannedMealAction,
   updatePlannedMealAction,
   getPlannedMealByIdAction,
+  getPlannedMealsAction,
 } from "@/lib/actions/planned-meals";
 import {
   CreatePlannedMealInput,
@@ -38,10 +39,21 @@ export const getRecipesMetadataTool = tool({
 });
 
 export const getPlannedMealsMetadataTool = tool({
-  description: "Get the metadata of all planned meals belonging to the user.",
+  description:
+    "Get the metadata of all planned meals with status PLANNED belonging to the user.",
   parameters: z.object({}),
   execute: async () => {
     const plannedMeals = await getPlannedMealsMetadataAction();
+    return plannedMeals;
+  },
+});
+
+export const getPlannedMealsTool = tool({
+  description:
+    "Get all planned meals with status PLANNED belonging to the user. Useful for fetching all ingredients of upcoming meals.",
+  parameters: z.object({}),
+  execute: async () => {
+    const plannedMeals = await getPlannedMealsAction();
     return plannedMeals;
   },
 });

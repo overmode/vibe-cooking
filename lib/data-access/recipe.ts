@@ -1,6 +1,7 @@
 import prisma from "@/prisma/client";
 import { CreateRecipeInput, UpdateRecipeInput } from "@/lib/validators/recipe";
 import { handleDbError } from "@/lib/utils/error";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 export async function createRecipe({
   userId,
   data,
@@ -120,6 +121,12 @@ export async function deleteRecipe({
     });
     return true;
   } catch (error) {
+    if (error instanceof PrismaClientKnownRequestError) {
+      // 2025 is the code for the recipe not found error
+      if (error.code === "2025") {
+        return true;
+      }
+    }
     handleDbError(error, "delete recipe");
   }
 }

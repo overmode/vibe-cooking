@@ -68,6 +68,26 @@ function renderGetPlannedMealsMetadataTool(
   }
 }
 
+function renderGetPlannedMealsTool(
+  toolInvocation: ToolInvocation
+): React.ReactNode {
+  switch (toolInvocation.state) {
+    case "partial-call":
+      return <ToolSpinner message={`Retrieving planned meals...`} />;
+    case "call":
+      return <ToolSpinner message={`Retrieving planned meals...`} />;
+    case "result":
+      const plannedMeals = toolInvocation.result;
+      const message =
+        plannedMeals.length > 0
+          ? `Retrieved ${plannedMeals.length} planned meal${
+              plannedMeals.length > 1 ? "s" : ""
+            }!`
+          : `No planned meals found`;
+      return <ToolSuccess message={message} />;
+  }
+}
+
 function renderRecipePreviewTool(
   toolInvocation: ToolInvocation
 ): React.ReactNode {
@@ -203,6 +223,7 @@ toolRenderers["updateRecipeTool"] = renderUpdateRecipeTool;
 toolRenderers["getRecipeByIdTool"] = renderGetRecipeByIdTool;
 toolRenderers["getPlannedMealsMetadataTool"] =
   renderGetPlannedMealsMetadataTool;
+toolRenderers["getPlannedMealsTool"] = renderGetPlannedMealsTool;
 toolRenderers["createPlannedMealTool"] = renderCreatePlannedMealTool;
 toolRenderers["deletePlannedMealTool"] = renderDeletePlannedMealTool;
 toolRenderers["updatePlannedMealTool"] = renderUpdatePlannedMealTool;
