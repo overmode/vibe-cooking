@@ -42,35 +42,81 @@ export async function getPlannedMealById({
   }
 }
 
-export async function listUserPlannedMeals(userId: string) {
-  // TODO: Add pagination
+export async function getPlannedMealsMetadata({ userId }: { userId: string }) {
   try {
+    // TODO: Add pagination
     const plannedMeals = await prisma.plannedMeal.findMany({
       where: { userId },
+      select: {
+        id: true,
+        overrideName: true,
+        createdAt: true,
+        overrideDifficulty: true,
+        overrideDuration: true,
+        overrideServings: true,
+        status: true,
+        cookedAt: true,
+      },
+      orderBy: { createdAt: "desc" },
     });
     return plannedMeals;
   } catch (error) {
-    handleDbError(error, "list user planned meals");
+    handleDbError(error, "get planned meals metadata");
   }
 }
 
 export async function updatePlannedMeal({
-  id,
   userId,
   data,
 }: {
-  id: string;
   userId: string;
   data: UpdatePlannedMealInput;
 }) {
   try {
+    const { id, ...updateData } = data;
     const plannedMeal = await prisma.plannedMeal.update({
       where: { id, userId },
-      data,
+      data: updateData,
     });
     return plannedMeal;
   } catch (error) {
     handleDbError(error, "update planned meal");
+  }
+}
+
+export async function setPlannedMealCooked({
+  id,
+  userId,
+}: {
+  id: string;
+  userId: string;
+}) {
+  try {
+    const plannedMeal = await updatePlannedMeal({
+      userId,
+      data: { id, cookedAt: new Date(), status: PlannedMealStatus.COOKED },
+    });
+    return plannedMeal;
+  } catch (error) {
+    handleDbError(error, "set planned meal cooked");
+  }
+}
+
+export async function setPlannedMealUnCooked({
+  id,
+  userId,
+}: {
+  id: string;
+  userId: string;
+}) {
+  try {
+    const plannedMeal = await updatePlannedMeal({
+      userId,
+      data: { id, cookedAt: undefined, status: PlannedMealStatus.PLANNED },
+    });
+    return plannedMeal;
+  } catch (error) {
+    handleDbError(error, "set planned meal uncooked");
   }
 }
 
@@ -88,43 +134,5 @@ export async function deletePlannedMeal({
     return true;
   } catch (error) {
     handleDbError(error, "delete planned meal");
-  }
-}
-
-export async function setPlannedMealCooked({
-  id,
-  userId,
-}: {
-  id: string;
-  userId: string;
-}) {
-  try {
-    const plannedMeal = await updatePlannedMeal({
-      id,
-      userId,
-      data: { cookedAt: new Date(), status: PlannedMealStatus.COOKED },
-    });
-    return plannedMeal;
-  } catch (error) {
-    handleDbError(error, "set planned meal cooked");
-  }
-}
-
-export async function setPlannedMealUnCooked({
-  id,
-  userId,
-}: {
-  id: string;
-  userId: string;
-}) {
-  try {
-    const plannedMeal = await updatePlannedMeal({
-      id,
-      userId,
-      data: { cookedAt: undefined, status: PlannedMealStatus.PLANNED },
-    });
-    return plannedMeal;
-  } catch (error) {
-    handleDbError(error, "set planned meal uncooked");
   }
 }

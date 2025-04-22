@@ -7,6 +7,11 @@ import {
   getRecipesMetadataTool,
   updateRecipeTool,
   getRecipeByIdTool,
+  getPlannedMealsMetadataTool,
+  createPlannedMealTool,
+  updatePlannedMealTool,
+  deletePlannedMealTool,
+  getPlannedMealByIdTool,
 } from "@/lib/ai/tools";
 import { getPrompt } from "@/lib/ai/prompts";
 // Allow streaming responses up to 30 seconds
@@ -35,6 +40,13 @@ export async function POST(req: Request) {
 
       // Recipe preview
       renderRecipePreviewTool: renderRecipePreviewTool,
+
+      // planned meal crud operations
+      getPlannedMealsMetadataTool: getPlannedMealsMetadataTool,
+      createPlannedMealTool: createPlannedMealTool,
+      updatePlannedMealTool: updatePlannedMealTool,
+      deletePlannedMealTool: deletePlannedMealTool,
+      getPlannedMealByIdTool: getPlannedMealByIdTool,
     },
   });
 

@@ -21,25 +21,6 @@ export async function createRecipe({
   }
 }
 
-export async function updateRecipe({
-  userId,
-  data,
-}: {
-  userId: string;
-  data: UpdateRecipeInput;
-}) {
-  const { id, ...recipeData } = data;
-  try {
-    const recipe = await prisma.recipe.update({
-      where: { id, userId },
-      data: recipeData,
-    });
-    return recipe;
-  } catch (error) {
-    handleDbError(error, "update recipe");
-  }
-}
-
 export async function getRecipeById({
   id,
   userId,
@@ -87,21 +68,22 @@ export async function getRecipesMetadata({ userId }: { userId: string }) {
     handleDbError(error, "list recipes");
   }
 }
-
-export async function deleteRecipe({
-  id,
+export async function updateRecipe({
   userId,
+  data,
 }: {
-  id: string;
   userId: string;
+  data: UpdateRecipeInput;
 }) {
+  const { id, ...recipeData } = data;
   try {
-    await prisma.recipe.delete({
+    const recipe = await prisma.recipe.update({
       where: { id, userId },
+      data: recipeData,
     });
-    return true;
+    return recipe;
   } catch (error) {
-    handleDbError(error, "delete recipe");
+    handleDbError(error, "update recipe");
   }
 }
 
@@ -122,5 +104,22 @@ export async function setRecipeFavorite({
     return recipe;
   } catch (error) {
     handleDbError(error, "set recipe favorite");
+  }
+}
+
+export async function deleteRecipe({
+  id,
+  userId,
+}: {
+  id: string;
+  userId: string;
+}) {
+  try {
+    await prisma.recipe.delete({
+      where: { id, userId },
+    });
+    return true;
+  } catch (error) {
+    handleDbError(error, "delete recipe");
   }
 }

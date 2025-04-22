@@ -47,6 +47,27 @@ function renderGetRecipesMetadataTool(
       return <ToolSuccess message={message} />;
   }
 }
+
+function renderGetPlannedMealsMetadataTool(
+  toolInvocation: ToolInvocation
+): React.ReactNode {
+  switch (toolInvocation.state) {
+    case "partial-call":
+      return <ToolSpinner message={`Retrieving planned meals metadata...`} />;
+    case "call":
+      return <ToolSpinner message={`Retrieving planned meals metadata...`} />;
+    case "result":
+      const plannedMeals = toolInvocation.result;
+      const message =
+        plannedMeals.length > 0
+          ? `Retrieved ${plannedMeals.length} planned meal${
+              plannedMeals.length > 1 ? "s" : ""
+            } metadata!`
+          : `No planned meals found`;
+      return <ToolSuccess message={message} />;
+  }
+}
+
 function renderRecipePreviewTool(
   toolInvocation: ToolInvocation
 ): React.ReactNode {
@@ -86,6 +107,18 @@ function renderCreateRecipeTool(
   }
 }
 
+function renderCreatePlannedMealTool(
+  toolInvocation: ToolInvocation
+): React.ReactNode {
+  switch (toolInvocation.state) {
+    case "partial-call":
+      return <ToolSpinner message={`Planning recipe...`} />;
+    case "call":
+      return <ToolSpinner message={`Planning recipe...`} />;
+    case "result":
+      return <ToolSuccess message={`Recipe planned successfully!`} />;
+  }
+}
 function renderDeleteRecipeTool(
   toolInvocation: ToolInvocation
 ): React.ReactNode {
@@ -96,6 +129,19 @@ function renderDeleteRecipeTool(
       return <ToolSpinner message={`Deleting recipe...`} />;
     case "result":
       return <ToolSuccess message={`Recipe deleted successfully!`} />;
+  }
+}
+
+function renderDeletePlannedMealTool(
+  toolInvocation: ToolInvocation
+): React.ReactNode {
+  switch (toolInvocation.state) {
+    case "partial-call":
+      return <ToolSpinner message={`Deleting planned meal...`} />;
+    case "call":
+      return <ToolSpinner message={`Deleting planned meal...`} />;
+    case "result":
+      return <ToolSuccess message={`Planned meal deleted successfully!`} />;
   }
 }
 
@@ -112,6 +158,18 @@ function renderUpdateRecipeTool(
   }
 }
 
+function renderUpdatePlannedMealTool(
+  toolInvocation: ToolInvocation
+): React.ReactNode {
+  switch (toolInvocation.state) {
+    case "partial-call":
+      return <ToolSpinner message={`Updating planned meal...`} />;
+    case "call":
+      return <ToolSpinner message={`Updating planned meal...`} />;
+    case "result":
+      return <ToolSuccess message={`Planned meal updated successfully!`} />;
+  }
+}
 function renderGetRecipeByIdTool(
   toolInvocation: ToolInvocation
 ): React.ReactNode {
@@ -124,9 +182,28 @@ function renderGetRecipeByIdTool(
       return <ToolSuccess message={`Recipe retrieved successfully!`} />;
   }
 }
+function renderGetPlannedMealByIdTool(
+  toolInvocation: ToolInvocation
+): React.ReactNode {
+  switch (toolInvocation.state) {
+    case "partial-call":
+      return <ToolSpinner message={`Retrieving planned meal...`} />;
+    case "call":
+      return <ToolSpinner message={`Retrieving planned meal...`} />;
+    case "result":
+      return <ToolSuccess message={`Planned meal retrieved successfully!`} />;
+  }
+}
+
 toolRenderers["renderRecipePreviewTool"] = renderRecipePreviewTool;
 toolRenderers["createRecipeTool"] = renderCreateRecipeTool;
 toolRenderers["deleteRecipeTool"] = renderDeleteRecipeTool;
 toolRenderers["getRecipesMetadataTool"] = renderGetRecipesMetadataTool;
 toolRenderers["updateRecipeTool"] = renderUpdateRecipeTool;
 toolRenderers["getRecipeByIdTool"] = renderGetRecipeByIdTool;
+toolRenderers["getPlannedMealsMetadataTool"] =
+  renderGetPlannedMealsMetadataTool;
+toolRenderers["createPlannedMealTool"] = renderCreatePlannedMealTool;
+toolRenderers["deletePlannedMealTool"] = renderDeletePlannedMealTool;
+toolRenderers["updatePlannedMealTool"] = renderUpdatePlannedMealTool;
+toolRenderers["getPlannedMealByIdTool"] = renderGetPlannedMealByIdTool;

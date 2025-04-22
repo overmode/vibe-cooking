@@ -34,8 +34,7 @@ model PlannedMeal {
   userId               String
   recipe               Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
   recipeId             String
-
-  name                 String?  @db.VarChar(100)
+  overrideName         String?  @db.VarChar(100)
   overrideIngredients  String[] @default([])
   overrideInstructions String? @db.Text
   overrideServings     Int?
