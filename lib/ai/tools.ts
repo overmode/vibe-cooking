@@ -8,6 +8,7 @@ import {
 import {
   createRecipeAction,
   deleteRecipeAction,
+  getRecipeByIdAction,
   getRecipesMetadataAction,
   updateRecipeAction,
 } from "@/lib/actions/recipe";
@@ -20,6 +21,17 @@ export const getRecipesMetadataTool = tool({
   execute: async () => {
     const recipes = await getRecipesMetadataAction();
     return recipes;
+  },
+});
+
+export const getRecipeByIdTool = tool({
+  description: "Get a Recipe object by ID.",
+  parameters: z.object({
+    id: z.string().describe("The ID of the recipe to get"),
+  }),
+  execute: async (parameters: { id: string }) => {
+    const recipe = await getRecipeByIdAction(parameters.id);
+    return recipe;
   },
 });
 

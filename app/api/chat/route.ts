@@ -6,6 +6,7 @@ import {
   renderRecipePreviewTool,
   getRecipesMetadataTool,
   updateRecipeTool,
+  getRecipeByIdTool,
 } from "@/lib/ai/tools";
 import { getPrompt } from "@/lib/ai/prompts";
 // Allow streaming responses up to 30 seconds
@@ -25,10 +26,14 @@ export async function POST(req: Request) {
     maxSteps: 5,
     messages,
     tools: {
+      // Recipe crud operations
       getRecipesMetadataTool: getRecipesMetadataTool,
       createRecipeTool: createRecipeTool,
       updateRecipeTool: updateRecipeTool,
       deleteRecipeTool: deleteRecipeTool,
+      getRecipeByIdTool: getRecipeByIdTool,
+
+      // Recipe preview
       renderRecipePreviewTool: renderRecipePreviewTool,
     },
   });

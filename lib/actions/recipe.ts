@@ -1,6 +1,7 @@
 import {
   createRecipe,
   deleteRecipe,
+  getRecipeById,
   getRecipesMetadata,
   updateRecipe,
 } from "@/lib/data-access/recipe";
@@ -46,5 +47,14 @@ export const updateRecipeAction = async (recipeData: UpdateRecipeInput) => {
     userId,
     data: recipeData,
   });
+  return recipe;
+};
+
+export const getRecipeByIdAction = async (recipeId: string) => {
+  const { userId } = await auth();
+  if (!userId) {
+    handleActionError("Unauthorized", "getRecipeByIdAction");
+  }
+  const recipe = await getRecipeById({ id: recipeId, userId });
   return recipe;
 };

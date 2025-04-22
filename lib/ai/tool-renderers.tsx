@@ -38,11 +38,13 @@ function renderGetRecipesMetadataTool(
       return <ToolSpinner message={`Retrieving recipes metadata...`} />;
     case "result":
       const recipes = toolInvocation.result;
-      return (
-        <ToolSuccess
-          message={`Retrieved ${recipes.length} recipes metadata!`}
-        />
-      );
+      const message =
+        recipes.length > 0
+          ? `Retrieved ${recipes.length} recipe${
+              recipes.length > 1 ? "s" : ""
+            } metadata!`
+          : `No recipes found`;
+      return <ToolSuccess message={message} />;
   }
 }
 function renderRecipePreviewTool(
@@ -110,8 +112,21 @@ function renderUpdateRecipeTool(
   }
 }
 
+function renderGetRecipeByIdTool(
+  toolInvocation: ToolInvocation
+): React.ReactNode {
+  switch (toolInvocation.state) {
+    case "partial-call":
+      return <ToolSpinner message={`Retrieving recipe...`} />;
+    case "call":
+      return <ToolSpinner message={`Retrieving recipe...`} />;
+    case "result":
+      return <ToolSuccess message={`Recipe retrieved successfully!`} />;
+  }
+}
 toolRenderers["renderRecipePreviewTool"] = renderRecipePreviewTool;
 toolRenderers["createRecipeTool"] = renderCreateRecipeTool;
 toolRenderers["deleteRecipeTool"] = renderDeleteRecipeTool;
 toolRenderers["getRecipesMetadataTool"] = renderGetRecipesMetadataTool;
 toolRenderers["updateRecipeTool"] = renderUpdateRecipeTool;
+toolRenderers["getRecipeByIdTool"] = renderGetRecipeByIdTool;
