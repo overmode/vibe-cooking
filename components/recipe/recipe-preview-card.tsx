@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { Clock, Users } from "lucide-react";
@@ -16,18 +16,29 @@ export const RecipePreviewCard = ({
   return (
     <Card className="w-full mx-auto shadow-md border-lime-100 overflow-hidden">
       <CardHeader className="bg-gradient-to-r from-lime-50 to-lime-100 p-6 border-b border-lime-200">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <h3 className="text-2xl font-semibold tracking-tight text-lime-900">
+        <div className="flex flex-col  gap-3">
+          <CardTitle className="text-2xl font-semibold tracking-tight text-lime-900">
             {cardData.name}
-          </h3>
+          </CardTitle>
           <div className="flex items-center gap-2">
-            <Badge
-              variant="secondary"
-              className="flex items-center gap-1 bg-lime-100 text-lime-700 hover:bg-lime-200"
-            >
-              <Clock className="h-3 w-3" />
-              <span>{cardData.duration || 0} min</span>
-            </Badge>
+            {cardData.duration && (
+              <Badge
+                variant="secondary"
+                className="flex items-center gap-1 bg-lime-100 text-lime-700 hover:bg-lime-200"
+              >
+                <Clock className="h-3 w-3" />
+                <span>{cardData.duration || 0} min</span>
+              </Badge>
+            )}
+            {cardData.difficulty && (
+              <Badge
+                variant="secondary"
+                className="flex items-center gap-1 bg-lime-100 text-lime-700 hover:bg-lime-200"
+              >
+                <span>Difficulty: {cardData.difficulty || 1}/10</span>
+              </Badge>
+            )}
+
             <Badge
               variant="secondary"
               className="flex items-center gap-1 bg-lime-100 text-lime-700 hover:bg-lime-200"
