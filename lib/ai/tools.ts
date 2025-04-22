@@ -5,8 +5,9 @@ import {
 import { auth } from "@clerk/nextjs/server";
 import { createRecipeAction, deleteRecipeAction } from "@/lib/actions/recipe";
 import { z } from "zod";
+import { tool } from "ai";
 
-export const createRecipeTool = {
+export const createRecipeTool = tool({
   description: "Create a Recipe object.",
   parameters: createRecipeInputSchema,
   execute: async (parameters: CreateRecipeInput) => {
@@ -17,9 +18,9 @@ export const createRecipeTool = {
     const recipe = await createRecipeAction(parameters);
     return recipe;
   },
-};
+});
 
-export const deleteRecipeTool = {
+export const deleteRecipeTool = tool({
   description: "Delete a Recipe object.",
   parameters: z.object({
     id: z.string().describe("The id of the recipe to be deleted"),
@@ -32,4 +33,9 @@ export const deleteRecipeTool = {
     await deleteRecipeAction(parameters.id);
     return "Recipe deleted successfully";
   },
-};
+});
+
+export const renderRecipePreviewTool = tool({
+  description: "Renders a preview of a full recipe.",
+  parameters: createRecipeInputSchema,
+});

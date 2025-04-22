@@ -26,7 +26,15 @@ export default function Home() {
         //   role: "assistant",
         // },
       ],
+      // run client-side tools that are automatically executed:
+      async onToolCall({ toolCall }) {
+        if (toolCall.toolName === "renderRecipePreviewTool") {
+          return "The recipe was successfully rendered";
+        }
+      },
     });
+
+  console.log(messages);
 
   return (
     <div className="flex flex-col h-[calc(100vh-7rem)]">
