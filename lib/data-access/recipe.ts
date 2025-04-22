@@ -22,18 +22,17 @@ export async function createRecipe({
 }
 
 export async function updateRecipe({
-  id,
   userId,
   data,
 }: {
-  id: string;
   userId: string;
   data: UpdateRecipeInput;
 }) {
+  const { id, ...recipeData } = data;
   try {
     const recipe = await prisma.recipe.update({
       where: { id, userId },
-      data,
+      data: recipeData,
     });
     return recipe;
   } catch (error) {
@@ -63,12 +62,21 @@ export async function getRecipeById({
   }
 }
 
-export async function listUserRecipes(userId: string) {
+export async function getRecipesMetadata({ userId }: { userId: string }) {
   // TODO: Add pagination
   try {
     const recipes = await prisma.recipe.findMany({
       where: {
         userId,
+      },
+      select: {
+        id: true,
+        name: true,
+        createdAt: true,
+        servings: true,
+        duration: true,
+        cookCount: true,
+        isFavorite: true,
       },
       orderBy: {
         createdAt: "desc",
@@ -107,7 +115,10 @@ export async function setRecipeFavorite({
   isFavorite: boolean;
 }) {
   try {
-    const recipe = await updateRecipe({ id, userId, data: { isFavorite } });
+    const recipe = await updateRecipe({
+      userId,
+      data: { isFavorite, id },
+    });
     return recipe;
   } catch (error) {
     handleDbError(error, "set recipe favorite");

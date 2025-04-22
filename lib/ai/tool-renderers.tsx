@@ -28,16 +28,39 @@ export function renderToolInvocation(
   return renderer(toolInvocation);
 }
 
+function renderGetRecipesMetadataTool(
+  toolInvocation: ToolInvocation
+): React.ReactNode {
+  switch (toolInvocation.state) {
+    case "partial-call":
+      return <ToolSpinner message={`Retrieving recipes metadata...`} />;
+    case "call":
+      return <ToolSpinner message={`Retrieving recipes metadata...`} />;
+    case "result":
+      const recipes = toolInvocation.result;
+      return (
+        <ToolSuccess
+          message={`Retrieved ${recipes.length} recipes metadata!`}
+        />
+      );
+  }
+}
 function renderRecipePreviewTool(
   toolInvocation: ToolInvocation
 ): React.ReactNode {
-  return (
-    // We return the preview card no matter the state, because it is instant.
-    <RecipePreviewCard
-      cardData={toolInvocation.args}
-      id={toolInvocation.toolCallId}
-    />
-  );
+  switch (toolInvocation.state) {
+    case "partial-call":
+      return <ToolSpinner message={`Rendering recipe preview...`} />;
+    case "call":
+      return <ToolSpinner message={`Rendering recipe preview...`} />;
+    case "result":
+      return (
+        <RecipePreviewCard
+          cardData={toolInvocation.args}
+          id={toolInvocation.toolCallId}
+        />
+      );
+  }
 }
 
 function renderCreateRecipeTool(
@@ -74,6 +97,21 @@ function renderDeleteRecipeTool(
   }
 }
 
+function renderUpdateRecipeTool(
+  toolInvocation: ToolInvocation
+): React.ReactNode {
+  switch (toolInvocation.state) {
+    case "partial-call":
+      return <ToolSpinner message={`Updating recipe...`} />;
+    case "call":
+      return <ToolSpinner message={`Updating recipe...`} />;
+    case "result":
+      return <ToolSuccess message={`Recipe updated successfully!`} />;
+  }
+}
+
 toolRenderers["renderRecipePreviewTool"] = renderRecipePreviewTool;
 toolRenderers["createRecipeTool"] = renderCreateRecipeTool;
 toolRenderers["deleteRecipeTool"] = renderDeleteRecipeTool;
+toolRenderers["getRecipesMetadataTool"] = renderGetRecipesMetadataTool;
+toolRenderers["updateRecipeTool"] = renderUpdateRecipeTool;

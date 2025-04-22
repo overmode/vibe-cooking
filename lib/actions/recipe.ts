@@ -1,7 +1,21 @@
-import { createRecipe, deleteRecipe } from "@/lib/data-access/recipe";
+import {
+  createRecipe,
+  deleteRecipe,
+  getRecipesMetadata,
+  updateRecipe,
+} from "@/lib/data-access/recipe";
 import { auth } from "@clerk/nextjs/server";
-import { CreateRecipeInput } from "@/lib/validators/recipe";
+import { CreateRecipeInput, UpdateRecipeInput } from "@/lib/validators/recipe";
 import { handleActionError } from "@/lib/utils/error";
+
+export const getRecipesMetadataAction = async () => {
+  const { userId } = await auth();
+  if (!userId) {
+    handleActionError("Unauthorized", "getRecipesMetadataAction");
+  }
+  const recipes = await getRecipesMetadata({ userId });
+  return recipes;
+};
 export const createRecipeAction = async (recipeData: CreateRecipeInput) => {
   const { userId } = await auth();
   if (!userId) {
@@ -20,5 +34,17 @@ export const deleteRecipeAction = async (recipeId: string) => {
     handleActionError("Unauthorized", "deleteRecipeAction");
   }
   const recipe = await deleteRecipe({ id: recipeId, userId });
+  return recipe;
+};
+
+export const updateRecipeAction = async (recipeData: UpdateRecipeInput) => {
+  const { userId } = await auth();
+  if (!userId) {
+    handleActionError("Unauthorized", "updateRecipeAction");
+  }
+  const recipe = await updateRecipe({
+    userId,
+    data: recipeData,
+  });
   return recipe;
 };

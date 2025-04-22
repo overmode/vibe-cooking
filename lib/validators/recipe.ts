@@ -101,7 +101,11 @@ export const createRecipeInputSchema = z.object({
     .optional(),
 });
 
-export const updateRecipeInputSchema = createRecipeInputSchema.partial();
+export const updateRecipeInputSchema = createRecipeInputSchema
+  .partial()
+  .extend({
+    id: z.string().describe("The ID of the recipe to update"),
+  });
 
 export type CreateRecipeInput = z.infer<typeof createRecipeInputSchema>;
 export type UpdateRecipeInput = z.infer<typeof updateRecipeInputSchema>;
