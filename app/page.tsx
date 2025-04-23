@@ -22,7 +22,7 @@ export default function Home() {
   });
 
   return (
-    <div className="flex flex-col h-[calc(100vh-7rem)]">
+    <div className="flex flex-col h-[calc(100vh-4rem)]">
       <div className="flex-1 overflow-hidden p-4">
         <ChatWindow messages={messages} />
       </div>
