@@ -1,8 +1,6 @@
 import { Message } from "ai";
-import { ChatMessage } from "@/components/chat/chat-message";
-import { useEffect, useRef } from "react";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChatInput } from "@/components/chat/chat-input";
+import { ChatWindow } from "@/components/chat/chat-window";
 
 interface CookingChatProps {
   messages: Message[];
@@ -17,31 +15,16 @@ export function CookingChat({
   handleInputChange,
   handleSubmit,
 }: CookingChatProps) {
-  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="p-4 border-b bg-lime-50/50">
-        <h2 className="text-lg font-semibold text-lime-900">Cooking Assistant</h2>
-        <p className="text-sm text-muted-foreground">
-          Ask me anything about the recipe or cooking process
-        </p>
+    <div className="flex flex-col h-[calc(100vh-8.5rem)]">
+      
+      <div className="flex-1 overflow-auto">
+        <ChatWindow messages={messages} />
       </div>
       
-      <ScrollArea className="flex-1 p-4">
-        <div className="space-y-4">
-          {messages.map((message) => (
-            <ChatMessage key={message.id} message={message} />
-          ))}
-          <div ref={messagesEndRef} />
-        </div>
-      </ScrollArea>
-      
-      <div className="border-t">
+      <div className="border-t mt-auto sticky bottom-0 z-10 bg-background">
         <ChatInput
           input={input}
           handleInputChange={handleInputChange}

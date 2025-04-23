@@ -6,7 +6,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     <>
       {/* <TopNav /> */}
       <div className="bg-background text-foreground flex flex-col">
-        <main className="flex-1 w-full max-w-3xl mx-auto px-4">{children}</main>
+        <main className="flex-1 w-full mx-auto px-4 max-w-7xl">{children}</main>
       </div>
     </>
   );

@@ -85,12 +85,16 @@ export function CookingView({ plannedMealWithRecipe }: CookingViewProps) {
           <RecipeViewer recipe={effectiveRecipe} />
         </div>
         <div className="w-1/2 flex flex-col">
-          <CookingChat 
-            messages={messages}
-            input={input}
-            handleInputChange={handleInputChange}
-            handleSubmit={handleSubmit}
-          />
+          <div className="flex flex-col h-full">
+            <div className="flex-1 overflow-auto">
+              <CookingChat 
+                messages={messages}
+                input={input}
+                handleInputChange={handleInputChange}
+                handleSubmit={handleSubmit}
+              />
+            </div>
+          </div>
         </div>
       </div>
 

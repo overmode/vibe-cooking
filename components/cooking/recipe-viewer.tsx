@@ -2,10 +2,11 @@ import { Recipe } from "@prisma/client";
 import { Clock, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { MemoizedMarkdown } from "@/components/chat/memoized-markdown";
-
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export function RecipeViewer({ recipe }: { recipe: Recipe }) {
   return (
+    <ScrollArea className="h-[calc(100vh-8.5rem)]">
     <div className="p-6 space-y-6">
       {/* Recipe header */}
       <div className="space-y-3">
@@ -65,5 +66,6 @@ export function RecipeViewer({ recipe }: { recipe: Recipe }) {
         </div>
       </div>
     </div>
+    </ScrollArea>
   );
 } 
