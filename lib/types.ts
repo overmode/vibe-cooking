@@ -11,6 +11,7 @@ export type RecipeMetadata = Prisma.RecipeGetPayload<{
     createdAt: true;
     servings: true;
     duration: true;
+    difficulty: true;
     cookCount: true;
     isFavorite: true;
   };
@@ -26,5 +27,13 @@ export type PlannedMealMetadata = Prisma.PlannedMealGetPayload<{
     overrideServings: true;
     status: true;
     cookedAt: true;
+    recipe: {
+      select: {
+        name: true;
+        servings: true;
+        duration: true;
+        difficulty: true;
+      };
+    };
   };
 }>;

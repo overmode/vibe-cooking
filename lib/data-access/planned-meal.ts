@@ -62,6 +62,14 @@ export async function getPlannedMealsMetadata({
         overrideServings: true,
         status: true,
         cookedAt: true,
+        recipe: {
+          select: {
+            name: true,
+            servings: true,
+            duration: true,
+            difficulty: true,
+          },
+        },
       },
       orderBy: { createdAt: "desc" },
     });
