@@ -2,6 +2,7 @@ import prisma from "@/prisma/client";
 import { Prisma } from "@prisma/client";
 import { CreateRecipeInput, UpdateRecipeInput } from "@/lib/validators/recipe";
 import { handleDbError } from "@/lib/utils/error";
+import { RecipeMetadata } from "@/lib/types";
 
 export async function createRecipe({
   userId,
@@ -45,7 +46,11 @@ export async function getRecipeById({
   }
 }
 
-export async function getRecipesMetadata({ userId }: { userId: string }) {
+export async function getRecipesMetadata({
+  userId,
+}: {
+  userId: string;
+}): Promise<RecipeMetadata[]> {
   // TODO: Add pagination
   try {
     const recipes = await prisma.recipe.findMany({

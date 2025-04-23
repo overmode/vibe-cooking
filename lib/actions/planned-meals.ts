@@ -7,13 +7,16 @@ import {
   getPlannedMeals,
   getPlannedMealsMetadata,
   updatePlannedMeal,
-} from "@/lib/data-access/plannedMeal";
+} from "@/lib/data-access/planned-meal";
 import {
   CreatePlannedMealInput,
   UpdatePlannedMealInput,
 } from "@/lib/validators/plannedMeals";
+import { PlannedMealMetadata } from "@/lib/types";
 
-export const getPlannedMealsMetadataAction = async () => {
+export const getPlannedMealsMetadataAction = async (): Promise<
+  PlannedMealMetadata[]
+> => {
   const { userId } = await auth();
   if (!userId) {
     handleActionError("Unauthorized", "getPlannedMealsMetadataAction");

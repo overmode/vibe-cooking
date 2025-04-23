@@ -6,6 +6,7 @@ import {
   ToolSpinner,
   ToolError,
 } from "@/components/chat/tool-feedback";
+import { PlannedMealMetadata, RecipeMetadata, ToolResult } from "@/lib/types";
 
 // Simple type for tool rendering functions
 type ToolRenderer = (toolInvocation: ToolInvocation) => React.ReactNode;
@@ -37,11 +38,14 @@ function renderGetRecipesMetadataTool(
     case "call":
       return <ToolSpinner message={`Retrieving recipes metadata...`} />;
     case "result":
-      const recipes = toolInvocation.result;
+      const recipes = toolInvocation.result as ToolResult<RecipeMetadata[]>;
+      if (!recipes.success) {
+        return <ToolError message={recipes.error} />;
+      }
       const message =
-        recipes.length > 0
-          ? `Retrieved ${recipes.length} recipe${
-              recipes.length > 1 ? "s" : ""
+        recipes.data.length > 0
+          ? `Retrieved ${recipes.data.length} recipe${
+              recipes.data.length > 1 ? "s" : ""
             } metadata!`
           : `No recipes found`;
       return <ToolSuccess message={message} />;
@@ -57,11 +61,16 @@ function renderGetPlannedMealsMetadataTool(
     case "call":
       return <ToolSpinner message={`Retrieving planned meals metadata...`} />;
     case "result":
-      const plannedMeals = toolInvocation.result;
+      const plannedMeals = toolInvocation.result as ToolResult<
+        PlannedMealMetadata[]
+      >;
+      if (!plannedMeals.success) {
+        return <ToolError message={plannedMeals.error} />;
+      }
       const message =
-        plannedMeals.length > 0
-          ? `Retrieved ${plannedMeals.length} planned meal${
-              plannedMeals.length > 1 ? "s" : ""
+        plannedMeals.data.length > 0
+          ? `Retrieved ${plannedMeals.data.length} planned meal${
+              plannedMeals.data.length > 1 ? "s" : ""
             } metadata!`
           : `No planned meals found`;
       return <ToolSuccess message={message} />;
@@ -77,11 +86,16 @@ function renderGetPlannedMealsTool(
     case "call":
       return <ToolSpinner message={`Retrieving planned meals...`} />;
     case "result":
-      const plannedMeals = toolInvocation.result;
+      const plannedMeals = toolInvocation.result as ToolResult<
+        PlannedMealMetadata[]
+      >;
+      if (!plannedMeals.success) {
+        return <ToolError message={plannedMeals.error} />;
+      }
       const message =
-        plannedMeals.length > 0
-          ? `Retrieved ${plannedMeals.length} planned meal${
-              plannedMeals.length > 1 ? "s" : ""
+        plannedMeals.data.length > 0
+          ? `Retrieved ${plannedMeals.data.length} planned meal${
+              plannedMeals.data.length > 1 ? "s" : ""
             }!`
           : `No planned meals found`;
       return <ToolSuccess message={message} />;

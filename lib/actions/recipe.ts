@@ -8,8 +8,9 @@ import {
 import { auth } from "@clerk/nextjs/server";
 import { CreateRecipeInput, UpdateRecipeInput } from "@/lib/validators/recipe";
 import { handleActionError } from "@/lib/utils/error";
+import { RecipeMetadata } from "@/lib/types";
 
-export const getRecipesMetadataAction = async () => {
+export const getRecipesMetadataAction = async (): Promise<RecipeMetadata[]> => {
   const { userId } = await auth();
   if (!userId) {
     handleActionError("Unauthorized", "getRecipesMetadataAction");

@@ -6,7 +6,7 @@ import {
 } from "@/lib/validators/plannedMeals";
 import { PlannedMealStatus } from "@prisma/client";
 import { handleDbError } from "@/lib/utils/error";
-
+import { PlannedMealMetadata } from "@/lib/types";
 export async function createPlannedMeal({
   userId,
   data,
@@ -44,7 +44,11 @@ export async function getPlannedMealById({
   }
 }
 
-export async function getPlannedMealsMetadata({ userId }: { userId: string }) {
+export async function getPlannedMealsMetadata({
+  userId,
+}: {
+  userId: string;
+}): Promise<PlannedMealMetadata[]> {
   try {
     // TODO: Add pagination
     const plannedMeals = await prisma.plannedMeal.findMany({

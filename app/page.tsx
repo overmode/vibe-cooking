@@ -3,6 +3,7 @@
 import { useChat } from "@ai-sdk/react";
 import { ChatWindow } from "@/components/chat/chat-window";
 import { ChatInput } from "@/components/chat/chat-input";
+import { ToolResult } from "@/lib/types";
 
 export default function Home() {
   const { messages, input, handleInputChange, handleSubmit } = useChat({
@@ -16,7 +17,10 @@ export default function Home() {
     // run client-side tools that are automatically executed:
     async onToolCall({ toolCall }) {
       if (toolCall.toolName === "renderRecipePreviewTool") {
-        return "The recipe was successfully rendered";
+        return {
+          success: true,
+          data: "The recipe was successfully rendered",
+        } as ToolResult<string>;
       }
     },
   });
