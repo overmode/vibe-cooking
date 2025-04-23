@@ -37,3 +37,9 @@ export type PlannedMealMetadata = Prisma.PlannedMealGetPayload<{
     };
   };
 }>;
+
+export type PlannedMealWithRecipe = Prisma.PlannedMealGetPayload<{
+  include: {
+    recipe: true;
+  };
+}>;

@@ -39,8 +39,6 @@ export default function Home() {
     setInput(message);
   };
 
-  console.log(messages);
-
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)]">
       <div className="flex-1 overflow-hidden p-4">
