@@ -18,7 +18,10 @@ import {
 import { PlannedMealStatus } from "@prisma/client";
 
 export const createPlannedMealInputSchema = z.object({
-  recipeId: z.string(),
+  recipeId: z
+    .string()
+    .nonempty({ message: "Recipe ID is required" })
+    .describe("The ID of the recipe to plan. Required."),
   overrideName: z
     .string()
     .describe(

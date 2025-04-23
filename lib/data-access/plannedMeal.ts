@@ -1,11 +1,12 @@
 import prisma from "@/prisma/client";
+import { Prisma } from "@prisma/client";
 import {
   CreatePlannedMealInput,
   UpdatePlannedMealInput,
 } from "@/lib/validators/plannedMeals";
 import { PlannedMealStatus } from "@prisma/client";
 import { handleDbError } from "@/lib/utils/error";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+
 export async function createPlannedMeal({
   userId,
   data,
@@ -145,9 +146,9 @@ export async function deletePlannedMeal({
     });
     return true;
   } catch (error) {
-    if (error instanceof PrismaClientKnownRequestError) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
       // 2025 is the code for the planned meal not found error
-      if (error.code === "2025") {
+      if (error.code === "P2025") {
         return true;
       }
     }
