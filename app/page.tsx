@@ -5,11 +5,11 @@ import { ChatWindow } from "@/components/chat/chat-window";
 import { ChatInput } from "@/components/chat/chat-input";
 import { ChatSuggestions } from "@/components/chat/chat-suggestions";
 import { ToolResult } from "@/lib/types";
-import { useState } from "react";
 import { chatSuggestions } from "@/lib/constants/chat-suggestions";
-
+import { triggerToolEffects } from "@/lib/ai/tool-effects";
+import { useQueryClient } from "@tanstack/react-query";
 export default function Home() {
-  const [showSuggestions, setShowSuggestions] = useState(true);
+  const queryClient = useQueryClient();
 
   const { messages, input, handleInputChange, handleSubmit, setInput } =
     useChat({
@@ -29,9 +29,9 @@ export default function Home() {
           } as ToolResult<string>;
         }
       },
-      onResponse: () => {
-        // Hide suggestions after first user message
-        setShowSuggestions(false);
+      onFinish: (message) => {
+        // client-side side effects such as cache invalidation
+        triggerToolEffects(message, queryClient);
       },
     });
 
@@ -45,7 +45,7 @@ export default function Home() {
         <ChatWindow messages={messages} />
       </div>
       <div className="w-full">
-        {showSuggestions && messages.length <= 2 && (
+        {messages.length <= 2 && (
           <ChatSuggestions
             suggestions={chatSuggestions}
             onSuggestionClick={handleSuggestionClick}

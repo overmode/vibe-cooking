@@ -21,7 +21,7 @@ export function CookingChat({
         <ChatWindow messages={messages} />
       </div>
       
-      <div className="border-t bg-background">
+      <div className="sticky bottom-0 border-t bg-background p-2 pb-0">
         <ChatInput
           input={input}
           handleInputChange={handleInputChange}

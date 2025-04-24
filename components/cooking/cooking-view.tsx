@@ -9,14 +9,16 @@ import { Button } from "@/components/ui/button";
 import { Check, ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { PlannedMealWithRecipe } from "@/lib/types";
+import { PlannedMealWithRecipe, ToolResult } from "@/lib/types";
 import { useMarkAsCookedMutation } from "@/lib/api/hooks/planned-meals";
-
+import { triggerToolEffects } from "@/lib/ai/tool-effects";
+import { useQueryClient } from "@tanstack/react-query";
 interface CookingViewProps {
   plannedMealWithRecipe: PlannedMealWithRecipe;
 }
 
 export function CookingView({ plannedMealWithRecipe }: CookingViewProps) {
+  const queryClient = useQueryClient();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<string>("recipe");
   
@@ -29,6 +31,19 @@ export function CookingView({ plannedMealWithRecipe }: CookingViewProps) {
         role: "assistant",
       },
     ],
+    // run client-side tools that are automatically executed:
+      async onToolCall({ toolCall }) {
+        if (toolCall.toolName === "renderRecipePreviewTool") {
+          return {
+            success: true,
+            data: "The recipe was successfully rendered",
+          } as ToolResult<string>;
+        }
+      },
+      onFinish: (message) => {
+        // client-side side effects such as cache invalidation
+        triggerToolEffects(message, queryClient);
+      },
   });
 
   // Mark as cooked mutation
