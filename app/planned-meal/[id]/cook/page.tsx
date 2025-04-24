@@ -17,7 +17,7 @@ export default function CookingPage() {
 
   if (plannedMealWithRecipeQuery.isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center h-[calc(100vh-4rem)]">
+      <div className="flex flex-col items-center justify-center h-full">
         <LoadingSpinner size="lg" />
         <p className="mt-4 text-muted-foreground">Loading your cooking session...</p>
       </div>    
@@ -26,7 +26,7 @@ export default function CookingPage() {
 
   if (plannedMealWithRecipeQuery.isError) {
     return (
-      <div className="flex flex-col items-center justify-center h-[calc(100vh-4rem)]">
+      <div className="flex flex-col items-center justify-center h-full">
         <p className="text-destructive">Failed to load cooking session</p>
         <Button asChild variant="outline" className="mt-4">
           <Link href="/">
@@ -42,7 +42,7 @@ export default function CookingPage() {
 
   if (!plannedMealWithRecipe) {
     return (
-      <div className="flex flex-col items-center justify-center h-[calc(100vh-4rem)]">
+      <div className="flex flex-col items-center justify-center h-full">
         <p className="text-destructive">Recipe or planned meal not found</p>
         <Button asChild variant="outline" className="mt-4">
           <Link href="/">
@@ -54,5 +54,9 @@ export default function CookingPage() {
     );
   }
 
-  return <CookingView plannedMealWithRecipe={plannedMealWithRecipe} />;
+  return (
+    <div className="h-full">
+      <CookingView plannedMealWithRecipe={plannedMealWithRecipe} />
+    </div>
+  );
 } 

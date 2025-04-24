@@ -15,16 +15,13 @@ export function CookingChat({
   handleInputChange,
   handleSubmit,
 }: CookingChatProps) {
-
-
   return (
-    <div className="flex flex-col h-[calc(100vh-8.5rem)]">
-      
-      <div className="flex-1 overflow-auto">
+    <div className="flex flex-col h-full">
+      <div className="flex-1 overflow-hidden">
         <ChatWindow messages={messages} />
       </div>
       
-      <div className="border-t mt-auto sticky bottom-0 z-10 bg-background">
+      <div className="border-t bg-background">
         <ChatInput
           input={input}
           handleInputChange={handleInputChange}

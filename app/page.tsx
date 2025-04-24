@@ -40,8 +40,8 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)]">
-      <div className="flex-1 overflow-hidden p-4">
+    <div className="flex flex-col h-full">
+      <div className="flex-1 overflow-hidden">
         <ChatWindow messages={messages} />
       </div>
       <div className="w-full">
@@ -51,11 +51,13 @@ export default function Home() {
             onSuggestionClick={handleSuggestionClick}
           />
         )}
+        <div className="sticky bottom-0">
         <ChatInput
           input={input}
           handleInputChange={handleInputChange}
           handleSubmit={handleSubmit}
-        />
+          />
+        </div>
       </div>
     </div>
   );

@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { PlannedMealWithRecipe } from "@/lib/types";
 import { useMarkAsCookedMutation } from "@/lib/api/hooks/planned-meals";
+
 interface CookingViewProps {
   plannedMealWithRecipe: PlannedMealWithRecipe;
 }
@@ -57,65 +58,64 @@ export function CookingView({ plannedMealWithRecipe }: CookingViewProps) {
   };
 
   return (
-    <div className="h-[calc(100vh-4rem)] flex flex-col">
+    <div className="flex flex-col h-full">
       {/* Header with back button and mark as cooked */}
-      <div className="flex justify-between items-center p-4 border-b">
+      <div className="flex justify-between items-center p-2 border-b bg-background sticky top-0 z-10">
         <Button 
           variant="ghost" 
-          size="sm" 
+          size="icon" 
           onClick={() => router.back()}
-          className="gap-1"
+          className="h-8 w-8"
         >
           <ChevronLeft className="h-4 w-4" />
-          Back
         </Button>
+        <h3 className="text-sm font-medium">{effectiveRecipe.name}</h3>
         <Button 
           onClick={() => markAsCookedMutation.mutate()}
           disabled={markAsCookedMutation.isPending}
-          className="gap-2 bg-lime-600 hover:bg-lime-700"
+          size="sm"
+          className="h-8 bg-lime-600 hover:bg-lime-700"
         >
-          <Check className="h-4 w-4" />
-          Mark as Cooked
+          <Check className="h-3.5 w-3.5 mr-1" />
+          <span className="text-xs">Cooked</span>
         </Button>
       </div>
 
       {/* Desktop layout (side by side) */}
-      <div className="hidden md:flex h-full">
-        <div className="w-1/2 border-r overflow-auto">
+      <div className="hidden md:flex flex-1 overflow-hidden">
+        <div className="w-1/2 border-r h-full overflow-y-auto">
           <RecipeViewer recipe={effectiveRecipe} />
         </div>
-        <div className="w-1/2 flex flex-col">
-          <div className="flex flex-col h-full">
-            <div className="flex-1 overflow-auto">
+        <div className="w-1/2 h-full overflow-y-auto">
+          <CookingChat 
+            messages={messages}
+            input={input}
+            handleInputChange={handleInputChange}
+            handleSubmit={handleSubmit}
+          />
+        </div>
+      </div>
+
+      {/* Mobile layout (tabs) */}
+      <div className="md:hidden flex-1 overflow-hidden">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
+          <TabsList className="grid grid-cols-2 w-full sticky top-0 z-10">
+            <TabsTrigger value="recipe">Recipe</TabsTrigger>
+            <TabsTrigger value="chat">Assistant</TabsTrigger>
+          </TabsList>
+          <div className="flex-1 overflow-hidden">
+            <TabsContent value="recipe" className="h-full overflow-y-auto">
+              <RecipeViewer recipe={effectiveRecipe} />
+            </TabsContent>
+            <TabsContent value="chat" className="h-full overflow-y-auto">
               <CookingChat 
                 messages={messages}
                 input={input}
                 handleInputChange={handleInputChange}
                 handleSubmit={handleSubmit}
               />
-            </div>
+            </TabsContent>
           </div>
-        </div>
-      </div>
-
-      {/* Mobile layout (tabs) */}
-      <div className="md:hidden flex flex-col h-full">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-          <TabsList className="grid grid-cols-2 w-full">
-            <TabsTrigger value="recipe">Recipe</TabsTrigger>
-            <TabsTrigger value="chat">Assistant</TabsTrigger>
-          </TabsList>
-          <TabsContent value="recipe" className="flex-1 overflow-auto">
-            <RecipeViewer recipe={effectiveRecipe} />
-          </TabsContent>
-          <TabsContent value="chat" className="flex-1 flex flex-col">
-            <CookingChat 
-              messages={messages}
-              input={input}
-              handleInputChange={handleInputChange}
-              handleSubmit={handleSubmit}
-            />
-          </TabsContent>
         </Tabs>
       </div>
     </div>
