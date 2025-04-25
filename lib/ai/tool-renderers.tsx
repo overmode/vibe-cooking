@@ -7,12 +7,22 @@ import {
   ToolError,
 } from "@/components/chat/tool-feedback";
 import { PlannedMealMetadata, RecipeMetadata, ToolResult } from "@/lib/types";
+import { PlannedMeal, Recipe } from "@prisma/client";
 
 // Simple type for tool rendering functions
 type ToolRenderer = (toolInvocation: ToolInvocation) => React.ReactNode;
 
 // Map of tool names to their rendering functions
 const toolRenderers: Record<string, ToolRenderer> = {};
+
+function renderResultWithMessage<T>({result, message}: {result: ToolResult<T>, message : (data: T) => string}) {
+  if (!result.success) {
+    return <ToolError message={result.error} />;
+  }
+  return <ToolSuccess message={message(result.data)} />;
+}
+
+// TODO in all above functions, tighter typing for result.data => should be linked to the actual tool
 
 // Simple function to render a tool's output
 export function renderToolInvocation(
@@ -39,16 +49,7 @@ function renderGetRecipesMetadataTool(
       return <ToolSpinner message={`Retrieving recipes metadata...`} />;
     case "result":
       const recipes = toolInvocation.result as ToolResult<RecipeMetadata[]>;
-      if (!recipes.success) {
-        return <ToolError message={recipes.error} />;
-      }
-      const message =
-        recipes.data.length > 0
-          ? `Retrieved ${recipes.data.length} recipe${
-              recipes.data.length > 1 ? "s" : ""
-            } metadata!`
-          : `No recipes found`;
-      return <ToolSuccess message={message} />;
+      return renderResultWithMessage({result: recipes, message: (data) => `Retrieved ${data.length} recipe${data.length > 1 ? "s" : ""} metadata!`});
   }
 }
 
@@ -64,16 +65,7 @@ function renderGetPlannedMealsMetadataTool(
       const plannedMeals = toolInvocation.result as ToolResult<
         PlannedMealMetadata[]
       >;
-      if (!plannedMeals.success) {
-        return <ToolError message={plannedMeals.error} />;
-      }
-      const message =
-        plannedMeals.data.length > 0
-          ? `Retrieved ${plannedMeals.data.length} planned meal${
-              plannedMeals.data.length > 1 ? "s" : ""
-            } metadata!`
-          : `No planned meals found`;
-      return <ToolSuccess message={message} />;
+      return renderResultWithMessage({result: plannedMeals, message: (data) => `Retrieved ${data.length} planned meal${data.length > 1 ? "s" : ""} metadata!`});
   }
 }
 
@@ -89,16 +81,7 @@ function renderGetPlannedMealsTool(
       const plannedMeals = toolInvocation.result as ToolResult<
         PlannedMealMetadata[]
       >;
-      if (!plannedMeals.success) {
-        return <ToolError message={plannedMeals.error} />;
-      }
-      const message =
-        plannedMeals.data.length > 0
-          ? `Retrieved ${plannedMeals.data.length} planned meal${
-              plannedMeals.data.length > 1 ? "s" : ""
-            }!`
-          : `No planned meals found`;
-      return <ToolSuccess message={message} />;
+      return renderResultWithMessage({result: plannedMeals, message: (data) => `Retrieved ${data.length} planned meal${data.length > 1 ? "s" : ""}!`});
   }
 }
 
@@ -133,11 +116,7 @@ function renderCreateRecipeTool(
         <ToolSpinner message={`Creating "${toolInvocation.args.name}"...`} />
       );
     case "result":
-      return (
-        <ToolSuccess
-          message={`"${toolInvocation.args.name}" created successfully!`}
-        />
-      );
+      return renderResultWithMessage({result: toolInvocation.result as ToolResult<Recipe>, message: (data) => `"${data.name}" created successfully!`});
   }
 }
 
@@ -150,7 +129,7 @@ function renderCreatePlannedMealTool(
     case "call":
       return <ToolSpinner message={`Planning recipe...`} />;
     case "result":
-      return <ToolSuccess message={`Recipe planned successfully!`} />;
+      return renderResultWithMessage({result: toolInvocation.result as ToolResult<PlannedMeal>, message: () => `Recipe planned successfully!`});
   }
 }
 function renderDeleteRecipeTool(
@@ -162,7 +141,7 @@ function renderDeleteRecipeTool(
     case "call":
       return <ToolSpinner message={`Deleting recipe...`} />;
     case "result":
-      return <ToolSuccess message={`Recipe deleted successfully!`} />;
+      return renderResultWithMessage({result: toolInvocation.result as ToolResult<Recipe>, message: () => `Recipe deleted successfully!`});
   }
 }
 
@@ -175,7 +154,7 @@ function renderDeletePlannedMealTool(
     case "call":
       return <ToolSpinner message={`Deleting planned meal...`} />;
     case "result":
-      return <ToolSuccess message={`Planned meal deleted successfully!`} />;
+      return renderResultWithMessage({result: toolInvocation.result as ToolResult<Recipe>, message: () => `Planned meal deleted successfully!`});
   }
 }
 
@@ -188,7 +167,7 @@ function renderUpdateRecipeTool(
     case "call":
       return <ToolSpinner message={`Updating recipe...`} />;
     case "result":
-      return <ToolSuccess message={`Recipe updated successfully!`} />;
+      return renderResultWithMessage({result: toolInvocation.result as ToolResult<Recipe>, message: () => `Recipe updated successfully!`});
   }
 }
 
@@ -201,7 +180,7 @@ function renderUpdatePlannedMealTool(
     case "call":
       return <ToolSpinner message={`Updating planned meal...`} />;
     case "result":
-      return <ToolSuccess message={`Planned meal updated successfully!`} />;
+      return renderResultWithMessage({result: toolInvocation.result as ToolResult<PlannedMeal>, message: () => `Planned meal updated successfully!`});
   }
 }
 function renderGetRecipeByIdTool(
@@ -213,7 +192,7 @@ function renderGetRecipeByIdTool(
     case "call":
       return <ToolSpinner message={`Retrieving recipe...`} />;
     case "result":
-      return <ToolSuccess message={`Recipe retrieved successfully!`} />;
+      return renderResultWithMessage({result: toolInvocation.result as ToolResult<Recipe>, message: () => `Recipe retrieved successfully!`});
   }
 }
 function renderGetPlannedMealByIdTool(
@@ -225,7 +204,7 @@ function renderGetPlannedMealByIdTool(
     case "call":
       return <ToolSpinner message={`Retrieving planned meal...`} />;
     case "result":
-      return <ToolSuccess message={`Planned meal retrieved successfully!`} />;
+      return renderResultWithMessage({result: toolInvocation.result as ToolResult<PlannedMeal>, message: () => `Planned meal retrieved successfully!`});
   }
 }
 

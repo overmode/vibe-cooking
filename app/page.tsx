@@ -13,6 +13,7 @@ export default function Home() {
 
   const { messages, input, handleInputChange, handleSubmit, setInput } =
     useChat({
+      api: "/api/assistants/planning",
       initialMessages: [
         {
           id: "1",

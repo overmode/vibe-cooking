@@ -22,7 +22,7 @@ export async function POST(req: Request) {
   const { messages } = await req.json();
 
   const prompt = await getPrompt({
-    promptName: "main-cook-assistant",
+    promptName: "planning-assistant",
     promptVars: { date: new Date().toISOString() },
   });
 

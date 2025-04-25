@@ -24,10 +24,14 @@ export function CookingView({ plannedMealWithRecipe }: CookingViewProps) {
   
   // Initialize chat with cooking context
   const { messages, input, handleInputChange, handleSubmit } = useChat({
+    api: "/api/assistants/cooking",
+    body: {
+      plannedMealWithRecipe,
+    },
     initialMessages: [
       {
         id: "cooking-intro",
-        content: `I'll guide you through cooking ${plannedMealWithRecipe.overrideName || plannedMealWithRecipe.recipe.name}. Let me know if you have questions at any step!`,
+        content: `I'll guide you through cooking ${plannedMealWithRecipe.overrideName || plannedMealWithRecipe.recipe.name}. Let me know if you have questions at any step or want to make changes!`,
         role: "assistant",
       },
     ],

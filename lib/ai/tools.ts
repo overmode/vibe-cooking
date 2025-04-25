@@ -161,7 +161,7 @@ export const updatePlannedMealTool = tool({
     } catch {
       return { success: false, error: "Error updating planned meal" };
     }
-  },
+  },  
 });
 
 export const deleteRecipeTool = tool({

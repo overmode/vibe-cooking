@@ -43,7 +43,6 @@ export const triggerToolEffects = (
       const toolName = part.toolInvocation.toolName;
       const result = part.toolInvocation.result;
       const toolEffect = toolEffects[toolName];
-      console.log("applied toolEffect for ", toolName);
       toolEffect(queryClient, result);
     }
   }
