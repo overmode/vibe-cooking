@@ -6,13 +6,16 @@ import { RecipeViewer } from "@/components/cooking/recipe-viewer";
 import { CookingChat } from "@/components/cooking/cooking-chat";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Check, ChevronLeft } from "lucide-react";
+import { Check, ChevronLeft} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { PlannedMealWithRecipe, ToolResult } from "@/lib/types";
-import { useMarkAsCookedMutation } from "@/lib/api/hooks/planned-meals";
+import { useUpdatePlannedMealMutation } from "@/lib/api/hooks/planned-meals";
 import { triggerToolEffects } from "@/lib/ai/tool-effects";
 import { useQueryClient } from "@tanstack/react-query";
+import { PlannedMealStatus } from "@prisma/client";
+import { CookingCongratulationsDialog } from "@/components/cooking/cooking-congratulations-dialog";
+
 interface CookingViewProps {
   plannedMealWithRecipe: PlannedMealWithRecipe;
 }
@@ -51,18 +54,25 @@ export function CookingView({ plannedMealWithRecipe }: CookingViewProps) {
   });
 
   // Mark as cooked mutation
-  const markAsCookedMutation = useMarkAsCookedMutation({
-    id: plannedMealWithRecipe.id,
+  const updateCookingStatusMutation = useUpdatePlannedMealMutation({
     options: {
-      onSuccess: () => {
-        toast.success("Recipe marked as cooked!");
-        router.push("/");
-    },
+      onSuccess: (data) => {
+        // Don't trigger if marked as cooked (congratulation dialog opens)
+        if (data.status === PlannedMealStatus.PLANNED) {
+          toast.success(`${plannedMealWithRecipe.overrideName || plannedMealWithRecipe.recipe.name} marked as planned!`);
+        }
+      },
       onError: () => {
-        toast.error("Failed to mark recipe as cooked");
+        toast.error("Failed to update cooking status.");
       },
     },
   });
+
+  // Handle navigation to home
+  const handleGoHome = () => {
+    router.push('/');
+  };
+  
   // Get the effective recipe data (with overrides)
   const effectiveRecipe = {
     ...plannedMealWithRecipe.recipe,
@@ -78,20 +88,28 @@ export function CookingView({ plannedMealWithRecipe }: CookingViewProps) {
 
   return (
     <div className="flex flex-col h-full">
+      {/* Congratulations Dialog: This is a modal that appears when the meal is cooked */}
+      <CookingCongratulationsDialog
+        plannedMealWithRecipe={plannedMealWithRecipe}
+        updateCookingStatusMutation={updateCookingStatusMutation}
+        onGoHome={handleGoHome}
+      />
+
       {/* Header with back button and mark as cooked */}
       <div className="flex justify-between items-center p-2 border-b bg-background sticky top-0 z-10">
         <Button 
           variant="ghost" 
           size="icon" 
-          onClick={() => router.back()}
+          onClick={handleGoHome}
           className="h-8 w-8"
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
         <h3 className="text-sm font-medium">{effectiveRecipe.name}</h3>
+        
         <Button 
-          onClick={() => markAsCookedMutation.mutate()}
-          disabled={markAsCookedMutation.isPending}
+          onClick={() => updateCookingStatusMutation.mutate({id: plannedMealWithRecipe.id, status: PlannedMealStatus.COOKED})}
+          disabled={updateCookingStatusMutation.isPending}
           size="sm"
           className="h-8 bg-lime-600 hover:bg-lime-700"
         >
