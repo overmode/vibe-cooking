@@ -2,12 +2,12 @@ import { useMutation, UseMutationOptions, useQuery, useQueryClient, UseQueryOpti
 import { PlannedMealWithRecipe } from "@/lib/types";
 import { PlannedMeal, PlannedMealStatus } from "@prisma/client";
 import { getPlannedMealWithRecipeById, updatePlannedMeal } from "@/lib/api/client";
-
+import { queryKeys } from "@/lib/api/query-keys";
 
 
 export const usePlannedMealWithRecipe = ({id, options}: {id: string, options: Omit<UseQueryOptions<PlannedMealWithRecipe, Error>, "queryKey" | "queryFn">}) => {
   return useQuery({
-    queryKey: ["plannedMeal", id],
+    queryKey: queryKeys.plannedMeals.byId(id),
     queryFn: async () => await getPlannedMealWithRecipeById(id),
     ...options,
   });
@@ -25,7 +25,7 @@ export const useMarkAsCookedMutation = ({id, options}: {id: string, options: Omi
       options.onError?.(error, variables, context);
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["plannedMeal", id] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.plannedMeals.byId(id) });
     },
   });
 };

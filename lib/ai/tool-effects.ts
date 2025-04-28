@@ -1,30 +1,38 @@
+// TODO tighter typing of results
 import { QueryClient } from "@tanstack/react-query";
 import { Message } from "ai";
+import { ToolResult, ToolResultSuccess } from "@/lib/types";
+import { queryKeys } from "@/lib/api/query-keys";
+type ToolEffect = (queryClient: QueryClient, result: ToolResult<unknown>) => void;
 
-type ToolEffect = (queryClient: QueryClient, result: unknown) => void;
-
-function hasId(result: unknown): result is { id: string } {
-  return typeof result === "object" && result !== null && "id" in result;
+function hasId(result: ToolResult<unknown>): result is ToolResultSuccess<{ id: string }> {
+  return result.success && typeof result.data === "object" && result.data !== null && "id" in result.data;
 }
 
 export const toolEffects: Record<string, ToolEffect> = {
   createPlannedMealTool: (qc) =>
-    qc.invalidateQueries({ queryKey: ["planned-meals"] }),
+    qc.invalidateQueries({ queryKey: queryKeys.plannedMeals.all }),
+
   updatePlannedMealTool: (qc, result) => {
-    qc.invalidateQueries({ queryKey: ["planned-meals"] });
+    qc.invalidateQueries({ queryKey: queryKeys.plannedMeals.all });
     if (hasId(result)) {
-      qc.invalidateQueries({ queryKey: ["planned-meals", result.id] });
+      qc.invalidateQueries({ queryKey: queryKeys.plannedMeals.byId(result.data.id) });
+      qc.invalidateQueries({ queryKey: queryKeys.plannedMeals.byId(result.data.id) });
     }
   },
+
   deletePlannedMealTool: (qc, result) => {
-    qc.invalidateQueries({ queryKey: ["planned-meals"] });
+    qc.invalidateQueries({ queryKey: queryKeys.plannedMeals.all });
     if (hasId(result)) {
-      qc.invalidateQueries({ queryKey: ["planned-meals", result.id] });
+      qc.invalidateQueries({ queryKey: queryKeys.plannedMeals.byId(result.data.id) });
     }
   },
+
   // Because delete operations on recipes cascade to planned meals
-  deleteRecipeTool: (qc) =>
-    qc.invalidateQueries({ queryKey: ["planned-meals"] }),
+  deleteRecipeTool: (qc) => {
+    qc.invalidateQueries({ queryKey: queryKeys.plannedMeals.all });
+    qc.invalidateQueries({ queryKey: queryKeys.recipes.all });
+  },
 };
 
 // Trigger tool effects when a message contains a tool invocation result

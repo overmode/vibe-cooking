@@ -112,13 +112,14 @@ export const createPlannedMealInputSchema = z.object({
       "The date and time the meal was cooked. Leave empty if the meal is not cooked yet."
     )
     .optional(),
-});
+}).strict();
 
 export const updatePlannedMealInputSchema = createPlannedMealInputSchema
+  .omit({ recipeId: true })
   .partial()
   .extend({
     id: z.string().describe("The ID of the planned meal to update"),
-  });
+  }).strict();
 
 export type CreatePlannedMealInput = z.infer<
   typeof createPlannedMealInputSchema

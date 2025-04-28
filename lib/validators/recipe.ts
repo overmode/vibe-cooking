@@ -99,13 +99,13 @@ export const createRecipeInputSchema = z.object({
     .describe("The number of times the recipe has been cooked")
     .min(0, { message: `Cook count must be at least ${MIN_COOK_COUNT}` })
     .optional(),
-});
+}).strict();
 
 export const updateRecipeInputSchema = createRecipeInputSchema
   .partial()
   .extend({
     id: z.string().describe("The ID of the recipe to update"),
-  });
+  }).strict();
 
 export type CreateRecipeInput = z.infer<typeof createRecipeInputSchema>;
 export type UpdateRecipeInput = z.infer<typeof updateRecipeInputSchema>;

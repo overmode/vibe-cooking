@@ -4,6 +4,9 @@ export type ToolResult<T> =
   | { success: true; data: T }
   | { success: false; error: string };
 
+export type ToolResultSuccess<T> = Extract<ToolResult<T>, { success: true }>;
+export type ToolResultError = Extract<ToolResult<unknown>, { success: false }>;
+
 export type RecipeMetadata = Prisma.RecipeGetPayload<{
   select: {
     id: true;

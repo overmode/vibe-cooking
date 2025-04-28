@@ -18,7 +18,7 @@ export async function POST(req: Request) {
     promptName: "cooking-assistant",
     promptVars: {
       date: new Date().toISOString(),
-      plannedMealWithRecipe,
+      plannedMealWithRecipe: JSON.stringify(plannedMealWithRecipe),
     },
   });
 
