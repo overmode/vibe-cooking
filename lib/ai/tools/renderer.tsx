@@ -209,6 +209,18 @@ function renderGetPlannedMealByIdTool(
   }
 }
 
+function renderEnterCookingModeTool(
+  toolInvocation: ToolInvocation
+): React.ReactNode {
+  switch (toolInvocation.state) {
+    case "partial-call":
+      return <ToolSpinner message={`Entering cooking mode...`} />;
+    case "call":
+      return <ToolSpinner message={`Entering cooking mode...`} />;
+    case "result":
+      return <ToolSuccess message={`Cooking mode entered successfully!`} />;
+  }
+}
 toolRenderers["renderRecipePreviewTool"] = renderRecipePreviewTool;
 toolRenderers["createRecipeTool"] = renderCreateRecipeTool;
 toolRenderers["deleteRecipeTool"] = renderDeleteRecipeTool;
@@ -222,3 +234,4 @@ toolRenderers["createPlannedMealTool"] = renderCreatePlannedMealTool;
 toolRenderers["deletePlannedMealTool"] = renderDeletePlannedMealTool;
 toolRenderers["updatePlannedMealTool"] = renderUpdatePlannedMealTool;
 toolRenderers["getPlannedMealByIdTool"] = renderGetPlannedMealByIdTool;
+toolRenderers["enterCookingModeTool"] = renderEnterCookingModeTool;
