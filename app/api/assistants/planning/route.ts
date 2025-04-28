@@ -13,7 +13,8 @@ import {
   deletePlannedMealTool,
   getPlannedMealByIdTool,
   getPlannedMealsTool,
-} from "@/lib/ai/tools";
+  enterCookingModeTool,
+} from "@/lib/ai/tools/tools";
 import { getPrompt } from "@/lib/ai/prompts";
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
@@ -22,7 +23,7 @@ export async function POST(req: Request) {
   const { messages } = await req.json();
 
   const prompt = await getPrompt({
-    promptName: "main-cook-assistant",
+    promptName: "planning-assistant",
     promptVars: { date: new Date().toISOString() },
   });
 
@@ -49,6 +50,9 @@ export async function POST(req: Request) {
       updatePlannedMealTool: updatePlannedMealTool,
       deletePlannedMealTool: deletePlannedMealTool,
       getPlannedMealByIdTool: getPlannedMealByIdTool,
+
+      // Cooking mode
+      enterCookingModeTool: enterCookingModeTool,
     },
   });
 

@@ -6,7 +6,8 @@ import {
 } from "@/lib/validators/plannedMeals";
 import { PlannedMealStatus } from "@prisma/client";
 import { handleDbError } from "@/lib/utils/error";
-import { PlannedMealMetadata } from "@/lib/types";
+import { PlannedMealMetadata, PlannedMealWithRecipe } from "@/lib/types";
+
 export async function createPlannedMeal({
   userId,
   data,
@@ -33,11 +34,22 @@ export async function getPlannedMealById({
 }: {
   id: string;
   userId: string;
-}) {
+}): Promise<PlannedMealWithRecipe> {
   try {
     const plannedMeal = await prisma.plannedMeal.findUnique({
-      where: { id, userId },
+      where: {
+        id,
+        userId,
+      },
+      include: {
+        recipe: true,
+      },
     });
+    
+    if (!plannedMeal) {
+      throw new Error(`Planned meal with ID ${id} not found`);
+    }
+    
     return plannedMeal;
   } catch (error) {
     handleDbError(error, "get planned meal by id");

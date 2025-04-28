@@ -24,7 +24,7 @@ export function ChatInput({
   return (
     <form
       onSubmit={handleSubmit}
-      className="p-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+      className="pb-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
     >
       <div className="flex gap-3 items-end">
         <Textarea

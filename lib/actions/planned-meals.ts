@@ -1,3 +1,5 @@
+"use server";
+
 import { auth } from "@clerk/nextjs/server";
 import { handleActionError } from "@/lib/utils/error";
 import {
@@ -12,7 +14,7 @@ import {
   CreatePlannedMealInput,
   UpdatePlannedMealInput,
 } from "@/lib/validators/plannedMeals";
-import { PlannedMealMetadata } from "@/lib/types";
+import { PlannedMealMetadata, PlannedMealWithRecipe } from "@/lib/types";
 
 export const getPlannedMealsMetadataAction = async (): Promise<
   PlannedMealMetadata[]
@@ -71,11 +73,11 @@ export const updatePlannedMealAction = async (
   return plannedMeal;
 };
 
-export const getPlannedMealByIdAction = async (plannedMealId: string) => {
+export const getPlannedMealByIdAction = async (id: string): Promise<PlannedMealWithRecipe> => {
   const { userId } = await auth();
   if (!userId) {
     handleActionError("Unauthorized", "getPlannedMealByIdAction");
   }
-  const plannedMeal = await getPlannedMealById({ id: plannedMealId, userId });
+  const plannedMeal = await getPlannedMealById({ id, userId });
   return plannedMeal;
 };

@@ -14,13 +14,8 @@ export function ChatWindow({ messages }: ChatWindowProps) {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Dynamic height calculation to account for suggestions
-  const showSuggestions = messages.length <= 2;
-
   return (
-    <ScrollArea
-      className={`h-[calc(100vh-${showSuggestions ? "20rem" : "16rem"})]`}
-    >
+    <ScrollArea className="h-full">
       <div className="flex-grow p-4 space-y-4 rounded-lg">
         {messages.map((message) => (
           <ChatMessage key={message.id} message={message} />

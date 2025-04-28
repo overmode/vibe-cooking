@@ -1,9 +1,5 @@
 import { Prisma } from "@prisma/client";
-
-export type ToolResult<T> =
-  | { success: true; data: T }
-  | { success: false; error: string };
-
+import { z } from "zod";
 export type RecipeMetadata = Prisma.RecipeGetPayload<{
   select: {
     id: true;
@@ -37,3 +33,12 @@ export type PlannedMealMetadata = Prisma.PlannedMealGetPayload<{
     };
   };
 }>;
+
+export type PlannedMealWithRecipe = Prisma.PlannedMealGetPayload<{
+  include: {
+    recipe: true;
+  };
+}>;
+
+// bypasses a zod schema and accept a type instead. Can be used to type safe values
+export const asTypedSchema = <T>() => ({} as unknown as z.ZodType<T>);
