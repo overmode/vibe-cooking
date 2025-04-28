@@ -6,8 +6,9 @@ import {
   ToolSpinner,
   ToolError,
 } from "@/components/chat/tool-feedback";
-import { PlannedMealMetadata, RecipeMetadata, ToolResult } from "@/lib/types";
+import { PlannedMealMetadata, RecipeMetadata } from "@/lib/types";
 import { PlannedMeal, Recipe } from "@prisma/client";
+import { ToolResult } from "@/lib/ai/tools/types";
 
 // Simple type for tool rendering functions
 type ToolRenderer = (toolInvocation: ToolInvocation) => React.ReactNode;
@@ -22,7 +23,7 @@ function renderResultWithMessage<T>({result, message}: {result: ToolResult<T>, m
   return <ToolSuccess message={message(result.data)} />;
 }
 
-// TODO in all above functions, tighter typing for result.data => should be linked to the actual tool
+// TODO in all functions below, tighter typing for result.data => should be linked to the actual tool
 
 // Simple function to render a tool's output
 export function renderToolInvocation(

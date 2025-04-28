@@ -1,8 +1,9 @@
 // TODO tighter typing of results
 import { QueryClient } from "@tanstack/react-query";
 import { Message } from "ai";
-import { ToolResult, ToolResultSuccess } from "@/lib/types";
+import { ToolResult, ToolResultSuccess } from "@/lib/ai/tools/types";
 import { queryKeys } from "@/lib/api/query-keys";
+
 type ToolEffect = (queryClient: QueryClient, result: ToolResult<unknown>) => void;
 
 function hasId(result: ToolResult<unknown>): result is ToolResultSuccess<{ id: string }> {
@@ -16,7 +17,6 @@ export const toolEffects: Record<string, ToolEffect> = {
   updatePlannedMealTool: (qc, result) => {
     qc.invalidateQueries({ queryKey: queryKeys.plannedMeals.all });
     if (hasId(result)) {
-      qc.invalidateQueries({ queryKey: queryKeys.plannedMeals.byId(result.data.id) });
       qc.invalidateQueries({ queryKey: queryKeys.plannedMeals.byId(result.data.id) });
     }
   },

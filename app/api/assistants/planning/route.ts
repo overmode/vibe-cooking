@@ -14,7 +14,7 @@ import {
   getPlannedMealByIdTool,
   getPlannedMealsTool,
   enterCookingModeTool,
-} from "@/lib/ai/tools";
+} from "@/lib/ai/tools/tools";
 import { getPrompt } from "@/lib/ai/prompts";
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;

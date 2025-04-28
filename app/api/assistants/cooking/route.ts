@@ -2,7 +2,7 @@ import { openai } from "@ai-sdk/openai";
 import { streamText } from "ai";
 import {
   updatePlannedMealTool,
-} from "@/lib/ai/tools";
+} from "@/lib/ai/tools/tools";
 import { getPrompt } from "@/lib/ai/prompts";
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;

@@ -9,13 +9,13 @@ import { Button } from "@/components/ui/button";
 import { Check, ChevronLeft} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { PlannedMealWithRecipe, ToolResult } from "@/lib/types";
+import { PlannedMealWithRecipe } from "@/lib/types";
 import { useUpdatePlannedMealMutation } from "@/lib/api/hooks/planned-meals";
-import { triggerToolEffects } from "@/lib/ai/tool-effects";
+import { triggerToolEffects } from "@/lib/ai/tools/effects";
 import { useQueryClient } from "@tanstack/react-query";
 import { PlannedMealStatus } from "@prisma/client";
 import { CookingCongratulationsDialog } from "@/components/cooking/cooking-congratulations-dialog";
-
+import { ToolResult } from "@/lib/ai/tools/types";
 interface CookingViewProps {
   plannedMealWithRecipe: PlannedMealWithRecipe;
 }
