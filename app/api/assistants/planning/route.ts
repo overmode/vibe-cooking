@@ -13,6 +13,7 @@ import {
   deletePlannedMealTool,
   getPlannedMealByIdTool,
   getPlannedMealsTool,
+  enterCookingModeTool,
 } from "@/lib/ai/tools";
 import { getPrompt } from "@/lib/ai/prompts";
 // Allow streaming responses up to 30 seconds
@@ -49,6 +50,9 @@ export async function POST(req: Request) {
       updatePlannedMealTool: updatePlannedMealTool,
       deletePlannedMealTool: deletePlannedMealTool,
       getPlannedMealByIdTool: getPlannedMealByIdTool,
+
+      // Cooking mode
+      enterCookingModeTool: enterCookingModeTool,
     },
   });
 

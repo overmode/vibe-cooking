@@ -198,3 +198,11 @@ export const renderRecipePreviewTool = tool({
   description: "Renders a preview of a full recipe.",
   parameters: createRecipeInputSchema,
 });
+
+export const enterCookingModeToolParametersSchema = z.object({
+  id: z.string().describe("The id of the planned meal to be cooked"),
+});
+export const enterCookingModeTool = tool({
+  description: "Enter cooking mode.",
+  parameters: enterCookingModeToolParametersSchema,
+});

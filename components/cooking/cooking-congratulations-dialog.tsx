@@ -56,16 +56,16 @@ export function CookingCongratulationsDialog({
           <DialogTitle className="text-xl text-center">
             Congratulations! 🎉
           </DialogTitle>
-          <DialogDescription className="text-center pt-2">
+          <DialogDescription className="text-center pt-2 flex flex-col gap-2">
             <span className="font-medium text-lime-600 dark:text-lime-500">
               You&apos;ve successfully cooked{" "}
               {plannedMealWithRecipe.overrideName ||
                 plannedMealWithRecipe.recipe.name}
               !
             </span>
-            <div className="mt-2">
+            <span className="mt-2">
               What would you like to do next?
-            </div>
+            </span>
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="sm:justify-center gap-2 mt-4">
