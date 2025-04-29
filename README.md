@@ -10,7 +10,7 @@ Welcome to **Vibe Cooking**, an AI-powered cooking assistant designed to make yo
 
 ### Key Concepts (see schema.prisma)
 
-#### 🍲 **Recipes**
+#### Recipes
 
 **Recipes** serve as the foundation of this app. They consist of:
 - Name, ingredients, and instructions
@@ -18,7 +18,7 @@ Welcome to **Vibe Cooking**, an AI-powered cooking assistant designed to make yo
 
 Planning to cook a recipe leads to the creation of a **Planned Meal**, derived from the recipe, but with possible variations and overrides based on available ingredients or preferences.
 
-#### 🍽 **Planned Meals**
+#### Planned Meals
 
 A **Planned Meal** is a **personalized version** of a recipe. It allows users to:
 - Modify ingredients (e.g., substitute, remove, or adjust)
@@ -29,7 +29,7 @@ Planned Meals are **temporary variants** of recipes, intended for real-time adap
 
 ---
 
-## 🏛️ Architecture
+## Architecture
 
 The project follows a **Layered Architecture** to maintain a clear separation of concerns and facilitate scalability. Key layers include:
 
@@ -42,7 +42,7 @@ The project follows a **Layered Architecture** to maintain a clear separation of
 
 ---
 
-## ⚙️ Features & Functionality
+## Features & Functionality
 
 ### Two Core Modes: **Planning** & **Cooking**
 
@@ -61,7 +61,7 @@ The assistant triggers **Cooking** mode based on user input, guiding them throug
 
 ---
 
-## 🔧 Technologies Used
+## Technologies Used
 
 - **React / Next.js**
 - **TypeScript**
@@ -72,7 +72,7 @@ The assistant triggers **Cooking** mode based on user input, guiding them throug
 
 ---
 
-## 🧩 How It Works
+## How It Works
 
 1. **Recipe Creation & Planning**: Users can create recipes and plan meals by customizing them based on their needs and preferences.
 2. **Cooking Assistance**: The assistant guides the user through cooking, allowing for adjustments along the way.
@@ -84,7 +84,7 @@ The assistant triggers **Cooking** mode based on user input, guiding them throug
 
 ---
 
-## 📝 To-Do / Future Features
+## To-Do / Future Features
 
 The project is still in active development, and several key features are in progress or planned for future releases:
 
@@ -94,7 +94,7 @@ The project is still in active development, and several key features are in prog
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 To get started with the Vibe Cooking app, follow these steps:
 
@@ -106,6 +106,6 @@ To get started with the Vibe Cooking app, follow these steps:
 
 ---
 
-## 🔄 Project Status
+## Project Status
 
 The project is **under active development**. The core functionality is stable-ish, and I'm continuously refining the user experience and adding new features.
