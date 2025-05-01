@@ -1,53 +1,57 @@
-"use client";
+'use client'
 
-import { useChat } from "@ai-sdk/react";
-import { ChatWindow } from "@/components/chat/chat-window";
-import { ChatInput } from "@/components/chat/chat-input";
-import { ChatSuggestions } from "@/components/chat/chat-suggestions";
-import { ToolResult } from "@/lib/ai/tools/types";
-import { chatSuggestions } from "@/lib/constants/chat-suggestions";
-import { triggerToolEffects } from "@/lib/ai/tools/effects";
-import { useQueryClient } from "@tanstack/react-query";
-import { routes } from "@/lib/routes";
-import { useRouter } from "next/navigation";
-import { enterCookingModeDefinition } from "@/lib/ai/tools/definitions";
-import { z } from "zod";
+import { useChat } from '@ai-sdk/react'
+import { ChatWindow } from '@/components/chat/chat-window'
+import { ChatInput } from '@/components/chat/chat-input'
+import { ChatSuggestions } from '@/components/chat/chat-suggestions'
+import { ToolResult } from '@/lib/ai/tools/types'
+import { chatSuggestions } from '@/lib/constants/chat-suggestions'
+import { triggerToolEffects } from '@/lib/ai/tools/effects'
+import { useQueryClient } from '@tanstack/react-query'
+import { routes } from '@/lib/routes'
+import { useRouter } from 'next/navigation'
+import { enterCookingModeDefinition } from '@/lib/ai/tools/definitions'
+import { z } from 'zod'
 export default function Home() {
-  const queryClient = useQueryClient();
-  const router = useRouter();
+  const queryClient = useQueryClient()
+  const router = useRouter()
 
   const { messages, input, handleInputChange, handleSubmit, setInput } =
     useChat({
-      api: "/api/assistants/planning",
+      api: '/api/assistants/planning',
       initialMessages: [
         {
-          id: "1",
-          content: "Welcome to Vibe Cooking! How can I help you today? 🍲🌴 ",
-          role: "assistant",
+          id: '1',
+          content: 'Welcome to Vibe Cooking! How can I help you today? 🌴 ',
+          role: 'assistant',
         },
       ],
       // run client-side tools that are automatically executed:
       async onToolCall({ toolCall }) {
-        if (toolCall.toolName === "renderRecipePreviewTool") {
+        if (toolCall.toolName === 'renderRecipePreviewTool') {
           return {
             success: true,
-            data: "The recipe was successfully rendered",
-          } as ToolResult<string>;
+            data: 'The recipe was successfully rendered',
+          } as ToolResult<string>
         }
-        if (toolCall.toolName === "enterCookingModeTool") {
-          const id = (toolCall.args as z.infer<typeof enterCookingModeDefinition.parameters>).id;
-          router.push(routes.plannedMeal.cooking(id));
+        if (toolCall.toolName === 'enterCookingModeTool') {
+          const id = (
+            toolCall.args as z.infer<
+              typeof enterCookingModeDefinition.parameters
+            >
+          ).id
+          router.push(routes.plannedMeal.cooking(id))
         }
       },
       onFinish: (message) => {
         // client-side side effects such as cache invalidation
-        triggerToolEffects(message, queryClient);
+        triggerToolEffects(message, queryClient)
       },
-    });
+    })
 
   const handleSuggestionClick = (message: string) => {
-    setInput(message);
-  };
+    setInput(message)
+  }
 
   return (
     <div className="flex flex-col h-full">
@@ -62,13 +66,13 @@ export default function Home() {
           />
         )}
         <div className="sticky bottom-0">
-        <ChatInput
-          input={input}
-          handleInputChange={handleInputChange}
-          handleSubmit={handleSubmit}
+          <ChatInput
+            input={input}
+            handleInputChange={handleInputChange}
+            handleSubmit={handleSubmit}
           />
         </div>
       </div>
     </div>
-  );
+  )
 }

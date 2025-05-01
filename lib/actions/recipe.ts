@@ -4,58 +4,58 @@ import {
   getRecipeById,
   getRecipesMetadata,
   updateRecipe,
-} from "@/lib/data-access/recipe";
-import { auth } from "@clerk/nextjs/server";
-import { CreateRecipeInput, UpdateRecipeInput } from "@/lib/validators/recipe";
-import { handleActionError } from "@/lib/utils/error";
-import { RecipeMetadata } from "@/lib/types";
+} from '@/lib/data-access/recipe'
+import { auth } from '@clerk/nextjs/server'
+import { CreateRecipeInput, UpdateRecipeInput } from '@/lib/validators/recipe'
+import { handleActionError } from '@/lib/utils/error'
+import { RecipeMetadata } from '@/lib/types'
 
 export const getRecipesMetadataAction = async (): Promise<RecipeMetadata[]> => {
-  const { userId } = await auth();
+  const { userId } = await auth()
   if (!userId) {
-    handleActionError("Unauthorized", "getRecipesMetadataAction");
+    handleActionError('Unauthorized', 'getRecipesMetadataAction')
   }
-  const recipes = await getRecipesMetadata({ userId });
-  return recipes;
-};
+  const recipes = await getRecipesMetadata({ userId })
+  return recipes
+}
 export const createRecipeAction = async (recipeData: CreateRecipeInput) => {
-  const { userId } = await auth();
+  const { userId } = await auth()
   if (!userId) {
-    handleActionError("Unauthorized", "createRecipeAction");
+    handleActionError('Unauthorized', 'createRecipeAction')
   }
   const recipe = await createRecipe({
     userId,
     data: recipeData,
-  });
-  return recipe;
-};
+  })
+  return recipe
+}
 
 export const deleteRecipeAction = async (recipeId: string) => {
-  const { userId } = await auth();
+  const { userId } = await auth()
   if (!userId) {
-    handleActionError("Unauthorized", "deleteRecipeAction");
+    handleActionError('Unauthorized', 'deleteRecipeAction')
   }
-  const recipe = await deleteRecipe({ id: recipeId, userId });
-  return recipe;
-};
+  const recipe = await deleteRecipe({ id: recipeId, userId })
+  return recipe
+}
 
 export const updateRecipeAction = async (recipeData: UpdateRecipeInput) => {
-  const { userId } = await auth();
+  const { userId } = await auth()
   if (!userId) {
-    handleActionError("Unauthorized", "updateRecipeAction");
+    handleActionError('Unauthorized', 'updateRecipeAction')
   }
   const recipe = await updateRecipe({
     userId,
     data: recipeData,
-  });
-  return recipe;
-};
+  })
+  return recipe
+}
 
 export const getRecipeByIdAction = async (recipeId: string) => {
-  const { userId } = await auth();
+  const { userId } = await auth()
   if (!userId) {
-    handleActionError("Unauthorized", "getRecipeByIdAction");
+    handleActionError('Unauthorized', 'getRecipeByIdAction')
   }
-  const recipe = await getRecipeById({ id: recipeId, userId });
-  return recipe;
-};
+  const recipe = await getRecipeById({ id: recipeId, userId })
+  return recipe
+}

@@ -1,5 +1,4 @@
-import { PlannedMeal, PlannedMealStatus } from "@prisma/client";
-import { PlannedMealWithRecipe } from "@/lib/types";
+import { PlannedMealWithRecipe } from '@/lib/types'
 import {
   Dialog,
   DialogContent,
@@ -7,74 +6,53 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Home, X } from "lucide-react";
-import { UseMutationResult } from "@tanstack/react-query";
-import { UpdatePlannedMealInput } from "@/lib/validators/plannedMeals";
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Home, X } from 'lucide-react'
 
 interface CookingCongratulationsDialogProps {
-  plannedMealWithRecipe: PlannedMealWithRecipe;
-  updateCookingStatusMutation: UseMutationResult<PlannedMeal, Error, UpdatePlannedMealInput, unknown>;
-  onGoHome: () => void;
+  plannedMealWithRecipe: PlannedMealWithRecipe
+  onMarkUncooked: () => void
+  onGoHome: () => void
+  open: boolean
+  onOpenChange: (open: boolean) => void
 }
 
 export function CookingCongratulationsDialog({
   plannedMealWithRecipe,
-  updateCookingStatusMutation,
+  onMarkUncooked,
   onGoHome,
+  open,
+  onOpenChange,
 }: CookingCongratulationsDialogProps) {
-  const handleMarkUncooked = () => {
-    updateCookingStatusMutation.mutate({
-      id: plannedMealWithRecipe.id,
-      status: PlannedMealStatus.PLANNED,
-    });
-  };
-
   return (
-    <Dialog
-      open={plannedMealWithRecipe.status === PlannedMealStatus.COOKED}
-      onOpenChange={(open) => {
-        if (!open) {
-          // If dialog is being closed, reset the status to PLANNED
-          updateCookingStatusMutation.mutate({
-            id: plannedMealWithRecipe.id,
-            status: PlannedMealStatus.PLANNED,
-          });
-        }
-      }}
-    >
-      <DialogContent className="sm:max-w-md"
-      hideCloseButton
-      onEscapeKeyDown={(e) => {
-        e.preventDefault();
-      }}
-      onInteractOutside={(e) => {
-        e.preventDefault();
-      }}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent
+        className="sm:max-w-md"
+        hideCloseButton
+        onEscapeKeyDown={(e) => {
+          e.preventDefault()
+        }}
+        onInteractOutside={(e) => {
+          e.preventDefault()
+        }}
+      >
         <DialogHeader>
           <DialogTitle className="text-xl text-center">
             Congratulations! 🎉
           </DialogTitle>
           <DialogDescription className="text-center pt-2 flex flex-col gap-2">
             <span className="font-medium text-lime-600 dark:text-lime-500">
-              You&apos;ve successfully cooked{" "}
+              You&apos;ve successfully cooked{' '}
               {plannedMealWithRecipe.overrideName ||
                 plannedMealWithRecipe.recipe.name}
               !
             </span>
-            <span className="mt-2">
-              What would you like to do next?
-            </span>
+            <span className="mt-2">What would you like to do next?</span>
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="sm:justify-center gap-2 mt-4">
-          <Button
-            variant="outline"
-            onClick={handleMarkUncooked}
-            disabled={updateCookingStatusMutation.isPending}
-            className="gap-2"
-          >
+          <Button variant="outline" onClick={onMarkUncooked} className="gap-2">
             <X className="h-4 w-4" />
             Mark as Uncooked
           </Button>
@@ -88,5 +66,5 @@ export function CookingCongratulationsDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
-} 
+  )
+}

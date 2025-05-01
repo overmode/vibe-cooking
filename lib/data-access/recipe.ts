@@ -1,18 +1,20 @@
 import prisma from "@/prisma/client";
-import { Prisma } from "@prisma/client";
+import { PlannedMealStatus, Prisma } from "@prisma/client";
 import { CreateRecipeInput, UpdateRecipeInput } from "@/lib/validators/recipe";
 import { handleDbError } from "@/lib/utils/error";
 import { RecipeMetadata } from "@/lib/types";
 
 export async function createRecipe({
+  transaction,
   userId,
   data,
 }: {
+  transaction?: Prisma.TransactionClient;
   userId: string;
   data: CreateRecipeInput;
 }) {
   try {
-    const recipe = await prisma.recipe.create({
+    const recipe = await (transaction ?? prisma).recipe.create({
       data: {
         ...data,
         userId,
@@ -25,14 +27,16 @@ export async function createRecipe({
 }
 
 export async function getRecipeById({
+  transaction,
   id,
   userId,
 }: {
+  transaction?: Prisma.TransactionClient;
   id: string;
   userId: string;
 }) {
   try {
-    const recipe = await prisma.recipe.findUnique({
+    const recipe = await (transaction ?? prisma).recipe.findUnique({
       where: { id, userId },
     });
 
@@ -47,13 +51,15 @@ export async function getRecipeById({
 }
 
 export async function getRecipesMetadata({
+  transaction,
   userId,
 }: {
+  transaction?: Prisma.TransactionClient;
   userId: string;
 }): Promise<RecipeMetadata[]> {
   // TODO: Add pagination
   try {
-    const recipes = await prisma.recipe.findMany({
+    const recipes = await (transaction ?? prisma).recipe.findMany({
       where: {
         userId,
       },
@@ -66,6 +72,15 @@ export async function getRecipesMetadata({
         difficulty: true,
         cookCount: true,
         isFavorite: true,
+        plannedMeals: {
+          where: {
+            status: PlannedMealStatus.PLANNED,
+          },
+          select: {
+            id: true,
+            status: true,            
+          }
+        }
       },
       orderBy: {
         createdAt: "desc",
@@ -77,15 +92,17 @@ export async function getRecipesMetadata({
   }
 }
 export async function updateRecipe({
+  transaction,
   userId,
   data,
 }: {
+  transaction?: Prisma.TransactionClient;
   userId: string;
   data: UpdateRecipeInput;
 }) {
   const { id, ...recipeData } = data;
   try {
-    const recipe = await prisma.recipe.update({
+    const recipe = await (transaction ?? prisma).recipe.update({
       where: { id, userId },
       data: recipeData,
     });
@@ -96,16 +113,19 @@ export async function updateRecipe({
 }
 
 export async function setRecipeFavorite({
+  transaction,
   id,
   userId,
   isFavorite,
 }: {
+  transaction?: Prisma.TransactionClient;
   id: string;
   userId: string;
   isFavorite: boolean;
 }) {
   try {
     const recipe = await updateRecipe({
+      transaction,
       userId,
       data: { isFavorite, id },
     });
@@ -116,14 +136,16 @@ export async function setRecipeFavorite({
 }
 
 export async function deleteRecipe({
+  transaction,
   id,
   userId,
 }: {
+  transaction?: Prisma.TransactionClient;
   id: string;
   userId: string;
 }) {
   try {
-    await prisma.recipe.delete({
+    await (transaction ?? prisma).recipe.delete({
       where: { id, userId },
     });
     return true;
@@ -135,5 +157,46 @@ export async function deleteRecipe({
       }
     }
     handleDbError(error, "delete recipe");
+  }
+}
+
+
+export async function incrementCookedCount({
+  id,
+  userId,
+  transaction,
+}: {
+  id: string;
+  userId: string;
+  transaction?: Prisma.TransactionClient;
+}) {
+  try {
+    const recipe = await (transaction ?? prisma).recipe.update({
+      where: { id, userId },
+      data: { cookCount: { increment: 1 } },
+    });
+    return recipe;
+  } catch (error) {
+    handleDbError(error, "increment cooked count");
+  }
+}
+
+export async function decrementCookedCount({
+  id,
+  userId,
+  transaction,
+}: {
+  id: string;
+  userId: string;
+  transaction?: Prisma.TransactionClient;
+}) {
+  try {
+    const recipe = await (transaction ?? prisma).recipe.update({
+      where: { id, userId },
+      data: { cookCount: { decrement: 1} },
+    });
+    return recipe;
+  } catch (error) {
+    handleDbError(error, "decrement cooked count");
   }
 }
