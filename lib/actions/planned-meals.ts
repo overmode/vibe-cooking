@@ -8,6 +8,8 @@ import {
   getPlannedMealById,
   getPlannedMeals,
   getPlannedMealsMetadata,
+  setPlannedMealCooked,
+  setPlannedMealUnCooked,
   updatePlannedMeal,
 } from "@/lib/data-access/planned-meal";
 import {
@@ -15,6 +17,9 @@ import {
   UpdatePlannedMealInput,
 } from "@/lib/validators/plannedMeals";
 import { PlannedMealMetadata, PlannedMealWithRecipe } from "@/lib/types";
+import prisma from "@/prisma/client";
+import { PlannedMealStatus } from "@prisma/client";
+import { decrementCookedCount, incrementCookedCount } from "@/lib/data-access/recipe";
 
 export const getPlannedMealsMetadataAction = async (): Promise<
   PlannedMealMetadata[]
@@ -81,3 +86,31 @@ export const getPlannedMealByIdAction = async (id: string): Promise<PlannedMealW
   const plannedMeal = await getPlannedMealById({ id, userId });
   return plannedMeal;
 };
+
+
+export async function updateStatus(plannedMealId: string, status: PlannedMealStatus) {
+  const { userId } = await auth();
+  if (!userId) {
+    handleActionError("Unauthorized", "updateStatus");
+  }
+
+  return await prisma.$transaction(async (tx) => {
+    const plannedMeal = await getPlannedMealById({ id: plannedMealId, userId, transaction: tx });
+
+    if (!plannedMeal) {
+      handleActionError("Planned meal not found", "updateCookedStatus");
+    }
+
+    if (plannedMeal.status === status) return;
+
+    if (status === PlannedMealStatus.COOKED) {
+      const plannedMeal = await setPlannedMealCooked({ id: plannedMealId, userId, transaction: tx });
+      await incrementCookedCount({ id: plannedMeal.recipeId, userId, transaction: tx });
+    } else {
+      const plannedMeal = await setPlannedMealUnCooked({ id: plannedMealId, userId, transaction: tx });
+      await decrementCookedCount({ id: plannedMeal.recipeId, userId, transaction: tx });
+    }
+
+    return plannedMeal;
+  });
+}

@@ -9,14 +9,16 @@ import { handleDbError } from "@/lib/utils/error";
 import { PlannedMealMetadata, PlannedMealWithRecipe } from "@/lib/types";
 
 export async function createPlannedMeal({
+  transaction,
   userId,
   data,
 }: {
+  transaction?: Prisma.TransactionClient;
   userId: string;
   data: CreatePlannedMealInput;
 }) {
   try {
-    const plannedMeal = await prisma.plannedMeal.create({
+    const plannedMeal = await (transaction ?? prisma).plannedMeal.create({
       data: {
         ...data,
         userId,
@@ -29,14 +31,16 @@ export async function createPlannedMeal({
 }
 
 export async function getPlannedMealById({
+  transaction,
   id,
   userId,
 }: {
+  transaction?: Prisma.TransactionClient;
   id: string;
   userId: string;
 }): Promise<PlannedMealWithRecipe> {
   try {
-    const plannedMeal = await prisma.plannedMeal.findUnique({
+    const plannedMeal = await (transaction ?? prisma).plannedMeal.findUnique({
       where: {
         id,
         userId,
@@ -57,13 +61,15 @@ export async function getPlannedMealById({
 }
 
 export async function getPlannedMealsMetadata({
+  transaction,
   userId,
 }: {
+  transaction?: Prisma.TransactionClient;
   userId: string;
 }): Promise<PlannedMealMetadata[]> {
   try {
     // TODO: Add pagination
-    const plannedMeals = await prisma.plannedMeal.findMany({
+    const plannedMeals = await (transaction ?? prisma).plannedMeal.findMany({
       where: { userId, status: PlannedMealStatus.PLANNED },
       select: {
         id: true,
@@ -91,9 +97,15 @@ export async function getPlannedMealsMetadata({
   }
 }
 
-export async function getPlannedMeals({ userId }: { userId: string }) {
+export async function getPlannedMeals({
+  transaction,
+  userId,
+}: {
+  transaction?: Prisma.TransactionClient;
+  userId: string;
+}) {
   try {
-    const plannedMeals = await prisma.plannedMeal.findMany({
+    const plannedMeals = await (transaction ?? prisma).plannedMeal.findMany({
       where: { userId, status: PlannedMealStatus.PLANNED },
     });
     return plannedMeals;
@@ -103,15 +115,17 @@ export async function getPlannedMeals({ userId }: { userId: string }) {
 }
 
 export async function updatePlannedMeal({
+  transaction,
   userId,
   data,
 }: {
+  transaction?: Prisma.TransactionClient;
   userId: string;
   data: UpdatePlannedMealInput;
 }) {
   try {
     const { id, ...updateData } = data;
-    const plannedMeal = await prisma.plannedMeal.update({
+    const plannedMeal = await (transaction ?? prisma).plannedMeal.update({
       where: { id, userId },
       data: updateData,
     });
@@ -122,14 +136,17 @@ export async function updatePlannedMeal({
 }
 
 export async function setPlannedMealCooked({
+  transaction,
   id,
   userId,
 }: {
+  transaction?: Prisma.TransactionClient;
   id: string;
   userId: string;
 }) {
   try {
     const plannedMeal = await updatePlannedMeal({
+      transaction,
       userId,
       data: { id, cookedAt: new Date(), status: PlannedMealStatus.COOKED },
     });
@@ -140,14 +157,17 @@ export async function setPlannedMealCooked({
 }
 
 export async function setPlannedMealUnCooked({
+  transaction,
   id,
   userId,
 }: {
+  transaction?: Prisma.TransactionClient;
   id: string;
   userId: string;
 }) {
   try {
     const plannedMeal = await updatePlannedMeal({
+      transaction,
       userId,
       data: { id, cookedAt: undefined, status: PlannedMealStatus.PLANNED },
     });
@@ -158,14 +178,16 @@ export async function setPlannedMealUnCooked({
 }
 
 export async function deletePlannedMeal({
+  transaction,
   id,
   userId,
 }: {
+  transaction?: Prisma.TransactionClient;
   id: string;
   userId: string;
 }) {
   try {
-    await prisma.plannedMeal.delete({
+    await (transaction ?? prisma).plannedMeal.delete({
       where: { id, userId },
     });
     return true;
