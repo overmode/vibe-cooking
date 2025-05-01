@@ -56,34 +56,19 @@ export function CookingView({ plannedMealWithRecipe }: CookingViewProps) {
     },
   })
 
-  // Mark as cooked mutation
-
   const updateCookingStatusMutation = useUpdatePlannedMealStatusMutation({
     options: {
-      onSuccess: (data) => {
-        // Don't trigger if marked as cooked (congratulation dialog opens)
-        if (data.status === PlannedMealStatus.PLANNED) {
-          toast.success(
-            `${
-              plannedMealWithRecipe.overrideName ||
-              plannedMealWithRecipe.recipe.name
-            } marked as planned!`
-          )
-        }
-      },
       onError: () => {
         toast.error('Failed to update cooking status.')
       },
     },
   })
-
   const handleMarkUncooked = () => {
     updateCookingStatusMutation.mutate({
       id: plannedMealWithRecipe.id,
       status: PlannedMealStatus.PLANNED,
     })
   }
-
   const handleMarkCooked = () => {
     updateCookingStatusMutation.mutate({
       id: plannedMealWithRecipe.id,
@@ -95,6 +80,8 @@ export function CookingView({ plannedMealWithRecipe }: CookingViewProps) {
   const handleGoHome = () => {
     router.push('/')
   }
+
+  console.log(plannedMealWithRecipe)
 
   // Get the effective recipe data (with overrides)
   const effectiveRecipe = {
@@ -123,6 +110,8 @@ export function CookingView({ plannedMealWithRecipe }: CookingViewProps) {
       {/* Congratulations Dialog: This is a modal that appears when the meal is cooked */}
       {plannedMealWithRecipe.status === PlannedMealStatus.COOKED && (
         <CookingCongratulationsDialog
+          open={true}
+          onOpenChange={() => {}}
           plannedMealWithRecipe={plannedMealWithRecipe}
           onGoHome={handleGoHome}
           onMarkUncooked={handleMarkUncooked}
@@ -145,10 +134,10 @@ export function CookingView({ plannedMealWithRecipe }: CookingViewProps) {
           onClick={handleMarkCooked}
           disabled={updateCookingStatusMutation.isPending}
           size="sm"
-          className="h-8 bg-lime-600 hover:bg-lime-700"
+          className="h-9 bg-lime-600 hover:bg-lime-700 px-3"
         >
-          <Check className="h-3.5 w-3.5 mr-1" />
-          <span className="text-xs">Cooked</span>
+          <Check className="h-4 w-4 mr-1.5" />
+          <span>Mark as cooked</span>
         </Button>
       </div>
 

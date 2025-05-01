@@ -14,15 +14,19 @@ interface CookingCongratulationsDialogProps {
   plannedMealWithRecipe: PlannedMealWithRecipe
   onMarkUncooked: () => void
   onGoHome: () => void
+  open: boolean
+  onOpenChange: (open: boolean) => void
 }
 
 export function CookingCongratulationsDialog({
   plannedMealWithRecipe,
   onMarkUncooked,
   onGoHome,
+  open,
+  onOpenChange,
 }: CookingCongratulationsDialogProps) {
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className="sm:max-w-md"
         hideCloseButton

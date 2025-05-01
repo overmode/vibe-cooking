@@ -52,12 +52,23 @@ type CookedStatusVars = {
   id: string
   status: PlannedMealStatus
 }
+
+type StatusMutationContext = {
+  previousPlannedMeal: PlannedMealWithRecipe | undefined
+  previousPlannedMealsMetadata: PlannedMealMetadata[] | undefined
+}
+
 export const useUpdatePlannedMealStatusMutation = ({
   options = {},
 }: {
   options?: Omit<
-    UseMutationOptions<PlannedMeal, Error, CookedStatusVars>,
-    'mutationFn'
+    UseMutationOptions<
+      PlannedMeal,
+      Error,
+      CookedStatusVars,
+      StatusMutationContext
+    >,
+    'mutationFn' | 'onMutate'
   >
 } = {}) => {
   const queryClient = useQueryClient()
@@ -65,15 +76,75 @@ export const useUpdatePlannedMealStatusMutation = ({
   return useMutation({
     ...options,
     mutationFn: ({ id, status }) => updatePlannedMealStatus(id, status),
-    onSuccess: (data, variables, context) => {
+    onMutate: async (variables) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({
+        queryKey: queryKeys.plannedMeals.byId(variables.id),
+      })
+      await queryClient.cancelQueries({
+        queryKey: queryKeys.plannedMeals.all,
+      })
+
+      // Snapshot the previous values
+      const previousPlannedMeal =
+        queryClient.getQueryData<PlannedMealWithRecipe>(
+          queryKeys.plannedMeals.byId(variables.id)
+        )
+      const previousPlannedMealsMetadata = queryClient.getQueryData<
+        PlannedMealMetadata[]
+      >(queryKeys.plannedMeals.all)
+
+      // Optimistically update the cache
+      queryClient.setQueryData(
+        queryKeys.plannedMeals.byId(variables.id),
+        (old: PlannedMealWithRecipe | undefined) =>
+          old
+            ? {
+                ...old,
+                status: variables.status,
+              }
+            : undefined
+      )
+      queryClient.setQueryData(
+        queryKeys.plannedMeals.all,
+        (old: PlannedMealMetadata[] | undefined) =>
+          old
+            ? old.map((meal) =>
+                meal.id === variables.id
+                  ? { ...meal, status: variables.status }
+                  : meal
+              )
+            : undefined
+      )
+
+      // Return the previous values to be used in onError
+      return { previousPlannedMeal, previousPlannedMealsMetadata }
+    },
+    onError: (error, variables, context) => {
+      // Rollback the previous state
+      console.log('onError', error, variables, context)
+      queryClient.setQueryData(
+        queryKeys.plannedMeals.byId(variables.id),
+        context?.previousPlannedMeal
+      )
+      queryClient.setQueryData(
+        queryKeys.plannedMeals.all,
+        context?.previousPlannedMealsMetadata
+      )
+      options.onError?.(error, variables, context)
+    },
+    onSettled: (data, error, variables, context) => {
+      options.onSettled?.(data, error, variables, context)
       queryClient.invalidateQueries({ queryKey: queryKeys.plannedMeals.all })
       queryClient.invalidateQueries({
         queryKey: queryKeys.plannedMeals.byId(variables.id),
       })
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.recipes.byId(data.recipeId),
-      })
-      options.onSuccess?.(data, variables, context)
+      if (data?.recipeId) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.recipes.byId(data.recipeId),
+        })
+      }
+      options.onSettled?.(data, error, variables, context)
     },
   })
 }
