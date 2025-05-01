@@ -20,9 +20,9 @@ export function RecipeMetadataCard({ recipe }: RecipeMetadataCardProps) {
       className="transition-transform hover:scale-[1.02] focus:scale-[1.02] focus:outline-none"
     >
       <Card className="h-full overflow-hidden border-lime-100 shadow-md hover:shadow-lg transition-shadow duration-200">
-        <div className="bg-gradient-to-r from-lime-50 to-lime-100 p-4">
+        <div className="bg-gradient-to-r from-lime-50 to-lime-100 p-4 flex flex-col h-full">
           <div className="flex justify-between items-start gap-2">
-            <h3 className="text-xl font-semibold line-clamp-2 text-lime-900">
+            <h3 className="text-xl font-semibold line-clamp-2 text-lime-900 h-14">
               {recipe.name}
             </h3>
             {recipe.isFavorite && (
@@ -30,7 +30,7 @@ export function RecipeMetadataCard({ recipe }: RecipeMetadataCardProps) {
             )}
           </div>
 
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="mt-3 flex flex-wrap gap-2 min-h-8">
             {recipe.duration && (
               <Badge
                 variant="secondary"
@@ -59,7 +59,7 @@ export function RecipeMetadataCard({ recipe }: RecipeMetadataCardProps) {
             )}
           </div>
 
-          <div className="mt-3 flex flex-wrap items-center text-xs gap-x-4 gap-y-2">
+          <div className="mt-3 flex flex-wrap items-center text-xs gap-x-4 gap-y-2 min-h-6">
             <div className="flex items-center gap-1 text-lime-700/80">
               <ChefHat className="h-3.5 w-3.5" />
               {cookedCount > 0 ? (
