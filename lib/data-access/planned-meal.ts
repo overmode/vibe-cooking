@@ -1,21 +1,21 @@
-import prisma from "@/prisma/client";
-import { Prisma } from "@prisma/client";
+import prisma from '@/prisma/client'
+import { Prisma } from '@prisma/client'
 import {
   CreatePlannedMealInput,
   UpdatePlannedMealInput,
-} from "@/lib/validators/plannedMeals";
-import { PlannedMealStatus } from "@prisma/client";
-import { handleDbError } from "@/lib/utils/error";
-import { PlannedMealMetadata, PlannedMealWithRecipe } from "@/lib/types";
+} from '@/lib/validators/plannedMeals'
+import { PlannedMealStatus } from '@prisma/client'
+import { handleDbError } from '@/lib/utils/error'
+import { PlannedMealMetadata, PlannedMealWithRecipe } from '@/lib/types'
 
 export async function createPlannedMeal({
   transaction,
   userId,
   data,
 }: {
-  transaction?: Prisma.TransactionClient;
-  userId: string;
-  data: CreatePlannedMealInput;
+  transaction?: Prisma.TransactionClient
+  userId: string
+  data: CreatePlannedMealInput
 }) {
   try {
     const plannedMeal = await (transaction ?? prisma).plannedMeal.create({
@@ -23,10 +23,10 @@ export async function createPlannedMeal({
         ...data,
         userId,
       },
-    });
-    return plannedMeal;
+    })
+    return plannedMeal
   } catch (error) {
-    handleDbError(error, "create planned meal");
+    handleDbError(error, 'create planned meal')
   }
 }
 
@@ -35,9 +35,9 @@ export async function getPlannedMealById({
   id,
   userId,
 }: {
-  transaction?: Prisma.TransactionClient;
-  id: string;
-  userId: string;
+  transaction?: Prisma.TransactionClient
+  id: string
+  userId: string
 }): Promise<PlannedMealWithRecipe> {
   try {
     const plannedMeal = await (transaction ?? prisma).plannedMeal.findUnique({
@@ -48,15 +48,15 @@ export async function getPlannedMealById({
       include: {
         recipe: true,
       },
-    });
-    
+    })
+
     if (!plannedMeal) {
-      throw new Error(`Planned meal with ID ${id} not found`);
+      throw new Error(`Planned meal with ID ${id} not found`)
     }
-    
-    return plannedMeal;
+
+    return plannedMeal
   } catch (error) {
-    handleDbError(error, "get planned meal by id");
+    handleDbError(error, 'get planned meal by id')
   }
 }
 
@@ -64,8 +64,8 @@ export async function getPlannedMealsMetadata({
   transaction,
   userId,
 }: {
-  transaction?: Prisma.TransactionClient;
-  userId: string;
+  transaction?: Prisma.TransactionClient
+  userId: string
 }): Promise<PlannedMealMetadata[]> {
   try {
     // TODO: Add pagination
@@ -89,11 +89,11 @@ export async function getPlannedMealsMetadata({
           },
         },
       },
-      orderBy: { createdAt: "desc" },
-    });
-    return plannedMeals;
+      orderBy: { createdAt: 'desc' },
+    })
+    return plannedMeals
   } catch (error) {
-    handleDbError(error, "get planned meals metadata");
+    handleDbError(error, 'get planned meals metadata')
   }
 }
 
@@ -101,16 +101,16 @@ export async function getPlannedMeals({
   transaction,
   userId,
 }: {
-  transaction?: Prisma.TransactionClient;
-  userId: string;
+  transaction?: Prisma.TransactionClient
+  userId: string
 }) {
   try {
     const plannedMeals = await (transaction ?? prisma).plannedMeal.findMany({
       where: { userId, status: PlannedMealStatus.PLANNED },
-    });
-    return plannedMeals;
+    })
+    return plannedMeals
   } catch (error) {
-    handleDbError(error, "get planned meals");
+    handleDbError(error, 'get planned meals')
   }
 }
 
@@ -119,19 +119,19 @@ export async function updatePlannedMeal({
   userId,
   data,
 }: {
-  transaction?: Prisma.TransactionClient;
-  userId: string;
-  data: UpdatePlannedMealInput;
+  transaction?: Prisma.TransactionClient
+  userId: string
+  data: UpdatePlannedMealInput
 }) {
   try {
-    const { id, ...updateData } = data;
+    const { id, ...updateData } = data
     const plannedMeal = await (transaction ?? prisma).plannedMeal.update({
       where: { id, userId },
       data: updateData,
-    });
-    return plannedMeal;
+    })
+    return plannedMeal
   } catch (error) {
-    handleDbError(error, "update planned meal");
+    handleDbError(error, 'update planned meal')
   }
 }
 
@@ -140,19 +140,19 @@ export async function setPlannedMealCooked({
   id,
   userId,
 }: {
-  transaction?: Prisma.TransactionClient;
-  id: string;
-  userId: string;
+  transaction?: Prisma.TransactionClient
+  id: string
+  userId: string
 }) {
   try {
     const plannedMeal = await updatePlannedMeal({
       transaction,
       userId,
       data: { id, cookedAt: new Date(), status: PlannedMealStatus.COOKED },
-    });
-    return plannedMeal;
+    })
+    return plannedMeal
   } catch (error) {
-    handleDbError(error, "set planned meal cooked");
+    handleDbError(error, 'set planned meal cooked')
   }
 }
 
@@ -161,19 +161,19 @@ export async function setPlannedMealUnCooked({
   id,
   userId,
 }: {
-  transaction?: Prisma.TransactionClient;
-  id: string;
-  userId: string;
+  transaction?: Prisma.TransactionClient
+  id: string
+  userId: string
 }) {
   try {
     const plannedMeal = await updatePlannedMeal({
       transaction,
       userId,
       data: { id, cookedAt: undefined, status: PlannedMealStatus.PLANNED },
-    });
-    return plannedMeal;
+    })
+    return plannedMeal
   } catch (error) {
-    handleDbError(error, "set planned meal uncooked");
+    handleDbError(error, 'set planned meal uncooked')
   }
 }
 
@@ -182,22 +182,22 @@ export async function deletePlannedMeal({
   id,
   userId,
 }: {
-  transaction?: Prisma.TransactionClient;
-  id: string;
-  userId: string;
+  transaction?: Prisma.TransactionClient
+  id: string
+  userId: string
 }) {
   try {
     await (transaction ?? prisma).plannedMeal.delete({
       where: { id, userId },
-    });
-    return true;
+    })
+    return true
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       // 2025 is the code for the planned meal not found error
-      if (error.code === "P2025") {
-        return true;
+      if (error.code === 'P2025') {
+        return true
       }
     }
-    handleDbError(error, "delete planned meal");
+    handleDbError(error, 'delete planned meal')
   }
 }

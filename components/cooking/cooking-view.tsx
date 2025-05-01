@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useChat } from '@ai-sdk/react'
-import { RecipeViewer } from '@/components/cooking/recipe-viewer'
+import { RecipeViewer } from '@/components/recipes/recipe-viewer'
 import { CookingChat } from '@/components/cooking/cooking-chat'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
