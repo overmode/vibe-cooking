@@ -2,7 +2,7 @@ import { PlannedMealMetadata } from '@/lib/types'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Clock, Users, ChefHat, CookingPot } from 'lucide-react'
+import { Clock, Users, CookingPot } from 'lucide-react'
 import Link from 'next/link'
 import { routes } from '@/lib/routes'
 import { useRouter } from 'next/navigation'
@@ -63,11 +63,6 @@ export function PlannedMealMetadataCard({
             <span>{servings} servings</span>
           </Badge>
         )}
-      </div>
-
-      <div className="mt-3 flex items-center gap-1 text-xs text-lime-700/80">
-        <ChefHat className="h-3.5 w-3.5" />
-        <span>Ready to cook</span>
       </div>
 
       <div className="mt-auto pt-4">
