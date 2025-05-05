@@ -26,7 +26,8 @@ export function RecipeViewControls({
   setSortField,
   sortDirection,
   setSortDirection,
-}: RecipeViewControlsProps) {
+  isMobile,
+}: RecipeViewControlsProps & { isMobile?: boolean }) {
   // Format the sort field name for display
   const formatSortFieldName = (field: SortField): string => {
     switch (field) {
@@ -160,32 +161,35 @@ export function RecipeViewControls({
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <div className="flex border border-lime-200 rounded-md overflow-hidden">
-        <Button
-          variant={viewMode === 'grid' ? 'default' : 'ghost'}
-          size="sm"
-          onClick={() => setViewMode('grid')}
-          className={
-            viewMode === 'grid'
-              ? 'bg-lime-100 text-lime-700 hover:bg-lime-200 hover:text-lime-800'
-              : 'text-lime-700 hover:bg-lime-50'
-          }
-        >
-          <Grid3X3 className="h-4 w-4" />
-        </Button>
-        <Button
-          variant={viewMode === 'list' ? 'default' : 'ghost'}
-          size="sm"
-          onClick={() => setViewMode('list')}
-          className={
-            viewMode === 'list'
-              ? 'bg-lime-100 text-lime-700 hover:bg-lime-200 hover:text-lime-800'
-              : 'text-lime-700 hover:bg-lime-50'
-          }
-        >
-          <List className="h-4 w-4" />
-        </Button>
-      </div>
+      {/* List view doesn't work UX-wise on mobile */}
+      {!isMobile && (
+        <div className="flex border border-lime-200 rounded-md overflow-hidden">
+          <Button
+            variant={viewMode === 'grid' ? 'default' : 'ghost'}
+            size="sm"
+            onClick={() => setViewMode('grid')}
+            className={
+              viewMode === 'grid'
+                ? 'bg-lime-100 text-lime-700 hover:bg-lime-200 hover:text-lime-800'
+                : 'text-lime-700 hover:bg-lime-50'
+            }
+          >
+            <Grid3X3 className="h-4 w-4" />
+          </Button>
+          <Button
+            variant={viewMode === 'list' ? 'default' : 'ghost'}
+            size="sm"
+            onClick={() => setViewMode('list')}
+            className={
+              viewMode === 'list'
+                ? 'bg-lime-100 text-lime-700 hover:bg-lime-200 hover:text-lime-800'
+                : 'text-lime-700 hover:bg-lime-50'
+            }
+          >
+            <List className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
     </div>
   )
 }

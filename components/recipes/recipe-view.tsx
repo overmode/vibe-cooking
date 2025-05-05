@@ -8,6 +8,7 @@ import { RecipeGridView } from '@/components/recipes/recipe-grid-view'
 import { RecipeListView } from '@/components/recipes/recipe-list-view'
 import { routes } from '@/lib/routes'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { useIsMobile } from '@/lib/hooks/use-is-mobile'
 
 export function RecipeView({
   recipeMetadata,
@@ -27,6 +28,15 @@ export function RecipeView({
   const [sortField, setSortField] = useState<SortField>(initialSortField)
   const [sortDirection, setSortDirection] =
     useState<SortDirection>(initialSortDirection)
+
+  const isMobile = useIsMobile()
+
+  // Force grid view on mobile
+  useEffect(() => {
+    if (isMobile && viewMode === 'list') {
+      setViewMode('grid')
+    }
+  }, [isMobile, viewMode])
 
   // Update URL when state changes
   useEffect(() => {
@@ -93,6 +103,7 @@ export function RecipeView({
           setSortField={setSortField}
           sortDirection={sortDirection}
           setSortDirection={setSortDirection}
+          isMobile={isMobile}
         />
       </div>
 
