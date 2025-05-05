@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 @plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
@@ -119,4 +119,12 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Prevent viewport height issues on mobile */
+html,
+body {
+  height: 100%;
+  /* Prevent bounce effects on iOS */
+  overscroll-behavior: none;
 }
