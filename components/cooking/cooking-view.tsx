@@ -15,6 +15,8 @@ import { ToolResult } from '@/lib/ai/tools/types'
 import { ChatCanva } from '@/components/chat/chat-canva'
 import { plannedMealToRecipe } from '@/lib/utils/plannedMealToRecipe'
 import { UseChatOptions } from '@ai-sdk/react'
+import { apiRoutes } from '@/lib/api/api-routes'
+import { routes } from '@/lib/routes'
 interface CookingViewProps {
   plannedMealWithRecipe: PlannedMealWithRecipe
 }
@@ -24,7 +26,7 @@ export function CookingView({ plannedMealWithRecipe }: CookingViewProps) {
   const router = useRouter()
 
   const chatOptions: UseChatOptions = {
-    api: '/api/assistants/cooking',
+    api: apiRoutes.assistants.cooking,
     body: {
       plannedMealWithRecipe,
     },
@@ -73,7 +75,7 @@ export function CookingView({ plannedMealWithRecipe }: CookingViewProps) {
     })
   }
   const handleGoHome = () => {
-    router.push('/')
+    router.push(routes.home)
   }
 
   // Get the effective recipe data (with overrides)
@@ -84,10 +86,10 @@ export function CookingView({ plannedMealWithRecipe }: CookingViewProps) {
       onClick={handleMarkCooked}
       disabled={updateCookingStatusMutation.isPending}
       size="sm"
-      className="h-9 bg-lime-600 hover:bg-lime-700 px-3"
+      className="bg-lime-600 hover:bg-lime-700 text-white gap-1.5 h-8 px-2 sm:px-3 sm:h-9"
     >
-      <Check className="h-4 w-4 mr-1.5" />
-      <span>Mark as cooked</span>
+      <Check className="h-4 w-4" />
+      <span className="hidden sm:inline">Mark as cooked</span>
     </Button>
   )
   return (

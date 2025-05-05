@@ -9,4 +9,10 @@ export const apiRoutes = {
     all: '/api/recipe',
     byId: (id: string) => `/api/recipe/${id}`,
   },
-}
+  assistants: {
+    planning: '/api/assistants/planning',
+    cooking: '/api/assistants/cooking',
+    recipe: '/api/assistants/recipe',
+    plannedMeal: '/api/assistants/planned-meal',
+  },
+} as const

@@ -7,6 +7,9 @@ import { RecipeViewControls } from '@/components/recipes/recipe-view-controls'
 import { RecipeGridView } from '@/components/recipes/recipe-grid-view'
 import { RecipeListView } from '@/components/recipes/recipe-list-view'
 import { routes } from '@/lib/routes'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { useIsMobile } from '@/lib/hooks/use-is-mobile'
+
 export function RecipeView({
   recipeMetadata,
 }: {
@@ -25,6 +28,15 @@ export function RecipeView({
   const [sortField, setSortField] = useState<SortField>(initialSortField)
   const [sortDirection, setSortDirection] =
     useState<SortDirection>(initialSortDirection)
+
+  const isMobile = useIsMobile()
+
+  // Force grid view on mobile
+  useEffect(() => {
+    if (isMobile && viewMode === 'list') {
+      setViewMode('grid')
+    }
+  }, [isMobile, viewMode])
 
   // Update URL when state changes
   useEffect(() => {
@@ -81,7 +93,7 @@ export function RecipeView({
   }
 
   return (
-    <div className="container mx-auto py-6">
+    <div className="container mx-auto py-6 flex flex-col h-full">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-lime-900">Your Recipes</h2>
         <RecipeViewControls
@@ -91,19 +103,28 @@ export function RecipeView({
           setSortField={setSortField}
           sortDirection={sortDirection}
           setSortDirection={setSortDirection}
+          isMobile={isMobile}
         />
       </div>
 
-      {viewMode === 'grid' ? (
-        <RecipeGridView recipes={sortedRecipes} />
-      ) : (
-        <RecipeListView
-          recipes={sortedRecipes}
-          handleSort={handleSort}
-          sortField={sortField}
-          sortDirection={sortDirection}
-        />
-      )}
+      <div className="flex-1 min-h-0">
+        {viewMode === 'grid' ? (
+          <ScrollArea className="h-full rounded-md">
+            <div className="p-1">
+              <RecipeGridView recipes={sortedRecipes} />
+            </div>
+          </ScrollArea>
+        ) : (
+          <ScrollArea className="h-full rounded-md">
+            <RecipeListView
+              recipes={sortedRecipes}
+              handleSort={handleSort}
+              sortField={sortField}
+              sortDirection={sortDirection}
+            />
+          </ScrollArea>
+        )}
+      </div>
     </div>
   )
 }

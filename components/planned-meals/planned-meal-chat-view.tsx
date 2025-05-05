@@ -7,6 +7,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { ChatCanva } from '@/components/chat/chat-canva'
 
 import { PlannedMealWithRecipe } from '@/lib/types'
+import { apiRoutes } from '@/lib/api/api-routes'
 interface PlannedMealChatViewProps {
   plannedMeal: PlannedMealWithRecipe
 }
@@ -15,7 +16,7 @@ export function PlannedMealChatView({ plannedMeal }: PlannedMealChatViewProps) {
   const queryClient = useQueryClient()
 
   const chatOptions: UseChatOptions = {
-    api: '/api/assistants/planned-meal',
+    api: apiRoutes.assistants.plannedMeal,
     body: {
       plannedMeal,
     },

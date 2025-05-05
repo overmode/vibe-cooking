@@ -1,33 +1,38 @@
-import { type Metadata } from "next";
-import {
-  ClerkProvider,
-} from "@clerk/nextjs";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import { AppShell } from "@/components/layout/app-shell";
-import { Header } from "@/components/layout/header";
-import { Toaster } from "sonner";
-import { QueryProvider } from "@/components/providers/query-provider";
+import { type Metadata, type Viewport } from 'next'
+import { ClerkProvider } from '@clerk/nextjs'
+import { Geist, Geist_Mono } from 'next/font/google'
+import './globals.css'
+import { AppShell } from '@/components/layout/app-shell'
+import { Header } from '@/components/layout/header'
+import { Toaster } from 'sonner'
+import { QueryProvider } from '@/components/providers/query-provider'
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
+})
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
+})
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+}
 
 export const metadata: Metadata = {
-  title: "Vibe Cooking",
-  description: "Assistant-powered cooking app",
-};
+  title: 'Vibe Cooking',
+  description: 'Assistant-powered cooking app',
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <ClerkProvider>
@@ -43,12 +48,12 @@ export default function RootLayout({
             <div className="flex-1 overflow-hidden">
               <AppShell>{children}</AppShell>
             </div>
-            
+
             {/* Toast notifications */}
             <Toaster position="top-center" />
           </QueryProvider>
         </body>
       </html>
     </ClerkProvider>
-  );
+  )
 }
