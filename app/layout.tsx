@@ -1,4 +1,4 @@
-import { type Metadata } from 'next'
+import { type Metadata, type Viewport } from 'next'
 import { ClerkProvider } from '@clerk/nextjs'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
@@ -17,6 +17,13 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 })
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+}
+
 export const metadata: Metadata = {
   title: 'Vibe Cooking',
   description: 'Assistant-powered cooking app',
@@ -30,12 +37,6 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en" className="h-screen">
-        <head>
-          <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
-          />
-        </head>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gradient-to-br from-lime-50 to-amber-50 dark:from-background dark:to-background flex flex-col h-full`}
         >
