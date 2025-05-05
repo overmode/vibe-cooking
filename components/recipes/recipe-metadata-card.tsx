@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Clock, Heart, Calendar, Users, ChefHat } from 'lucide-react'
 import Link from 'next/link'
-
+import { routes } from '@/lib/routes'
 interface RecipeMetadataCardProps {
   recipe: RecipeMetadata
 }
@@ -16,7 +16,7 @@ export function RecipeMetadataCard({ recipe }: RecipeMetadataCardProps) {
 
   return (
     <Link
-      href={`/recipes/${recipe.id}`}
+      href={routes.recipes.byId(recipe.id)}
       className="transition-transform hover:scale-[1.02] focus:scale-[1.02] focus:outline-none"
     >
       <Card className="h-full overflow-hidden border-lime-100 shadow-md hover:shadow-lg transition-shadow duration-200">

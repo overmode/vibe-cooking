@@ -6,7 +6,7 @@ import { SortField, SortDirection, ViewMode } from '@/components/recipes/types'
 import { RecipeViewControls } from '@/components/recipes/recipe-view-controls'
 import { RecipeGridView } from '@/components/recipes/recipe-grid-view'
 import { RecipeListView } from '@/components/recipes/recipe-list-view'
-
+import { routes } from '@/lib/routes'
 export function RecipeView({
   recipeMetadata,
 }: {
@@ -34,7 +34,9 @@ export function RecipeView({
     params.set('dir', sortDirection)
 
     // Update URL without refreshing the page
-    router.replace(`/recipes?${params.toString()}`, { scroll: false })
+    router.replace(`${routes.recipes.all}?${params.toString()}`, {
+      scroll: false,
+    })
   }, [viewMode, sortField, sortDirection, router])
 
   // Sort recipes
