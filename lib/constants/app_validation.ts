@@ -1,0 +1,4 @@
+export const MAX_USER_MESSAGE_LENGTH = 1000
+export const MIN_USER_MESSAGE_LENGTH = 2
+export const MAX_MESSAGES_PER_DAY = 100
+export const MESSAGE_COOLDOWN_DURATION = 500

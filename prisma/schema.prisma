@@ -20,7 +20,7 @@ model Recipe {
   name          String        @db.VarChar(100)
   servings      Int
   ingredients   String[]     
-  instructions  String        @db.Text
+  instructions  String        @db.VarChar(10000)
   duration      Int?          // duration in minutes
   difficulty    Int?          // scale: 1 (easy) to 10 (hard)
   isFavorite    Boolean       @default(false)
@@ -36,7 +36,7 @@ model PlannedMeal {
   recipeId             String
   overrideName         String?  @db.VarChar(100)
   overrideIngredients  String[] @default([])
-  overrideInstructions String? @db.Text
+  overrideInstructions String?  @db.VarChar(10000)
   overrideServings     Int?
   overrideDuration     Int?
   overrideDifficulty   Int?

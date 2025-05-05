@@ -2,11 +2,24 @@ import { openai } from '@ai-sdk/openai'
 import { streamText } from 'ai'
 import { deleteRecipeTool, updateRecipeTool } from '@/lib/ai/tools/tools'
 import { getPrompt } from '@/lib/ai/prompts'
+import { chatLimiter } from '@/lib/rate-limiter'
+import { auth } from '@clerk/nextjs/server'
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30
 
 export async function POST(req: Request) {
   const { messages, recipe } = await req.json()
+
+  const { userId } = await auth()
+  if (!userId) {
+    return new Response('Unauthorized', { status: 401 })
+  }
+
+  const { success } = await chatLimiter.limit(userId)
+
+  if (!success) {
+    return new Response('Rate Limit Exceeded', { status: 429 })
+  }
 
   if (!recipe) {
     return new Response('Invalid payload: recipe is required', {

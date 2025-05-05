@@ -17,7 +17,7 @@ export default function Home() {
   const queryClient = useQueryClient()
   const router = useRouter()
 
-  const { messages, input, handleInputChange, handleSubmit, setInput } =
+  const { messages, input, handleInputChange, handleSubmit, setInput, error } =
     useChat({
       api: apiRoutes.assistants.planning,
       initialMessages: [
@@ -57,7 +57,7 @@ export default function Home() {
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-hidden">
-        <ChatMessagesDisplay messages={messages} />
+        <ChatMessagesDisplay messages={messages} error={error} />
       </div>
       <div className="w-full">
         {messages.length <= 2 && (
