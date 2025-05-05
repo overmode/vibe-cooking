@@ -8,6 +8,7 @@ import { triggerToolEffects } from '@/lib/ai/tools/effects'
 import { useQueryClient } from '@tanstack/react-query'
 import { useDeleteRecipeById } from '@/lib/api/hooks/recipes'
 import { ChatCanva } from '@/components/chat/chat-canva'
+import { apiRoutes } from '@/lib/api/api-routes'
 interface RecipeChatViewProps {
   recipe: Recipe
 }
@@ -25,7 +26,7 @@ export function RecipeChatView({ recipe }: RecipeChatViewProps) {
   })
 
   const chatOptions: UseChatOptions = {
-    api: '/api/assistants/recipe',
+    api: apiRoutes.assistants.recipe,
     body: {
       recipe,
     },

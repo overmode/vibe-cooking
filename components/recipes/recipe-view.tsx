@@ -7,6 +7,8 @@ import { RecipeViewControls } from '@/components/recipes/recipe-view-controls'
 import { RecipeGridView } from '@/components/recipes/recipe-grid-view'
 import { RecipeListView } from '@/components/recipes/recipe-list-view'
 import { routes } from '@/lib/routes'
+import { ScrollArea } from '@/components/ui/scroll-area'
+
 export function RecipeView({
   recipeMetadata,
 }: {
@@ -81,7 +83,7 @@ export function RecipeView({
   }
 
   return (
-    <div className="container mx-auto py-6">
+    <div className="container mx-auto py-6 flex flex-col h-full">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-lime-900">Your Recipes</h2>
         <RecipeViewControls
@@ -94,16 +96,24 @@ export function RecipeView({
         />
       </div>
 
-      {viewMode === 'grid' ? (
-        <RecipeGridView recipes={sortedRecipes} />
-      ) : (
-        <RecipeListView
-          recipes={sortedRecipes}
-          handleSort={handleSort}
-          sortField={sortField}
-          sortDirection={sortDirection}
-        />
-      )}
+      <div className="flex-1 min-h-0">
+        {viewMode === 'grid' ? (
+          <ScrollArea className="h-full rounded-md">
+            <div className="p-1">
+              <RecipeGridView recipes={sortedRecipes} />
+            </div>
+          </ScrollArea>
+        ) : (
+          <ScrollArea className="h-full rounded-md">
+            <RecipeListView
+              recipes={sortedRecipes}
+              handleSort={handleSort}
+              sortField={sortField}
+              sortDirection={sortDirection}
+            />
+          </ScrollArea>
+        )}
+      </div>
     </div>
   )
 }

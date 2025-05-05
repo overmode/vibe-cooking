@@ -12,13 +12,14 @@ import { routes } from '@/lib/routes'
 import { useRouter } from 'next/navigation'
 import { enterCookingModeDefinition } from '@/lib/ai/tools/definitions'
 import { z } from 'zod'
+import { apiRoutes } from '@/lib/api/api-routes'
 export default function Home() {
   const queryClient = useQueryClient()
   const router = useRouter()
 
   const { messages, input, handleInputChange, handleSubmit, setInput } =
     useChat({
-      api: '/api/assistants/planning',
+      api: apiRoutes.assistants.planning,
       initialMessages: [
         {
           id: '1',

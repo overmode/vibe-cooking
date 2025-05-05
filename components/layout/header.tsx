@@ -22,12 +22,13 @@ import {
   SheetTrigger,
   SheetClose,
 } from '@/components/ui/sheet'
+import { routes } from '@/lib/routes'
 
 // Navigation items
 const navItems = [
-  { href: '/', label: 'Assistant' },
-  { href: '/recipes', label: 'Recipes' },
-  { href: '/planned-meals', label: 'Planned Meals' },
+  { href: routes.home, label: 'Assistant' },
+  { href: routes.recipes.all, label: 'Recipes' },
+  { href: routes.plannedMeal.all, label: 'Planned Meals' },
 ]
 
 export function Header() {
