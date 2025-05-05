@@ -1,7 +1,7 @@
 'use client'
 
 import { useChat } from '@ai-sdk/react'
-import { ChatWindow } from '@/components/chat/chat-window'
+import { ChatMessagesDisplay } from '@/components/chat/chat-messages-display'
 import { ChatInput } from '@/components/chat/chat-input'
 import { ChatSuggestions } from '@/components/chat/chat-suggestions'
 import { ToolResult } from '@/lib/ai/tools/types'
@@ -56,7 +56,7 @@ export default function Home() {
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-hidden">
-        <ChatWindow messages={messages} />
+        <ChatMessagesDisplay messages={messages} />
       </div>
       <div className="w-full">
         {messages.length <= 2 && (

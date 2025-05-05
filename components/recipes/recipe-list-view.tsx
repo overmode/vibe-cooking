@@ -20,7 +20,7 @@ import {
 
 import { SortField, SortDirection } from '@/components/recipes/types'
 import { useRouter } from 'next/navigation'
-
+import { routes } from '@/lib/routes'
 interface RecipeListViewProps {
   recipes: RecipeMetadata[]
   handleSort: (field: SortField) => void
@@ -107,7 +107,7 @@ export function RecipeListView({
               <TableRow
                 key={recipe.id}
                 className="border-b border-lime-50 transition-colors cursor-pointer"
-                onClick={() => router.push(`/recipes/${recipe.id}`)}
+                onClick={() => router.push(routes.recipes.byId(recipe.id))}
               >
                 <TableCell>
                   <div className="flex items-center gap-2 font-medium text-lime-900">
