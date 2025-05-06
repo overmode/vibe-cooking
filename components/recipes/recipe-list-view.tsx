@@ -77,9 +77,9 @@ export function RecipeListView({
 
   return (
     <ScrollArea className="h-full rounded-md">
-      <div className="rounded-md border border-lime-100 shadow-sm">
+      <div className="rounded-md border shadow-sm">
         <Table>
-          <TableHeader className="bg-gradient-to-r from-lime-50 to-lime-100">
+          <TableHeader className="bg-muted/50">
             <TableRow>
               <TableHead
                 className="w-[40%] cursor-pointer"
@@ -137,20 +137,20 @@ export function RecipeListView({
               return (
                 <TableRow
                   key={recipe.id}
-                  className="border-b border-lime-50 transition-colors cursor-pointer"
+                  className="border-b transition-colors cursor-pointer hover:bg-muted/20"
                   onClick={() => router.push(routes.recipes.byId(recipe.id))}
                 >
                   <TableCell>
-                    <div className="flex items-center gap-2 font-medium text-lime-900">
+                    <div className="flex items-center gap-2 font-medium text-foreground">
                       {recipe.name}
                       {recipe.isFavorite && (
-                        <Heart className="h-4 w-4 text-rose-400 fill-rose-400 animate-pulse-subtle" />
+                        <Heart className="h-4 w-4 text-destructive fill-destructive animate-pulse-subtle" />
                       )}
                     </div>
                   </TableCell>
                   <TableCell>
                     {recipe.duration ? (
-                      <div className="flex items-center gap-1 text-lime-700">
+                      <div className="flex items-center gap-1 text-muted-foreground">
                         <Clock className="h-3.5 w-3.5" />
                         <span>{recipe.duration} min</span>
                       </div>
@@ -160,7 +160,7 @@ export function RecipeListView({
                   </TableCell>
                   <TableCell>
                     {recipe.difficulty ? (
-                      <span className="text-lime-700">
+                      <span className="text-muted-foreground">
                         {recipe.difficulty}/10
                       </span>
                     ) : (
@@ -169,19 +169,19 @@ export function RecipeListView({
                   </TableCell>
                   <TableCell>
                     {recipe.cookCount > 0 ? (
-                      <div className="flex items-center gap-1 text-lime-700/80">
+                      <div className="flex items-center gap-1 text-muted-foreground">
                         <ChefHat className="h-3.5 w-3.5" />
                         <span className="font-medium">{recipe.cookCount}x</span>
                       </div>
                     ) : (
-                      <span className="text-lime-600/60 italic text-sm">
+                      <span className="text-muted-foreground/60 italic text-sm">
                         Not yet
                       </span>
                     )}
                   </TableCell>
                   <TableCell>
                     {recipe.servings > 0 ? (
-                      <div className="flex items-center gap-1 text-slate-600">
+                      <div className="flex items-center gap-1 text-muted-foreground">
                         <Users className="h-3.5 w-3.5" />
                         <span>{recipe.servings}</span>
                       </div>
@@ -194,18 +194,18 @@ export function RecipeListView({
                       <Tooltip>
                         <TooltipTrigger asChild>
                           {isPlanned ? (
-                            <div className="flex h-8 w-8 items-center justify-center text-emerald-600">
+                            <div className="flex h-8 w-8 items-center justify-center text-success">
                               <CheckCircle className="h-4 w-4" />
                             </div>
                           ) : isPlanning ? (
-                            <div className="flex h-8 w-8 items-center justify-center text-lime-600">
+                            <div className="flex h-8 w-8 items-center justify-center text-primary">
                               <Loader2 className="h-4 w-4 animate-spin" />
                             </div>
                           ) : (
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-8 w-8 text-lime-600 hover:bg-lime-50"
+                              className="h-8 w-8 text-primary hover:bg-primary/10"
                               onClick={(e) => handlePlanClick(e, recipe.id)}
                             >
                               <Calendar className="h-4 w-4" />

@@ -59,19 +59,17 @@ export function DeleteConfirmationDialog({
 
   return (
     <AlertDialog open={open} onOpenChange={handleOpenChange}>
-      <AlertDialogContent className="border-lime-200">
+      <AlertDialogContent className="border-destructive/20">
         <AlertDialogHeader className="gap-3">
-          <div className="bg-red-50 dark:bg-red-900/20 w-fit mx-auto rounded-full p-2.5">
-            <AlertTriangle className="h-6 w-6 text-red-600 dark:text-red-400" />
+          <div className="bg-destructive/10 dark:bg-destructive/20 w-fit mx-auto rounded-full p-2.5">
+            <AlertTriangle className="h-6 w-6 text-destructive" />
           </div>
           <AlertDialogTitle className="text-center text-xl">
             {title}
           </AlertDialogTitle>
           <AlertDialogDescription className="text-center">
             Are you sure you want to delete{' '}
-            <span className="font-medium text-lime-700 dark:text-lime-400">
-              {itemName}
-            </span>
+            <span className="font-medium text-foreground">{itemName}</span>
             ?
             <br />
             This action cannot be undone.
@@ -82,7 +80,7 @@ export function DeleteConfirmationDialog({
           <AlertDialogAction
             onClick={() => deleteMutation.mutate()}
             disabled={deleteMutation.isPending}
-            className="bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 text-white"
+            className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
           >
             {deleteMutation.isPending ? (
               <>

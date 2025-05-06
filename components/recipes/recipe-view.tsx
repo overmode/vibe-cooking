@@ -95,7 +95,7 @@ export function RecipeView({
   return (
     <div className="container mx-auto py-6 flex flex-col h-full">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-lime-900">Your Recipes</h2>
+        <h2 className="text-2xl font-bold text-primary">Your Recipes</h2>
         <RecipeViewControls
           viewMode={viewMode}
           setViewMode={setViewMode}

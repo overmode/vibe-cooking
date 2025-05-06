@@ -17,12 +17,12 @@ export function RecipeMetadataCard({ recipe }: RecipeMetadataCardProps) {
   const { mutate: planRecipe, isPending: isPlanning } = usePlanRecipe()
 
   const headerIcon = recipe.isFavorite ? (
-    <Heart className="h-5 w-5 text-rose-400 fill-rose-400 flex-shrink-0 animate-pulse-subtle" />
+    <Heart className="h-5 w-5 text-destructive fill-destructive flex-shrink-0 animate-pulse-subtle" />
   ) : null
 
   const actionContent = (
     <Button
-      className="w-full bg-lime-600 text-white hover:bg-lime-700"
+      className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
       disabled={isPlanned || isPlanning}
       onClick={(e) => {
         e.preventDefault()

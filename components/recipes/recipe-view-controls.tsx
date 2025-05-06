@@ -47,7 +47,7 @@ export function RecipeViewControls({
           <Button
             variant="outline"
             size="sm"
-            className="text-lime-700 border-lime-200"
+            className="text-primary border-primary/20"
           >
             Sort by: {formatSortFieldName(sortField)}
             {sortDirection === 'asc' ? (
@@ -163,15 +163,15 @@ export function RecipeViewControls({
       </DropdownMenu>
       {/* List view doesn't work UX-wise on mobile */}
       {!isMobile && (
-        <div className="flex border border-lime-200 rounded-md overflow-hidden">
+        <div className="flex border border-primary/20 rounded-md overflow-hidden">
           <Button
             variant={viewMode === 'grid' ? 'default' : 'ghost'}
             size="sm"
             onClick={() => setViewMode('grid')}
             className={
               viewMode === 'grid'
-                ? 'bg-lime-100 text-lime-700 hover:bg-lime-200 hover:text-lime-800'
-                : 'text-lime-700 hover:bg-lime-50'
+                ? 'bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary/80'
+                : 'text-primary hover:bg-primary/5'
             }
           >
             <Grid3X3 className="h-4 w-4" />
@@ -182,8 +182,8 @@ export function RecipeViewControls({
             onClick={() => setViewMode('list')}
             className={
               viewMode === 'list'
-                ? 'bg-lime-100 text-lime-700 hover:bg-lime-200 hover:text-lime-800'
-                : 'text-lime-700 hover:bg-lime-50'
+                ? 'bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary/80'
+                : 'text-primary hover:bg-primary/5'
             }
           >
             <List className="h-4 w-4" />

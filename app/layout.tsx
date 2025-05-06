@@ -38,7 +38,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" className="h-screen">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gradient-to-br from-lime-50 to-amber-50 dark:from-background dark:to-background flex flex-col h-full`}
+          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground flex flex-col h-full`}
         >
           <QueryProvider>
             {/* Sticky global header (logo + auth controls) */}

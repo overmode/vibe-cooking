@@ -24,7 +24,7 @@ export function PlannedMealMetadataCard({
 
   const actionContent = (
     <Button
-      className="w-full bg-lime-600 text-white hover:bg-lime-700"
+      className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
       onClick={(e) => {
         e.preventDefault()
         onCook()

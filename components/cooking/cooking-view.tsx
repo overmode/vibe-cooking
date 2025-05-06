@@ -86,7 +86,7 @@ export function CookingView({ plannedMealWithRecipe }: CookingViewProps) {
       onClick={handleMarkCooked}
       disabled={updateCookingStatusMutation.isPending}
       size="sm"
-      className="bg-lime-600 hover:bg-lime-700 text-white gap-1.5 h-8 px-2 sm:px-3 sm:h-9"
+      className="bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5 h-8 px-2 sm:px-3 sm:h-9"
     >
       <Check className="h-4 w-4" />
       <span className="hidden sm:inline">Mark as cooked</span>

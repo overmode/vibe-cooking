@@ -47,7 +47,7 @@ export default function PlannedMealsPage() {
     return (
       <div className="container mx-auto py-6 flex flex-col h-full">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-lime-900">
+          <h2 className="text-2xl font-bold text-foreground">
             Your Planned Meals
           </h2>
         </div>

@@ -29,7 +29,7 @@ export function RecipeCardBase({
       <Badge
         key="duration"
         variant="secondary"
-        className="flex items-center gap-1 bg-lime-100 text-lime-700 hover:bg-lime-200"
+        className="flex items-center gap-1"
       >
         <Clock className="h-3 w-3" />
         <span>{duration} min</span>
@@ -39,7 +39,7 @@ export function RecipeCardBase({
       <Badge
         key="difficulty"
         variant="secondary"
-        className="flex items-center gap-1 bg-lime-100 text-lime-700 hover:bg-lime-200"
+        className="flex items-center gap-1"
       >
         <span>Difficulty: {difficulty}/10</span>
       </Badge>
@@ -48,7 +48,7 @@ export function RecipeCardBase({
       <Badge
         key="servings"
         variant="secondary"
-        className="flex items-center gap-1 bg-lime-100 text-lime-700 hover:bg-lime-200"
+        className="flex items-center gap-1"
       >
         <Users className="h-3 w-3" />
         <span>{servings} servings</span>
@@ -62,23 +62,21 @@ export function RecipeCardBase({
   return (
     <Link
       href={linkHref}
-      className="transition-transform hover:scale-[1.02] focus:scale-[1.02] focus:outline-none block"
+      className="block transition-transform hover:scale-[1.02] focus:scale-[1.02] focus:outline-none"
     >
       <Card
-        className={`h-full overflow-hidden border-lime-100 shadow-md hover:shadow-lg transition-shadow duration-200 ${
+        className={`h-full overflow-hidden border border-border shadow-sm hover:shadow transition-shadow duration-200 ${
           className || ''
         }`}
       >
-        <div className="bg-gradient-to-r from-lime-50 to-lime-100 p-4 flex flex-col h-full">
-          <div className="flex justify-between items-start mb-2">
-            <h3 className="text-xl font-semibold line-clamp-2 text-lime-900">
-              {name}
-            </h3>
+        <div className="flex h-full flex-col bg-card p-4 text-card-foreground">
+          <div className="mb-2 flex items-start justify-between">
+            <h3 className="line-clamp-2 text-xl font-semibold">{name}</h3>
             {headerIcon}
           </div>
 
           {badgesToRender.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-4 min-h-8">
+            <div className="mb-4 min-h-8 flex flex-wrap gap-2">
               {badgesToRender}
             </div>
           )}

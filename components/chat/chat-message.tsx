@@ -28,7 +28,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
         {!isUser && (
           <Avatar className="h-8 w-8 flex-shrink-0">
             <AvatarImage src="/logo-coconut-bowl.png" alt="Vibe Cooking Logo" />
-            <AvatarFallback className="bg-lime-200 text-primary-foreground">
+            <AvatarFallback className="bg-accent text-accent-foreground">
               🍳
             </AvatarFallback>
           </Avatar>
