@@ -6,4 +6,4 @@ export const MESSAGE_COOLDOWN_DURATION = 500
 
 // Recipes / Planned meals
 export const MAX_NUM_RECIPES_PER_USER = 100
-export const MAX_NUM_PLANNED_MEALS_PER_USER = 15
+export const MAX_NUM_PLANNED_MEALS_PER_USER = 25

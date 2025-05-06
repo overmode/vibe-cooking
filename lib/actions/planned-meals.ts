@@ -23,6 +23,7 @@ import {
   decrementCookedCount,
   incrementCookedCount,
 } from '@/lib/data-access/recipe'
+import { MAX_NUM_PLANNED_MEALS_PER_USER } from '@/lib/constants/app_validation'
 
 export const getPlannedMealsMetadataAction = async (): Promise<
   PlannedMealMetadata[]
@@ -51,11 +52,36 @@ export const createPlannedMealAction = async (
   if (!userId) {
     handleActionError('Unauthorized', 'create planned meal')
   }
-  const plannedMeal = await createPlannedMeal({
-    userId,
-    data: plannedMealData,
-  })
-  return plannedMeal
+
+  try {
+    const plannedMeal = await prisma.$transaction(
+      async (tx) => {
+        const count = await tx.plannedMeal.count({
+          where: { userId, status: PlannedMealStatus.PLANNED },
+        })
+
+        if (count >= MAX_NUM_PLANNED_MEALS_PER_USER) {
+          throw new Error(
+            `Planned meal limit of ${MAX_NUM_PLANNED_MEALS_PER_USER} reached`
+          )
+        }
+
+        return createPlannedMeal({
+          userId,
+          data: plannedMealData,
+          transaction: tx,
+        })
+      },
+      {
+        // Slightly slower but prevents race conditions
+        isolationLevel: 'Serializable',
+      }
+    )
+
+    return plannedMeal
+  } catch (error) {
+    return handleActionError(error, 'create planned meal')
+  }
 }
 
 export const deletePlannedMealAction = async (plannedMealId: string) => {
