@@ -9,6 +9,12 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useDeleteRecipeById } from '@/lib/api/hooks/recipes'
 import { ChatCanva } from '@/components/chat/chat-canva'
 import { apiRoutes } from '@/lib/api/api-routes'
+import { Button } from '@/components/ui/button'
+import { Trash } from 'lucide-react'
+import { useState } from 'react'
+import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog'
+import { routes } from '@/lib/routes'
+
 interface RecipeChatViewProps {
   recipe: Recipe
 }
@@ -20,7 +26,7 @@ export function RecipeChatView({ recipe }: RecipeChatViewProps) {
     id: recipe.id,
     options: {
       onSuccess: () => {
-        router.back()
+        router.push(routes.recipes.all)
       },
     },
   })
@@ -60,6 +66,32 @@ export function RecipeChatView({ recipe }: RecipeChatViewProps) {
     },
   }
 
+  // Add delete action
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+
+  const deleteAction = (
+    <>
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => setShowDeleteDialog(true)}
+        disabled={deleteRecipeMutation.isPending}
+        className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+      >
+        <Trash className="h-4 w-4" />
+      </Button>
+
+      <DeleteConfirmationDialog
+        title="Delete Recipe"
+        itemName={recipe.name}
+        deleteMutation={deleteRecipeMutation}
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        deleteButtonText="Delete Recipe"
+      />
+    </>
+  )
+
   return (
     <ChatCanva
       title={recipe.name}
@@ -67,6 +99,7 @@ export function RecipeChatView({ recipe }: RecipeChatViewProps) {
       chatOptions={chatOptions}
       contentTabLabel="Recipe"
       chatTabLabel="Assistant"
+      actions={deleteAction}
     />
   )
 }

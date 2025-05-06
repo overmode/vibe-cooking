@@ -12,6 +12,7 @@ import {
   getPlannedMealWithRecipeById,
   updatePlannedMealStatus,
   updatePlannedMeal,
+  deletePlannedMealById,
 } from '@/lib/api/client'
 import { queryKeys } from '@/lib/api/query-keys'
 import { UpdatePlannedMealInput } from '@/lib/validators/plannedMeals'
@@ -176,6 +177,72 @@ export const useUpdatePlannedMealMutation = ({
       queryClient.invalidateQueries({
         queryKey: queryKeys.plannedMeals.byId(variables.id),
       })
+    },
+  })
+}
+
+export const useDeletePlannedMealMutation = ({
+  id,
+  options = {},
+}: {
+  id: string
+  options?: Omit<
+    UseMutationOptions<{ success: boolean }, Error>,
+    'mutationFn' | 'onMutate'
+  >
+}) => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    ...options,
+    mutationFn: async () => await deletePlannedMealById(id),
+    onMutate: async () => {
+      // optimistic update for planned meals only
+      await queryClient.cancelQueries({
+        queryKey: queryKeys.plannedMeals.byId(id),
+      })
+      await queryClient.cancelQueries({
+        queryKey: queryKeys.plannedMeals.all,
+      })
+
+      // snapshot the previous values
+      const previousPlannedMeal =
+        queryClient.getQueryData<PlannedMealWithRecipe>(
+          queryKeys.plannedMeals.byId(id)
+        )
+      const previousPlannedMealsMetadata = queryClient.getQueryData<
+        PlannedMealMetadata[]
+      >(queryKeys.plannedMeals.all)
+
+      // update the cache
+      queryClient.setQueryData(queryKeys.plannedMeals.byId(id), undefined)
+      queryClient.setQueryData(
+        queryKeys.plannedMeals.all,
+        (old: PlannedMealMetadata[] | undefined) =>
+          old?.filter((meal) => meal.id !== id)
+      )
+
+      // return the previous values to be used in onError
+      return { previousPlannedMeal, previousPlannedMealsMetadata }
+    },
+    onError: (error, variables, context) => {
+      // rollback the previous state
+      queryClient.setQueryData(
+        queryKeys.plannedMeals.byId(id),
+        context?.previousPlannedMeal
+      )
+      queryClient.setQueryData(
+        queryKeys.plannedMeals.all,
+        context?.previousPlannedMealsMetadata
+      )
+      options.onError?.(error, variables, context)
+    },
+    onSettled: (data, error, variables, context) => {
+      options.onSettled?.(data, error, variables, context)
+      queryClient.invalidateQueries({ queryKey: queryKeys.plannedMeals.all })
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.plannedMeals.byId(id),
+      })
+      queryClient.invalidateQueries({ queryKey: queryKeys.recipes.all })
     },
   })
 }
