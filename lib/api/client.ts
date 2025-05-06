@@ -50,3 +50,7 @@ export const updatePlannedMealStatus = async (
       : apiRoutes.plannedMeal.uncook(id)
   return post<PlannedMeal>(url, {})
 }
+
+export const planRecipe = async (id: string) => {
+  return post<PlannedMeal>(apiRoutes.recipe.plan(id), {})
+}
