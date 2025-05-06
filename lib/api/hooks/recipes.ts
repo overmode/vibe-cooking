@@ -77,16 +77,50 @@ export const usePlanRecipe = ({
   return useMutation({
     ...options,
     mutationFn: async (id: string) => await planRecipe(id),
-    onSuccess: (data, variables, context) => {
-      options.onSuccess?.(data, variables, context)
+    onMutate: async (variables) => {
+      options.onMutate?.(variables)
+
+      // Optimistic updates for recipes only (to update planned status)
+      await queryClient.cancelQueries({
+        queryKey: queryKeys.recipes.all,
+      })
+      const previousRecipes = queryClient.getQueryData<RecipeMetadata[]>(
+        queryKeys.recipes.all
+      )
+      queryClient.setQueryData(queryKeys.recipes.all, (old: RecipeMetadata[]) =>
+        old.map((recipe) =>
+          recipe.id === variables
+            ? {
+                ...recipe,
+                plannedMeals: [
+                  ...recipe.plannedMeals,
+                  // This allows to detect the recipe as planned in the UI
+                  {
+                    id:
+                      'planned-' + recipe.id + '-' + recipe.plannedMeals.length,
+                    status: 'PLANNED',
+                  },
+                ],
+              }
+            : recipe
+        )
+      )
+      return { previousRecipes }
+    },
+    onError: (error, variables, context) => {
+      options.onError?.(error, variables, context)
+      queryClient.setQueryData(queryKeys.recipes.all, context?.previousRecipes)
+    },
+    onSettled: (data, error, variables, context) => {
+      options.onSettled?.(data, error, variables, context)
       queryClient.invalidateQueries({
-        queryKey: queryKeys.recipes.byId(variables),
+        queryKey: queryKeys.recipes.all,
       })
       queryClient.invalidateQueries({
         queryKey: queryKeys.plannedMeals.all,
       })
       queryClient.invalidateQueries({
-        queryKey: queryKeys.recipes.all,
+        queryKey: queryKeys.recipes.byId(variables),
       })
     },
   })
