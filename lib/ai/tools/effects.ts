@@ -71,8 +71,9 @@ export const triggerToolEffects = (
     ) {
       const toolName = part.toolInvocation.toolName
       const result = part.toolInvocation.result
-      const toolEffect = toolEffects[toolName]
-      toolEffect(queryClient, result)
+      if (toolName in toolEffects) {
+        toolEffects[toolName](queryClient, result)
+      }
     }
   }
 }

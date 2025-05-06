@@ -1,5 +1,4 @@
 import {
-  createRecipe,
   deleteRecipe,
   getRecipeById,
   getRecipesMetadata,
@@ -9,11 +8,13 @@ import { auth } from '@clerk/nextjs/server'
 import { CreateRecipeInput, UpdateRecipeInput } from '@/lib/validators/recipe'
 import { handleActionError } from '@/lib/utils/error'
 import { RecipeMetadata } from '@/lib/types'
+import prisma from '@/prisma/client'
+import { MAX_NUM_RECIPES_PER_USER } from '@/lib/constants/app_validation'
 
 export const getRecipesMetadataAction = async (): Promise<RecipeMetadata[]> => {
   const { userId } = await auth()
   if (!userId) {
-    handleActionError('Unauthorized', 'getRecipesMetadataAction')
+    handleActionError('Unauthorized', 'get recipes metadata')
   }
   const recipes = await getRecipesMetadata({ userId })
   return recipes
@@ -21,19 +22,49 @@ export const getRecipesMetadataAction = async (): Promise<RecipeMetadata[]> => {
 export const createRecipeAction = async (recipeData: CreateRecipeInput) => {
   const { userId } = await auth()
   if (!userId) {
-    handleActionError('Unauthorized', 'createRecipeAction')
+    return handleActionError('Unauthorized', 'create recipe')
   }
-  const recipe = await createRecipe({
-    userId,
-    data: recipeData,
-  })
-  return recipe
+
+  try {
+    const recipe = await prisma.$transaction(
+      async (tx) => {
+        const count = await tx.recipe.count({
+          where: { userId },
+        })
+
+        if (count >= MAX_NUM_RECIPES_PER_USER) {
+          throw new Error(
+            `Recipe limit of ${MAX_NUM_RECIPES_PER_USER} reached.`
+          )
+        }
+
+        return tx.recipe.create({
+          data: {
+            ...recipeData,
+            userId,
+          },
+        })
+      },
+      {
+        // Slightly slower but prevents race conditions
+        isolationLevel: 'Serializable',
+      }
+    )
+
+    return recipe
+  } catch (error) {
+    return handleActionError(error, 'create recipe')
+  }
 }
 
-export const deleteRecipeAction = async (recipeId: string) => {
+export const deleteRecipeAction = async ({
+  recipeId,
+}: {
+  recipeId: string
+}) => {
   const { userId } = await auth()
   if (!userId) {
-    handleActionError('Unauthorized', 'deleteRecipeAction')
+    handleActionError('Unauthorized', 'delete recipe')
   }
   const recipe = await deleteRecipe({ id: recipeId, userId })
   return recipe
@@ -42,7 +73,7 @@ export const deleteRecipeAction = async (recipeId: string) => {
 export const updateRecipeAction = async (recipeData: UpdateRecipeInput) => {
   const { userId } = await auth()
   if (!userId) {
-    handleActionError('Unauthorized', 'updateRecipeAction')
+    handleActionError('Unauthorized', 'update recipe')
   }
   const recipe = await updateRecipe({
     userId,
@@ -54,7 +85,7 @@ export const updateRecipeAction = async (recipeData: UpdateRecipeInput) => {
 export const getRecipeByIdAction = async (recipeId: string) => {
   const { userId } = await auth()
   if (!userId) {
-    handleActionError('Unauthorized', 'getRecipeByIdAction')
+    handleActionError('Unauthorized', 'get recipe')
   }
   const recipe = await getRecipeById({ id: recipeId, userId })
   return recipe

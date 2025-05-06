@@ -26,7 +26,7 @@ export async function DELETE(
   const { id } = await params
   try {
     //Auth is done in the action
-    await deleteRecipeAction(id)
+    await deleteRecipeAction({ recipeId: id })
     return NextResponse.json({ success: true })
   } catch {
     // TODO better error handling with custom error classes and status codes

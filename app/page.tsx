@@ -1,9 +1,6 @@
 'use client'
 
 import { useChat } from '@ai-sdk/react'
-import { ChatMessagesDisplay } from '@/components/chat/chat-messages-display'
-import { ChatInput } from '@/components/chat/chat-input'
-import { ChatSuggestions } from '@/components/chat/chat-suggestions'
 import { ToolResult } from '@/lib/ai/tools/types'
 import { chatSuggestions } from '@/lib/constants/chat-suggestions'
 import { triggerToolEffects } from '@/lib/ai/tools/effects'
@@ -13,11 +10,13 @@ import { useRouter } from 'next/navigation'
 import { enterCookingModeDefinition } from '@/lib/ai/tools/definitions'
 import { z } from 'zod'
 import { apiRoutes } from '@/lib/api/api-routes'
+import { Chat } from '@/components/chat/chat'
+import { ChatSuggestion } from '@/lib/types'
 export default function Home() {
   const queryClient = useQueryClient()
   const router = useRouter()
 
-  const { messages, input, handleInputChange, handleSubmit, setInput } =
+  const { messages, input, handleInputChange, handleSubmit, setInput, error } =
     useChat({
       api: apiRoutes.assistants.planning,
       initialMessages: [
@@ -50,30 +49,19 @@ export default function Home() {
       },
     })
 
-  const handleSuggestionClick = (message: string) => {
-    setInput(message)
+  const handleSuggestionClick = (suggestion: ChatSuggestion) => {
+    setInput(suggestion.message)
   }
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex-1 overflow-hidden">
-        <ChatMessagesDisplay messages={messages} />
-      </div>
-      <div className="w-full">
-        {messages.length <= 2 && (
-          <ChatSuggestions
-            suggestions={chatSuggestions}
-            onSuggestionClick={handleSuggestionClick}
-          />
-        )}
-        <div className="sticky bottom-0">
-          <ChatInput
-            input={input}
-            handleInputChange={handleInputChange}
-            handleSubmit={handleSubmit}
-          />
-        </div>
-      </div>
-    </div>
+    <Chat
+      messages={messages}
+      input={input}
+      handleInputChange={handleInputChange}
+      handleSubmit={handleSubmit}
+      error={error}
+      suggestions={chatSuggestions}
+      handleSuggestionClick={handleSuggestionClick}
+    />
   )
 }
