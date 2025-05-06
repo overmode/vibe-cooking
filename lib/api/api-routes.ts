@@ -7,6 +7,7 @@ export const apiRoutes = {
   },
   recipe: {
     all: '/api/recipe',
+    plan: (id: string) => `/api/recipe/${id}/plan`,
     byId: (id: string) => `/api/recipe/${id}`,
   },
   assistants: {

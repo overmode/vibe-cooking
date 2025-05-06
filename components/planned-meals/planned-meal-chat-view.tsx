@@ -5,16 +5,32 @@ import { RecipeViewer } from '@/components/recipes/recipe-viewer'
 import { triggerToolEffects } from '@/lib/ai/tools/effects'
 import { useQueryClient } from '@tanstack/react-query'
 import { ChatCanva } from '@/components/chat/chat-canva'
-
+import { useDeletePlannedMealMutation } from '@/lib/api/hooks/planned-meals'
+import { routes } from '@/lib/routes'
 import { PlannedMealWithRecipe } from '@/lib/types'
 import { apiRoutes } from '@/lib/api/api-routes'
+import { useRouter } from 'next/navigation'
+import { plannedMealToRecipe } from '@/lib/utils/plannedMealUtils'
+import { Button } from '@/components/ui/button'
+import { Trash } from 'lucide-react'
+import { useState } from 'react'
+import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog'
+
 interface PlannedMealChatViewProps {
   plannedMeal: PlannedMealWithRecipe
 }
 
 export function PlannedMealChatView({ plannedMeal }: PlannedMealChatViewProps) {
   const queryClient = useQueryClient()
-
+  const router = useRouter()
+  const deletePlannedMealMutation = useDeletePlannedMealMutation({
+    id: plannedMeal.id,
+    options: {
+      onSuccess: () => {
+        router.push(routes.plannedMeal.all)
+      },
+    },
+  })
   const chatOptions: UseChatOptions = {
     api: apiRoutes.assistants.plannedMeal,
     body: {
@@ -33,18 +49,32 @@ export function PlannedMealChatView({ plannedMeal }: PlannedMealChatViewProps) {
     },
   }
 
-  const plannedMealAsRecipe = {
-    ...plannedMeal.recipe,
-    name: plannedMeal.overrideName || plannedMeal.recipe.name,
-    ingredients: plannedMeal.overrideIngredients?.length
-      ? plannedMeal.overrideIngredients
-      : plannedMeal.recipe.ingredients,
-    instructions:
-      plannedMeal.overrideInstructions || plannedMeal.recipe.instructions,
-    servings: plannedMeal.overrideServings || plannedMeal.recipe.servings,
-    duration: plannedMeal.overrideDuration || plannedMeal.recipe.duration,
-    difficulty: plannedMeal.overrideDifficulty || plannedMeal.recipe.difficulty,
-  }
+  const plannedMealAsRecipe = plannedMealToRecipe(plannedMeal)
+
+  // Delete action
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const deleteAction = (
+    <>
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => setShowDeleteDialog(true)}
+        disabled={deletePlannedMealMutation.isPending}
+        className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+      >
+        <Trash className="h-4 w-4" />
+      </Button>
+
+      <DeleteConfirmationDialog
+        title="Delete Planned Meal"
+        itemName={plannedMealAsRecipe.name}
+        deleteMutation={deletePlannedMealMutation}
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        deleteButtonText="Delete Planned Meal"
+      />
+    </>
+  )
 
   return (
     <ChatCanva
@@ -53,6 +83,7 @@ export function PlannedMealChatView({ plannedMeal }: PlannedMealChatViewProps) {
       chatOptions={chatOptions}
       contentTabLabel="Planned Meal"
       chatTabLabel="Assistant"
+      actions={deleteAction}
     />
   )
 }

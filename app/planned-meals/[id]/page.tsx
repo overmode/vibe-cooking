@@ -22,7 +22,7 @@ export default function PlannedMealPage() {
     return (
       <div className="flex flex-col items-center justify-center h-full">
         <LoadingSpinner size="lg" />
-        <p className="mt-4 text-muted-foreground">Loading recipe...</p>
+        <p className="mt-4 text-muted-foreground">Loading planned meal...</p>
       </div>
     )
   }

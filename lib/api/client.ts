@@ -50,3 +50,11 @@ export const updatePlannedMealStatus = async (
       : apiRoutes.plannedMeal.uncook(id)
   return post<PlannedMeal>(url, {})
 }
+
+export const planRecipe = async (id: string) => {
+  return post<PlannedMeal>(apiRoutes.recipe.plan(id), {})
+}
+
+export const deletePlannedMealById = async (id: string) => {
+  return del<{ success: boolean }>(apiRoutes.plannedMeal.byId(id))
+}

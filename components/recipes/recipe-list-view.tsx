@@ -16,12 +16,24 @@ import {
   Calendar,
   Users,
   ChefHat,
+  CheckCircle,
+  Loader2,
 } from 'lucide-react'
 
 import { SortField, SortDirection } from '@/components/recipes/types'
 import { useRouter } from 'next/navigation'
 import { routes } from '@/lib/routes'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { Button } from '@/components/ui/button'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+import { usePlanRecipe } from '@/lib/api/hooks/recipes'
+import { useState } from 'react'
+
 interface RecipeListViewProps {
   recipes: RecipeMetadata[]
   handleSort: (field: SortField) => void
@@ -38,6 +50,7 @@ export function RecipeListView({
   sortDirection,
 }: RecipeListViewProps) {
   const router = useRouter()
+  const [planningRecipeId, setPlanningRecipeId] = useState<string | null>(null)
 
   const renderSortIcon = (field: SortField) => {
     if (sortField !== field) return null
@@ -46,6 +59,20 @@ export function RecipeListView({
     ) : (
       <ChevronDown className="h-4 w-4 ml-1" />
     )
+  }
+
+  const { mutate: planRecipe } = usePlanRecipe({
+    options: {
+      onSettled: () => {
+        setPlanningRecipeId(null)
+      },
+    },
+  })
+
+  const handlePlanClick = (e: React.MouseEvent, recipeId: string) => {
+    e.stopPropagation()
+    setPlanningRecipeId(recipeId)
+    planRecipe(recipeId)
   }
 
   return (
@@ -95,7 +122,7 @@ export function RecipeListView({
                 </div>
               </TableHead>
               <TableHead>
-                <div className="flex items-center">Planned</div>
+                <div className="flex items-center">Plan</div>
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -104,6 +131,8 @@ export function RecipeListView({
               const isPlanned =
                 recipe.plannedMeals &&
                 recipe.plannedMeals.some((meal) => meal.status === 'PLANNED')
+
+              const isPlanning = planningRecipeId === recipe.id
 
               return (
                 <TableRow
@@ -161,14 +190,39 @@ export function RecipeListView({
                     )}
                   </TableCell>
                   <TableCell>
-                    {isPlanned ? (
-                      <div className="flex items-center gap-1 text-emerald-600 font-medium">
-                        <Calendar className="h-3.5 w-3.5" />
-                        <span>Yes</span>
-                      </div>
-                    ) : (
-                      <span className="text-slate-400">No</span>
-                    )}
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          {isPlanned ? (
+                            <div className="flex h-8 w-8 items-center justify-center text-emerald-600">
+                              <CheckCircle className="h-4 w-4" />
+                            </div>
+                          ) : isPlanning ? (
+                            <div className="flex h-8 w-8 items-center justify-center text-lime-600">
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            </div>
+                          ) : (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-lime-600 hover:bg-lime-50"
+                              onClick={(e) => handlePlanClick(e, recipe.id)}
+                            >
+                              <Calendar className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </TooltipTrigger>
+                        <TooltipContent side="left">
+                          <p>
+                            {isPlanned
+                              ? 'Already planned'
+                              : isPlanning
+                              ? 'Planning...'
+                              : 'Add to meal plan'}
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </TableCell>
                 </TableRow>
               )

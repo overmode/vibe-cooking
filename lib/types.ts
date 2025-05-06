@@ -1,5 +1,10 @@
-import { Prisma } from '@prisma/client'
+import { Prisma, Recipe } from '@prisma/client'
 import { z } from 'zod'
+
+export type CardDisplayMetadata = Pick<
+  Recipe,
+  'id' | 'name' | 'duration' | 'difficulty' | 'servings'
+>
 
 export type RecipeMetadata = Prisma.RecipeGetPayload<{
   select: {
