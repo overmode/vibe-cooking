@@ -53,3 +53,8 @@ export type PlannedMealWithRecipe = Prisma.PlannedMealGetPayload<{
 
 // bypasses a zod schema and accept a type instead. Can be used to type safe values
 export const asTypedSchema = <T>() => ({} as unknown as z.ZodType<T>)
+
+export type ChatSuggestion = {
+  label: string
+  message: string
+}

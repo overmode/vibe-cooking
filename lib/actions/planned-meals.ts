@@ -29,7 +29,7 @@ export const getPlannedMealsMetadataAction = async (): Promise<
 > => {
   const { userId } = await auth()
   if (!userId) {
-    handleActionError('Unauthorized', 'getPlannedMealsMetadataAction')
+    handleActionError('Unauthorized', 'get planned meals metadata')
   }
   const plannedMeals = await getPlannedMealsMetadata({ userId })
   return plannedMeals
@@ -38,7 +38,7 @@ export const getPlannedMealsMetadataAction = async (): Promise<
 export const getPlannedMealsAction = async () => {
   const { userId } = await auth()
   if (!userId) {
-    handleActionError('Unauthorized', 'getPlannedMealsAction')
+    handleActionError('Unauthorized', 'get planned meals')
   }
   const plannedMeals = await getPlannedMeals({ userId })
   return plannedMeals
@@ -49,7 +49,7 @@ export const createPlannedMealAction = async (
 ) => {
   const { userId } = await auth()
   if (!userId) {
-    handleActionError('Unauthorized', 'createPlannedMealAction')
+    handleActionError('Unauthorized', 'create planned meal')
   }
   const plannedMeal = await createPlannedMeal({
     userId,
@@ -61,7 +61,7 @@ export const createPlannedMealAction = async (
 export const deletePlannedMealAction = async (plannedMealId: string) => {
   const { userId } = await auth()
   if (!userId) {
-    handleActionError('Unauthorized', 'deletePlannedMealAction')
+    handleActionError('Unauthorized', 'delete planned meal')
   }
   const plannedMeal = await deletePlannedMeal({ id: plannedMealId, userId })
   return plannedMeal
@@ -72,7 +72,7 @@ export const updatePlannedMealAction = async (
 ) => {
   const { userId } = await auth()
   if (!userId) {
-    handleActionError('Unauthorized', 'updatePlannedMealAction')
+    handleActionError('Unauthorized', 'update planned meal')
   }
   const plannedMeal = await updatePlannedMeal({
     userId,
@@ -86,7 +86,7 @@ export const getPlannedMealByIdAction = async (
 ): Promise<PlannedMealWithRecipe> => {
   const { userId } = await auth()
   if (!userId) {
-    handleActionError('Unauthorized', 'getPlannedMealByIdAction')
+    handleActionError('Unauthorized', 'get planned meal')
   }
   const plannedMeal = await getPlannedMealById({ id, userId })
   return plannedMeal
@@ -98,7 +98,7 @@ export async function updateStatus(
 ) {
   const { userId } = await auth()
   if (!userId) {
-    handleActionError('Unauthorized', 'updateStatus')
+    handleActionError('Unauthorized', 'update status')
   }
 
   return await prisma.$transaction(async (tx) => {
@@ -109,7 +109,7 @@ export async function updateStatus(
     })
 
     if (!plannedMeal) {
-      handleActionError('Planned meal not found', 'updateCookedStatus')
+      handleActionError('Planned meal not found', 'update cooked status')
     }
 
     if (plannedMeal.status === status) return plannedMeal
