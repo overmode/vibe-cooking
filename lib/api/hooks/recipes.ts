@@ -69,20 +69,18 @@ export const useDeleteRecipeById = ({
 }
 
 export const usePlanRecipe = ({
-  id,
   options = {},
 }: {
-  id: string
-  options?: Omit<UseMutationOptions<PlannedMeal, Error>, 'mutationFn'>
-}) => {
+  options?: Omit<UseMutationOptions<PlannedMeal, Error, string>, 'mutationFn'>
+} = {}) => {
   const queryClient = useQueryClient()
   return useMutation({
     ...options,
-    mutationFn: async () => await planRecipe(id),
+    mutationFn: async (id: string) => await planRecipe(id),
     onSuccess: (data, variables, context) => {
       options.onSuccess?.(data, variables, context)
       queryClient.invalidateQueries({
-        queryKey: queryKeys.recipes.byId(id),
+        queryKey: queryKeys.recipes.byId(variables),
       })
       queryClient.invalidateQueries({
         queryKey: queryKeys.plannedMeals.all,

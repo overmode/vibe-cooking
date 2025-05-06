@@ -14,9 +14,7 @@ export function RecipeMetadataCard({ recipe }: RecipeMetadataCardProps) {
     recipe.plannedMeals &&
     recipe.plannedMeals?.some((meal) => meal.status === 'PLANNED')
 
-  const { mutate: planRecipe, isPending: isPlanning } = usePlanRecipe({
-    id: recipe.id,
-  })
+  const { mutate: planRecipe, isPending: isPlanning } = usePlanRecipe()
 
   const headerIcon = recipe.isFavorite ? (
     <Heart className="h-5 w-5 text-rose-400 fill-rose-400 flex-shrink-0 animate-pulse-subtle" />
@@ -28,7 +26,7 @@ export function RecipeMetadataCard({ recipe }: RecipeMetadataCardProps) {
       disabled={isPlanned || isPlanning}
       onClick={(e) => {
         e.preventDefault()
-        planRecipe()
+        planRecipe(recipe.id)
       }}
     >
       {isPlanned ? (
