@@ -79,10 +79,10 @@ export function RecipeListView({
 
   return (
     <ScrollArea className="h-full rounded-md">
-      <div className="rounded-lg border bg-card shadow-sm overflow-hidden">
+      <div>
         <Table>
           <TableHeader>
-            <TableRow className="bg-primary/10 shadow-sm hover:bg-primary/10">
+            <TableRow>
               {[
                 { label: 'Name', field: 'name', width: 'w-[40%]' },
                 { label: 'Duration', field: 'duration', width: '' },
@@ -121,30 +121,15 @@ export function RecipeListView({
               return (
                 <TableRow
                   key={recipe.id}
-                  className="group border-b transition-colors cursor-pointer hover:bg-accent/5"
                   onClick={() => router.push(routes.recipes.byId(recipe.id))}
+                  className="hover:cursor-pointer"
                 >
                   <TableCell className="py-3">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-foreground group-hover:text-primary transition-colors">
-                        {recipe.name}
-                      </span>
-                      {recipe.isFavorite && (
-                        <Badge
-                          variant="outline"
-                          className="gap-1 py-0 px-2 border-destructive bg-destructive/5"
-                        >
-                          <Heart className="h-3 w-3 text-destructive fill-destructive" />
-                          <span className="text-xs text-destructive">
-                            Favorite
-                          </span>
-                        </Badge>
-                      )}
-                    </div>
+                    <span>{recipe.name}</span>
                   </TableCell>
                   <TableCell>
                     {recipe.duration ? (
-                      <div className="flex items-center gap-1.5 text-muted-foreground">
+                      <div className="flex items-center gap-1.5">
                         <Clock className="h-3.5 w-3.5 text-primary/70" />
                         <span>{recipe.duration} min</span>
                       </div>
@@ -170,7 +155,7 @@ export function RecipeListView({
                             style={{ width: `${recipe.difficulty * 10}%` }}
                           />
                         </div>
-                        <span className="text-xs ml-2 text-muted-foreground">
+                        <span className="text-xs ml-2">
                           {recipe.difficulty}/10
                         </span>
                       </div>
@@ -184,7 +169,7 @@ export function RecipeListView({
                     {recipe.cookCount > 0 ? (
                       <div className="flex items-center gap-1.5">
                         <ChefHat className="h-3.5 w-3.5 text-primary/70" />
-                        <span className="font-medium">{recipe.cookCount}x</span>
+                        <span>{recipe.cookCount}x</span>
                       </div>
                     ) : (
                       <span className="text-muted-foreground/60 italic text-sm">

@@ -54,7 +54,7 @@ export function CookingCongratulationsDialog({
         <DialogFooter className="sm:justify-center gap-2 mt-4">
           <Button variant="outline" onClick={onMarkUncooked} className="gap-2">
             <X className="h-4 w-4" />
-            Mark as Uncooked
+            Undo
           </Button>
           <Button
             onClick={onGoHome}
