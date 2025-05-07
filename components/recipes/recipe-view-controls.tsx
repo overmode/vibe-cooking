@@ -164,15 +164,15 @@ export function RecipeViewControls({
       </DropdownMenu>
       {/* List view doesn't work UX-wise on mobile */}
       {!isMobile && (
-        <div className="flex border border-border rounded-md overflow-hidden shadow-sm">
+        <div className="flex border rounded-md overflow-hidden shadow-sm">
           <Button
             variant={viewMode === 'grid' ? 'default' : 'ghost'}
             size="sm"
             onClick={() => setViewMode('grid')}
             className={
               viewMode === 'grid'
-                ? 'bg-primary/5 text-primary hover:bg-primary/10 hover:text-primary'
-                : 'text-muted-foreground hover:bg-muted'
+                ? 'bg-primary/5 text-primary hover:bg-primary/10 hover:text-primary rounded-r-none'
+                : 'text-muted-foreground hover:bg-muted rounded-r-none'
             }
           >
             <Grid3X3 className="h-4 w-4" />
@@ -183,8 +183,8 @@ export function RecipeViewControls({
             onClick={() => setViewMode('list')}
             className={
               viewMode === 'list'
-                ? 'bg-primary/5 text-primary hover:bg-primary/10 hover:text-primary'
-                : 'text-muted-foreground hover:bg-muted'
+                ? 'bg-primary/5 text-primary hover:bg-primary/10 hover:text-primary rounded-l-none'
+                : 'text-muted-foreground hover:bg-muted rounded-l-none'
             }
           >
             <List className="h-4 w-4" />

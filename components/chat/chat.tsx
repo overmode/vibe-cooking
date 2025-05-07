@@ -38,7 +38,7 @@ export function Chat({
           />
         )}
       </div>
-      <div className="sticky bottom-0 bg-background p-2 pb-0">
+      <div className="sticky bottom-0 pb-0">
         <ChatInput
           input={input}
           handleInputChange={handleInputChange}

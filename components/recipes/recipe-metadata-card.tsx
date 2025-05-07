@@ -1,7 +1,7 @@
 import { RecipeMetadata } from '@/lib/types'
 import { Button } from '../ui/button'
 import { usePlanRecipe } from '@/lib/api/hooks/recipes'
-import { Heart, Calendar, CheckCircle2, Loader2 } from 'lucide-react'
+import { Calendar, CheckCircle2, Loader2 } from 'lucide-react'
 import { routes } from '@/lib/routes'
 import { RecipeCardBase } from '@/components/recipes/shared/recipe-card-base'
 
@@ -15,10 +15,6 @@ export function RecipeMetadataCard({ recipe }: RecipeMetadataCardProps) {
     recipe.plannedMeals?.some((meal) => meal.status === 'PLANNED')
 
   const { mutate: planRecipe, isPending: isPlanning } = usePlanRecipe()
-
-  const headerIcon = recipe.isFavorite ? (
-    <Heart className="h-5 w-5 text-destructive fill-destructive flex-shrink-0 animate-pulse-subtle opacity-90" />
-  ) : null
 
   const actionContent = (
     <Button
@@ -51,7 +47,6 @@ export function RecipeMetadataCard({ recipe }: RecipeMetadataCardProps) {
     <RecipeCardBase
       metadata={recipe}
       linkHref={routes.recipes.byId(recipe.id)}
-      headerIcon={headerIcon}
       actionContent={actionContent}
     />
   )

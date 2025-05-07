@@ -76,7 +76,7 @@ export function RecipeChatView({ recipe }: RecipeChatViewProps) {
         size="sm"
         onClick={() => setShowDeleteDialog(true)}
         disabled={deleteRecipeMutation.isPending}
-        className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+        className="text-destructive hover:text-destructive/80 hover:bg-destructive/10 dark:hover:bg-destructive/20"
       >
         <Trash className="h-4 w-4" />
       </Button>

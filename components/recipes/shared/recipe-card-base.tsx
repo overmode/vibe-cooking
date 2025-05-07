@@ -1,62 +1,78 @@
-import { Card } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Clock, Users } from 'lucide-react'
 import Link from 'next/link'
 import { CardDisplayMetadata } from '@/lib/types'
 
+export const RecipeMetadataDescription = ({
+  duration,
+  difficulty,
+  servings,
+}: {
+  duration: number | null | undefined
+  difficulty: number | null | undefined
+  servings: number | null | undefined
+}) => {
+  return (
+    <div className="flex flex-wrap items-center">
+      {duration && (
+        <>
+          <div className="flex flex-wrap items-center">
+            <span
+              className={`flex items-center gap-1.5 text-muted-foreground text-sm font-medium`}
+            >
+              <Clock className="h-3.5 w-3.5 opacity-80" />
+              <span>{duration} min</span>
+            </span>
+          </div>
+          <span className="mx-2 text-muted-foreground">•</span>
+        </>
+      )}
+      {difficulty && (
+        <>
+          <div className="flex flex-wrap items-center">
+            <span
+              className={`flex items-center gap-1.5 text-muted-foreground text-sm font-medium`}
+            >
+              <span>Level {difficulty}/10</span>
+            </span>
+          </div>
+          <span className="mx-2 text-muted-foreground">•</span>
+        </>
+      )}
+      {servings && (
+        <div className="flex flex-wrap items-center">
+          <span
+            className={`flex items-center gap-1.5 text-muted-foreground text-sm font-medium`}
+          >
+            <Users className="h-3.5 w-3.5 opacity-80" />
+            <span>{servings} servings</span>
+          </span>
+        </div>
+      )}
+    </div>
+  )
+}
+
 export interface RecipeCardBaseProps {
   metadata: CardDisplayMetadata
   linkHref: string
-  headerIcon?: React.ReactNode
   actionContent?: React.ReactNode
   className?: string
-}
-
-// New component to display metadata items
-export function MetadataItem({
-  children,
-  className,
-}: {
-  children: React.ReactNode
-  className?: string
-}) {
-  return (
-    <span
-      className={`flex items-center gap-1.5 text-primary text-sm font-medium ${className}`}
-    >
-      {children}
-    </span>
-  )
 }
 
 export function RecipeCardBase({
   metadata,
   linkHref,
-  headerIcon,
   actionContent,
   className,
 }: RecipeCardBaseProps) {
   const { name, duration, difficulty, servings } = metadata
-
-  // Default metadata items based on recipe properties
-  const metadataToRender = [
-    duration && (
-      <MetadataItem key="duration">
-        <Clock className="h-3.5 w-3.5 opacity-80" />
-        <span>{duration} min</span>
-      </MetadataItem>
-    ),
-    difficulty && (
-      <MetadataItem key="difficulty">
-        <span>Level {difficulty}/10</span>
-      </MetadataItem>
-    ),
-    servings && servings > 0 && (
-      <MetadataItem key="servings">
-        <Users className="h-3.5 w-3.5 opacity-80" />
-        <span>{servings} servings</span>
-      </MetadataItem>
-    ),
-  ].filter(Boolean)
 
   return (
     <Link
@@ -68,33 +84,23 @@ export function RecipeCardBase({
           className || ''
         }`}
       >
-        <div className="flex h-full flex-col p-5">
-          <div className="mb-3 flex items-start justify-between">
-            <h3 className="line-clamp-2 text-xl font-semibold leading-tight tracking-tight relative pl-3 border-l-2 border-primary/70">
-              {name}
-            </h3>
-            {headerIcon && <div className="ml-2">{headerIcon}</div>}
-          </div>
-
-          {metadataToRender.length > 0 && (
-            <div className="mb-4 min-h-8 flex flex-wrap items-center">
-              {metadataToRender.map((item, index) => (
-                <div key={index} className="flex items-center">
-                  {item}
-                  {index < metadataToRender.length - 1 && (
-                    <span className="mx-2 text-muted-foreground">•</span>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-
+        <CardHeader>
+          <CardTitle className="leading-tight line-clamp-2">{name}</CardTitle>
+          <CardDescription>
+            <RecipeMetadataDescription
+              duration={duration}
+              difficulty={difficulty}
+              servings={servings}
+            />
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
           {actionContent && (
             <div className="mt-auto pt-3 opacity-90 hover:opacity-100 transition-opacity">
               {actionContent}
             </div>
           )}
-        </div>
+        </CardContent>
       </Card>
     </Link>
   )

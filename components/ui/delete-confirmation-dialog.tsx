@@ -69,7 +69,7 @@ export function DeleteConfirmationDialog({
           </AlertDialogTitle>
           <AlertDialogDescription className="text-center">
             Are you sure you want to delete{' '}
-            <span className="font-medium text-foreground">{itemName}</span>
+            <span className="font-medium text-primary">{itemName}</span>
             ?
             <br />
             This action cannot be undone.
@@ -80,12 +80,11 @@ export function DeleteConfirmationDialog({
           <AlertDialogAction
             onClick={() => deleteMutation.mutate()}
             disabled={deleteMutation.isPending}
-            className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
           >
             {deleteMutation.isPending ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                {pendingText}
+                {pendingText}{' '}
               </>
             ) : (
               deleteButtonText
