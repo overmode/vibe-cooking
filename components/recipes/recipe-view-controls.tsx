@@ -17,6 +17,7 @@ interface RecipeViewControlsProps {
   setSortField: (field: SortField) => void
   sortDirection: SortDirection
   setSortDirection: (direction: SortDirection) => void
+  isMobile?: boolean
 }
 
 export function RecipeViewControls({
@@ -27,7 +28,7 @@ export function RecipeViewControls({
   sortDirection,
   setSortDirection,
   isMobile,
-}: RecipeViewControlsProps & { isMobile?: boolean }) {
+}: RecipeViewControlsProps) {
   // Format the sort field name for display
   const formatSortFieldName = (field: SortField): string => {
     switch (field) {
@@ -47,18 +48,20 @@ export function RecipeViewControls({
           <Button
             variant="outline"
             size="sm"
-            className="text-primary border-primary/20"
+            className="text-foreground/80 border-border hover:bg-secondary/5 shadow-sm"
           >
-            Sort by: {formatSortFieldName(sortField)}
+            Sort: {formatSortFieldName(sortField)}
             {sortDirection === 'asc' ? (
-              <ChevronUp className="ml-2 h-4 w-4" />
+              <ChevronUp className="ml-2 h-4 w-4 text-primary/80" />
             ) : (
-              <ChevronDown className="ml-2 h-4 w-4" />
+              <ChevronDown className="ml-2 h-4 w-4 text-primary/80" />
             )}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuLabel>Recipe Properties</DropdownMenuLabel>
+          <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
+            Recipe Properties
+          </DropdownMenuLabel>
           <DropdownMenuItem
             onClick={() => {
               setSortField('name')
@@ -125,7 +128,9 @@ export function RecipeViewControls({
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />
-          <DropdownMenuLabel>Usage & Dates</DropdownMenuLabel>
+          <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
+            Usage & Dates
+          </DropdownMenuLabel>
 
           <DropdownMenuItem
             onClick={() => {
@@ -163,15 +168,15 @@ export function RecipeViewControls({
       </DropdownMenu>
       {/* List view doesn't work UX-wise on mobile */}
       {!isMobile && (
-        <div className="flex border border-primary/20 rounded-md overflow-hidden">
+        <div className="flex border border-border rounded-md overflow-hidden shadow-sm">
           <Button
             variant={viewMode === 'grid' ? 'default' : 'ghost'}
             size="sm"
             onClick={() => setViewMode('grid')}
             className={
               viewMode === 'grid'
-                ? 'bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary/80'
-                : 'text-primary hover:bg-primary/5'
+                ? 'bg-primary/5 text-primary hover:bg-primary/10 hover:text-primary'
+                : 'text-muted-foreground hover:bg-muted'
             }
           >
             <Grid3X3 className="h-4 w-4" />
@@ -182,8 +187,8 @@ export function RecipeViewControls({
             onClick={() => setViewMode('list')}
             className={
               viewMode === 'list'
-                ? 'bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary/80'
-                : 'text-primary hover:bg-primary/5'
+                ? 'bg-primary/5 text-primary hover:bg-primary/10 hover:text-primary'
+                : 'text-muted-foreground hover:bg-muted'
             }
           >
             <List className="h-4 w-4" />
