@@ -13,7 +13,7 @@ import {
   ChevronUp,
   ChevronDown,
   Heart,
-  Calendar,
+  CalendarPlus,
   Users,
   ChefHat,
   CheckCircle,
@@ -33,6 +33,8 @@ import {
 } from '@/components/ui/tooltip'
 import { usePlanRecipe } from '@/lib/api/hooks/recipes'
 import { useState } from 'react'
+import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
 
 interface RecipeListViewProps {
   recipes: RecipeMetadata[]
@@ -77,53 +79,35 @@ export function RecipeListView({
 
   return (
     <ScrollArea className="h-full rounded-md">
-      <div className="rounded-md border shadow-sm">
+      <div className="rounded-lg border bg-card shadow-sm overflow-hidden">
         <Table>
-          <TableHeader className="bg-muted/50">
-            <TableRow>
-              <TableHead
-                className="w-[40%] cursor-pointer"
-                onClick={() => handleSort('name')}
-              >
-                <div className="flex items-center">
-                  Name {renderSortIcon('name')}
-                </div>
-              </TableHead>
-              <TableHead
-                className="cursor-pointer"
-                onClick={() => handleSort('duration')}
-              >
-                <div className="flex items-center">
-                  Duration {renderSortIcon('duration')}
-                </div>
-              </TableHead>
-              <TableHead
-                className="cursor-pointer"
-                onClick={() => handleSort('difficulty')}
-              >
-                <div className="flex items-center">
-                  Difficulty {renderSortIcon('difficulty')}
-                </div>
-              </TableHead>
-              <TableHead
-                className="cursor-pointer"
-                onClick={() => handleSort('cookCount')}
-              >
-                <div className="flex items-center">
-                  Cook Count {renderSortIcon('cookCount')}
-                </div>
-              </TableHead>
-              <TableHead
-                className="cursor-pointer"
-                onClick={() => handleSort('servings')}
-              >
-                <div className="flex items-center">
-                  Servings {renderSortIcon('servings')}
-                </div>
-              </TableHead>
-              <TableHead>
-                <div className="flex items-center">Plan</div>
-              </TableHead>
+          <TableHeader>
+            <TableRow className="bg-primary/10 shadow-sm hover:bg-primary/10">
+              {[
+                { label: 'Name', field: 'name', width: 'w-[40%]' },
+                { label: 'Duration', field: 'duration', width: '' },
+                { label: 'Difficulty', field: 'difficulty', width: '' },
+                { label: 'Cook Count', field: 'cookCount', width: '' },
+                { label: 'Servings', field: 'servings', width: '' },
+                { label: 'Plan', field: '', width: 'w-[80px]' },
+              ].map((column) => (
+                <TableHead
+                  key={column.field || 'action'}
+                  className={cn(
+                    column.width,
+                    column.field ? 'cursor-pointer font-medium' : '',
+                    'transition-colors'
+                  )}
+                  onClick={() =>
+                    column.field && handleSort(column.field as SortField)
+                  }
+                >
+                  <div className="flex items-center py-2">
+                    {column.label}
+                    {column.field && renderSortIcon(column.field as SortField)}
+                  </div>
+                </TableHead>
+              ))}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -137,40 +121,69 @@ export function RecipeListView({
               return (
                 <TableRow
                   key={recipe.id}
-                  className="border-b transition-colors cursor-pointer hover:bg-muted/20"
+                  className="group border-b transition-colors cursor-pointer hover:bg-accent/5"
                   onClick={() => router.push(routes.recipes.byId(recipe.id))}
                 >
-                  <TableCell>
-                    <div className="flex items-center gap-2 font-medium text-foreground">
-                      {recipe.name}
+                  <TableCell className="py-3">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-foreground group-hover:text-primary transition-colors">
+                        {recipe.name}
+                      </span>
                       {recipe.isFavorite && (
-                        <Heart className="h-4 w-4 text-destructive fill-destructive animate-pulse-subtle" />
+                        <Badge
+                          variant="outline"
+                          className="gap-1 py-0 px-2 border-destructive bg-destructive/5"
+                        >
+                          <Heart className="h-3 w-3 text-destructive fill-destructive" />
+                          <span className="text-xs text-destructive">
+                            Favorite
+                          </span>
+                        </Badge>
                       )}
                     </div>
                   </TableCell>
                   <TableCell>
                     {recipe.duration ? (
-                      <div className="flex items-center gap-1 text-muted-foreground">
-                        <Clock className="h-3.5 w-3.5" />
+                      <div className="flex items-center gap-1.5 text-muted-foreground">
+                        <Clock className="h-3.5 w-3.5 text-primary/70" />
                         <span>{recipe.duration} min</span>
                       </div>
                     ) : (
-                      UNDEFINED_VALUE_PLACEHOLDER
+                      <span className="text-muted-foreground/60">
+                        {UNDEFINED_VALUE_PLACEHOLDER}
+                      </span>
                     )}
                   </TableCell>
                   <TableCell>
                     {recipe.difficulty ? (
-                      <span className="text-muted-foreground">
-                        {recipe.difficulty}/10
-                      </span>
+                      <div className="flex items-center">
+                        <div className="w-24 h-2 bg-muted rounded-full overflow-hidden">
+                          <div
+                            className={cn(
+                              'h-full rounded-full',
+                              recipe.difficulty <= 3
+                                ? 'bg-primary/60'
+                                : recipe.difficulty <= 6
+                                ? 'bg-amber-500'
+                                : 'bg-destructive/70'
+                            )}
+                            style={{ width: `${recipe.difficulty * 10}%` }}
+                          />
+                        </div>
+                        <span className="text-xs ml-2 text-muted-foreground">
+                          {recipe.difficulty}/10
+                        </span>
+                      </div>
                     ) : (
-                      UNDEFINED_VALUE_PLACEHOLDER
+                      <span className="text-muted-foreground/60">
+                        {UNDEFINED_VALUE_PLACEHOLDER}
+                      </span>
                     )}
                   </TableCell>
                   <TableCell>
                     {recipe.cookCount > 0 ? (
-                      <div className="flex items-center gap-1 text-muted-foreground">
-                        <ChefHat className="h-3.5 w-3.5" />
+                      <div className="flex items-center gap-1.5">
+                        <ChefHat className="h-3.5 w-3.5 text-primary/70" />
                         <span className="font-medium">{recipe.cookCount}x</span>
                       </div>
                     ) : (
@@ -181,12 +194,14 @@ export function RecipeListView({
                   </TableCell>
                   <TableCell>
                     {recipe.servings > 0 ? (
-                      <div className="flex items-center gap-1 text-muted-foreground">
-                        <Users className="h-3.5 w-3.5" />
+                      <div className="flex items-center gap-1.5">
+                        <Users className="h-3.5 w-3.5 text-primary/70" />
                         <span>{recipe.servings}</span>
                       </div>
                     ) : (
-                      UNDEFINED_VALUE_PLACEHOLDER
+                      <span className="text-muted-foreground/60">
+                        {UNDEFINED_VALUE_PLACEHOLDER}
+                      </span>
                     )}
                   </TableCell>
                   <TableCell>
@@ -194,25 +209,25 @@ export function RecipeListView({
                       <Tooltip>
                         <TooltipTrigger asChild>
                           {isPlanned ? (
-                            <div className="flex h-8 w-8 items-center justify-center text-success">
-                              <CheckCircle className="h-4 w-4" />
+                            <div className="flex h-9 w-9 items-center justify-center text-success rounded-full">
+                              <CheckCircle className="h-4 w-4 text-success" />
                             </div>
                           ) : isPlanning ? (
-                            <div className="flex h-8 w-8 items-center justify-center text-primary">
+                            <div className="flex h-9 w-9 items-center justify-center text-primary bg-primary/10 rounded-full">
                               <Loader2 className="h-4 w-4 animate-spin" />
                             </div>
                           ) : (
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-8 w-8 text-primary hover:bg-primary/10"
+                              className="h-9 w-9"
                               onClick={(e) => handlePlanClick(e, recipe.id)}
                             >
-                              <Calendar className="h-4 w-4" />
+                              <CalendarPlus className="h-4 w-4" />
                             </Button>
                           )}
                         </TooltipTrigger>
-                        <TooltipContent side="left">
+                        <TooltipContent side="left" className="font-medium">
                           <p>
                             {isPlanned
                               ? 'Already planned'

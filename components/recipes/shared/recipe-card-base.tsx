@@ -41,7 +41,7 @@ export function RecipeCardBase({
   const metadataToRender = [
     duration && (
       <MetadataItem key="duration">
-        <Clock className="h-3.5 w-3.5 text-primary/80" />
+        <Clock className="h-3.5 w-3.5 opacity-80" />
         <span>{duration} min</span>
       </MetadataItem>
     ),
@@ -52,7 +52,7 @@ export function RecipeCardBase({
     ),
     servings && servings > 0 && (
       <MetadataItem key="servings">
-        <Users className="h-3.5 w-3.5 text-primary/80" />
+        <Users className="h-3.5 w-3.5 opacity-80" />
         <span>{servings} servings</span>
       </MetadataItem>
     ),
@@ -64,11 +64,11 @@ export function RecipeCardBase({
       className="block transition-transform hover:scale-[1.02] focus:scale-[1.02] focus:outline-none"
     >
       <Card
-        className={`h-full overflow-hidden border-border/30 shadow-sm hover:shadow-md transition-all duration-300 ${
+        className={`h-full overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 ${
           className || ''
         }`}
       >
-        <div className="flex h-full flex-col bg-card p-5 text-card-foreground">
+        <div className="flex h-full flex-col p-5">
           <div className="mb-3 flex items-start justify-between">
             <h3 className="line-clamp-2 text-xl font-semibold leading-tight tracking-tight relative pl-3 border-l-2 border-primary/70">
               {name}
@@ -82,7 +82,7 @@ export function RecipeCardBase({
                 <div key={index} className="flex items-center">
                   {item}
                   {index < metadataToRender.length - 1 && (
-                    <span className="mx-2 text-primary/30">•</span>
+                    <span className="mx-2 text-muted-foreground">•</span>
                   )}
                 </div>
               ))}

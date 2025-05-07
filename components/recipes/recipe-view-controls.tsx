@@ -45,16 +45,12 @@ export function RecipeViewControls({
     <div className="flex items-center gap-2">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
-            variant="outline"
-            size="sm"
-            className="text-foreground/80 border-border hover:bg-secondary/5 shadow-sm"
-          >
+          <Button variant="outline" size="sm">
             Sort: {formatSortFieldName(sortField)}
             {sortDirection === 'asc' ? (
-              <ChevronUp className="ml-2 h-4 w-4 text-primary/80" />
+              <ChevronUp className="ml-2 h-4 w-4" />
             ) : (
-              <ChevronDown className="ml-2 h-4 w-4 text-primary/80" />
+              <ChevronDown className="ml-2 h-4 w-4" />
             )}
           </Button>
         </DropdownMenuTrigger>

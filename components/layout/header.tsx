@@ -38,7 +38,7 @@ export function Header() {
   return (
     <header
       className={cn(
-        'sticky top-0 z-50 flex justify-between items-center px-4 border-b border-border',
+        'sticky top-0 z-50 flex justify-between items-center px-4 border-b',
         'h-16 py-3',
         'bg-card/80 backdrop-blur-md transition-colors duration-200'
       )}
