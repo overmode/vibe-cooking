@@ -8,6 +8,25 @@ interface ChatMessageProps {
   message: Message
 }
 
+const AnimatedDot = ({ delay }: { delay: number }) => {
+  return (
+    <span
+      className="inline-block w-2 h-2 bg-primary rounded-full opacity-75 animate-pulse"
+      style={{ animationDuration: '1s', animationDelay: `${delay}ms` }}
+    ></span>
+  )
+}
+
+const AnimatedDots = () => {
+  return (
+    <div className="flex items-center gap-1.5">
+      <AnimatedDot delay={0} />
+      <AnimatedDot delay={300} />
+      <AnimatedDot delay={600} />
+    </div>
+  )
+}
+
 export function ChatMessage({ message }: ChatMessageProps) {
   const isUser = message.role === 'user'
   const isLoading =
@@ -28,7 +47,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
         {!isUser && (
           <Avatar className="h-8 w-8 flex-shrink-0">
             <AvatarImage src="/logo-coconut-bowl.png" alt="Vibe Cooking Logo" />
-            <AvatarFallback className="bg-lime-200 text-primary-foreground">
+            <AvatarFallback className="bg-accent text-accent-foreground">
               🍳
             </AvatarFallback>
           </Avatar>
@@ -37,20 +56,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
         <div className="flex flex-col gap-2 w-full">
           {isLoading && (
             <div className="rounded-lg px-4 py-3 w-fit">
-              <div className="flex items-center gap-1.5">
-                <span
-                  className="inline-block w-2 h-2 bg-primary rounded-full opacity-75 animate-pulse"
-                  style={{ animationDuration: '1s', animationDelay: '0ms' }}
-                ></span>
-                <span
-                  className="inline-block w-2 h-2 bg-primary rounded-full opacity-75 animate-pulse"
-                  style={{ animationDuration: '1s', animationDelay: '300ms' }}
-                ></span>
-                <span
-                  className="inline-block w-2 h-2 bg-primary rounded-full opacity-75 animate-pulse"
-                  style={{ animationDuration: '1s', animationDelay: '600ms' }}
-                ></span>
-              </div>
+              <AnimatedDots />
             </div>
           )}
           {message.parts?.map((part, index) => {

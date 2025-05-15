@@ -83,19 +83,16 @@ export function ChatInput({
   }
 
   return (
-    <form
-      onSubmit={handleFormSubmit}
-      className="pb-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
-    >
+    <form onSubmit={handleFormSubmit} className="pb-4 pl-4 pr-4">
       <div className="flex flex-col w-full">
         <div className="flex gap-3 items-end">
           <div className="relative w-full">
             <Textarea
-              placeholder="Ask anything"
+              placeholder="Ask anything in any language"
               value={input}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
-              className="min-h-[60px] w-full resize-none rounded-xl border-2 focus-visible:ring-1 focus-visible:ring-offset-0 max-h-[200px]"
+              className="min-h-16 w-full max-h-48 resize-none"
               rows={1}
               maxLength={maxLength}
             />
@@ -104,7 +101,7 @@ export function ChatInput({
             type="submit"
             size="icon"
             disabled={input.trim().length === 0 || isSubmitting || cooldown}
-            className="h-[60px] w-[60px] rounded-xl bg-primary hover:bg-primary/90 transition-all"
+            className="h-16 w-16 transition-all"
           >
             <SendHorizontal
               className={`h-5 w-5 ${

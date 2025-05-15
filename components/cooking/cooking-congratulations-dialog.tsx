@@ -42,7 +42,7 @@ export function CookingCongratulationsDialog({
             Congratulations! 🎉
           </DialogTitle>
           <DialogDescription className="text-center pt-2 flex flex-col gap-2">
-            <span className="font-medium text-lime-600 dark:text-lime-500">
+            <span className="font-medium text-primary">
               You&apos;ve successfully cooked{' '}
               {plannedMealWithRecipe.overrideName ||
                 plannedMealWithRecipe.recipe.name}
@@ -54,11 +54,11 @@ export function CookingCongratulationsDialog({
         <DialogFooter className="sm:justify-center gap-2 mt-4">
           <Button variant="outline" onClick={onMarkUncooked} className="gap-2">
             <X className="h-4 w-4" />
-            Mark as Uncooked
+            Undo
           </Button>
           <Button
             onClick={onGoHome}
-            className="gap-2 bg-lime-600 hover:bg-lime-700"
+            className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
           >
             <Home className="h-4 w-4" />
             Go Home

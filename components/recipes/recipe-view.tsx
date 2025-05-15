@@ -93,9 +93,11 @@ export function RecipeView({
   }
 
   return (
-    <div className="container mx-auto py-6 flex flex-col h-full">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-lime-900">Your Recipes</h2>
+    <div className="container mx-auto py-8 flex flex-col h-full">
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-2xl font-medium tracking-tight text-primary">
+          Your Recipes
+        </h2>
         <RecipeViewControls
           viewMode={viewMode}
           setViewMode={setViewMode}
@@ -110,18 +112,20 @@ export function RecipeView({
       <div className="flex-1 min-h-0">
         {viewMode === 'grid' ? (
           <ScrollArea className="h-full rounded-md">
-            <div className="p-1">
+            <div className="p-1 pb-6">
               <RecipeGridView recipes={sortedRecipes} />
             </div>
           </ScrollArea>
         ) : (
           <ScrollArea className="h-full rounded-md">
-            <RecipeListView
-              recipes={sortedRecipes}
-              handleSort={handleSort}
-              sortField={sortField}
-              sortDirection={sortDirection}
-            />
+            <div className="pb-6">
+              <RecipeListView
+                recipes={sortedRecipes}
+                handleSort={handleSort}
+                sortField={sortField}
+                sortDirection={sortDirection}
+              />
+            </div>
           </ScrollArea>
         )}
       </div>

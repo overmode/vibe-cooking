@@ -1,14 +1,67 @@
-import { Badge } from '@/components/ui/badge'
-import { Card } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Clock, Users } from 'lucide-react'
 import Link from 'next/link'
 import { CardDisplayMetadata } from '@/lib/types'
 
+export const RecipeMetadataDescription = ({
+  duration,
+  difficulty,
+  servings,
+}: {
+  duration: number | null | undefined
+  difficulty: number | null | undefined
+  servings: number | null | undefined
+}) => {
+  return (
+    <div className="flex flex-wrap items-center">
+      {duration && (
+        <>
+          <div className="flex flex-wrap items-center">
+            <span
+              className={`flex items-center gap-1.5 text-muted-foreground text-sm font-medium`}
+            >
+              <Clock className="h-3.5 w-3.5 opacity-80" />
+              <span>{duration} min</span>
+            </span>
+          </div>
+          <span className="mx-2 text-muted-foreground">•</span>
+        </>
+      )}
+      {difficulty && (
+        <>
+          <div className="flex flex-wrap items-center">
+            <span
+              className={`flex items-center gap-1.5 text-muted-foreground text-sm font-medium`}
+            >
+              <span>Level {difficulty}/10</span>
+            </span>
+          </div>
+          <span className="mx-2 text-muted-foreground">•</span>
+        </>
+      )}
+      {servings && (
+        <div className="flex flex-wrap items-center">
+          <span
+            className={`flex items-center gap-1.5 text-muted-foreground text-sm font-medium`}
+          >
+            <Users className="h-3.5 w-3.5 opacity-80" />
+            <span>{servings} servings</span>
+          </span>
+        </div>
+      )}
+    </div>
+  )
+}
+
 export interface RecipeCardBaseProps {
   metadata: CardDisplayMetadata
   linkHref: string
-  headerIcon?: React.ReactNode
-  badges?: React.ReactNode[]
   actionContent?: React.ReactNode
   className?: string
 }
@@ -16,75 +69,38 @@ export interface RecipeCardBaseProps {
 export function RecipeCardBase({
   metadata,
   linkHref,
-  headerIcon,
-  badges: customBadges,
   actionContent,
   className,
 }: RecipeCardBaseProps) {
   const { name, duration, difficulty, servings } = metadata
 
-  // Default badges based on metadata
-  const defaultBadges = [
-    duration && (
-      <Badge
-        key="duration"
-        variant="secondary"
-        className="flex items-center gap-1 bg-lime-100 text-lime-700 hover:bg-lime-200"
-      >
-        <Clock className="h-3 w-3" />
-        <span>{duration} min</span>
-      </Badge>
-    ),
-    difficulty && (
-      <Badge
-        key="difficulty"
-        variant="secondary"
-        className="flex items-center gap-1 bg-lime-100 text-lime-700 hover:bg-lime-200"
-      >
-        <span>Difficulty: {difficulty}/10</span>
-      </Badge>
-    ),
-    servings && servings > 0 && (
-      <Badge
-        key="servings"
-        variant="secondary"
-        className="flex items-center gap-1 bg-lime-100 text-lime-700 hover:bg-lime-200"
-      >
-        <Users className="h-3 w-3" />
-        <span>{servings} servings</span>
-      </Badge>
-    ),
-  ].filter(Boolean)
-
-  // Use custom badges if provided, otherwise use default badges
-  const badgesToRender = customBadges || defaultBadges
-
   return (
     <Link
       href={linkHref}
-      className="transition-transform hover:scale-[1.02] focus:scale-[1.02] focus:outline-none block"
+      className="block transition-transform hover:scale-[1.02] focus:scale-[1.02] focus:outline-none"
     >
       <Card
-        className={`h-full overflow-hidden border-lime-100 shadow-md hover:shadow-lg transition-shadow duration-200 ${
+        className={`h-full overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 ${
           className || ''
         }`}
       >
-        <div className="bg-gradient-to-r from-lime-50 to-lime-100 p-4 flex flex-col h-full">
-          <div className="flex justify-between items-start mb-2">
-            <h3 className="text-xl font-semibold line-clamp-2 text-lime-900">
-              {name}
-            </h3>
-            {headerIcon}
-          </div>
-
-          {badgesToRender.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-4 min-h-8">
-              {badgesToRender}
+        <CardHeader>
+          <CardTitle className="leading-tight line-clamp-2">{name}</CardTitle>
+          <CardDescription>
+            <RecipeMetadataDescription
+              duration={duration}
+              difficulty={difficulty}
+              servings={servings}
+            />
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {actionContent && (
+            <div className="mt-auto pt-3 opacity-90 hover:opacity-100 transition-opacity">
+              {actionContent}
             </div>
           )}
-
-          {actionContent && <div className="mt-auto pt-2">{actionContent}</div>}
-        </div>
+        </CardContent>
       </Card>
     </Link>
   )

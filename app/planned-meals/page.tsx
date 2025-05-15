@@ -6,7 +6,6 @@ import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { usePlannedMealsMetadata } from '@/lib/api/hooks/planned-meals'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
-import { ScrollArea } from '@/components/ui/scroll-area'
 
 export default function PlannedMealsPage() {
   const {
@@ -44,23 +43,7 @@ export default function PlannedMealsPage() {
   }
 
   if (plannedMeals) {
-    return (
-      <div className="container mx-auto py-6 flex flex-col h-full">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-lime-900">
-            Your Planned Meals
-          </h2>
-        </div>
-
-        <div className="flex-1 min-h-0">
-          <ScrollArea className="h-full rounded-md">
-            <div className="p-1">
-              <PlannedMealsGridView plannedMeals={plannedMeals} />
-            </div>
-          </ScrollArea>
-        </div>
-      </div>
-    )
+    return <PlannedMealsGridView plannedMeals={plannedMeals} />
   }
 
   return <div>Loading...</div>
