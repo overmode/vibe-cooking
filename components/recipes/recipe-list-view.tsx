@@ -12,7 +12,6 @@ import {
   Clock,
   ChevronUp,
   ChevronDown,
-  Heart,
   CalendarPlus,
   Users,
   ChefHat,
@@ -33,7 +32,6 @@ import {
 } from '@/components/ui/tooltip'
 import { usePlanRecipe } from '@/lib/api/hooks/recipes'
 import { useState } from 'react'
-import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 
 interface RecipeListViewProps {
