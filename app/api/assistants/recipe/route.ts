@@ -30,7 +30,9 @@ export async function POST(req: Request) {
   });
 
   const result = streamText({
-    model: openai("gpt-4.1-mini"),
+    model: openai("gpt-4.1", {
+      parallelToolCalls: false,
+    }),
     system: prompt[0].content,
     maxSteps: 5,
     messages,
