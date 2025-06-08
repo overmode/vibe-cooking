@@ -1,18 +1,18 @@
-import { ChatInput } from './chat-input'
-import { ChatMessagesDisplay } from './chat-messages-display'
+import { ChatInput } from "./chat-input";
+import { ChatMessagesDisplay } from "./chat-messages-display";
 
-import { Message } from 'ai'
-import { ChatSuggestions } from './chat-suggestions'
-import { ChatSuggestion } from '@/lib/types'
+import { Message } from "ai";
+import { ChatSuggestions } from "./chat-suggestions";
+import { ChatSuggestion } from "@/lib/types";
 
 interface ChatProps {
-  messages: Message[]
-  input: string
-  handleInputChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
-  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void
-  error?: Error | undefined
-  suggestions?: ChatSuggestion[]
-  handleSuggestionClick?: (suggestion: ChatSuggestion) => void
+  messages: Message[];
+  input: string;
+  handleInputChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  error?: Error | undefined;
+  suggestions?: ChatSuggestion[];
+  handleSuggestionClick?: (suggestion: ChatSuggestion) => void;
 }
 
 export function Chat({
@@ -46,5 +46,5 @@ export function Chat({
         />
       </div>
     </div>
-  )
+  );
 }

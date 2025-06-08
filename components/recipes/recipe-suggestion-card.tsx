@@ -4,17 +4,17 @@ import {
   CardTitle,
   CardHeader,
   CardDescription,
-} from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { CreateRecipeInput } from '@/lib/validators/recipe'
-import { MemoizedMarkdown } from '@/components/chat/memoized-markdown'
-import { RecipeMetadataDescription } from './shared/recipe-card-base'
-export const RecipePreviewCard = ({
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CreateRecipeInput } from "@/lib/validators/recipe";
+import { MemoizedMarkdown } from "@/components/chat/memoized-markdown";
+import { RecipeMetadataDescription } from "./shared/recipe-card-base";
+export const RecipeSuggestionCard = ({
   cardData,
   id,
 }: {
-  cardData: CreateRecipeInput
-  id: string
+  cardData: CreateRecipeInput;
+  id: string;
 }) => {
   return (
     <Card className="w-full mx-auto overflow-hidden shadow-sm">
@@ -61,5 +61,5 @@ export const RecipePreviewCard = ({
         </Tabs>
       </CardContent>
     </Card>
-  )
-}
+  );
+};

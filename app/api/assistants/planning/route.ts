@@ -1,9 +1,9 @@
-import { openai } from '@ai-sdk/openai'
-import { streamText } from 'ai'
+import { openai } from "@ai-sdk/openai";
+import { streamText } from "ai";
 import {
   createRecipeTool,
   deleteRecipeTool,
-  renderRecipePreviewTool,
+  renderRecipeSuggestionTool,
   getRecipesMetadataTool,
   updateRecipeTool,
   getRecipeByIdTool,
@@ -14,28 +14,28 @@ import {
   getPlannedMealByIdTool,
   getPlannedMealsTool,
   enterCookingModeTool,
-} from '@/lib/ai/tools/tools'
-import { getPrompt } from '@/lib/ai/prompts'
-import { validateAssistantsRequest } from '@/app/api/assistants/validate-assistant-request'
+} from "@/lib/ai/tools/tools";
+import { getPrompt } from "@/lib/ai/prompts";
+import { validateAssistantsRequest } from "@/app/api/assistants/validate-assistant-request";
 
 // Allow streaming responses up to 30 seconds
-export const maxDuration = 30
+export const maxDuration = 30;
 
 export async function POST(req: Request) {
-  const { messages } = await req.json()
+  const { messages } = await req.json();
 
-  const { error } = await validateAssistantsRequest(messages)
+  const { error } = await validateAssistantsRequest(messages);
   if (error) {
-    return error
+    return error;
   }
 
   const prompt = await getPrompt({
-    promptName: 'planning-assistant',
+    promptName: "planning-assistant",
     promptVars: { date: new Date().toISOString() },
-  })
+  });
 
   const result = streamText({
-    model: openai('gpt-4.1-mini'),
+    model: openai("gpt-4.1-mini"),
     system: prompt[0].content,
     maxSteps: 5,
     messages,
@@ -47,8 +47,8 @@ export async function POST(req: Request) {
       deleteRecipeTool: deleteRecipeTool,
       getRecipeByIdTool: getRecipeByIdTool,
 
-      // Recipe preview
-      renderRecipePreviewTool: renderRecipePreviewTool,
+      // Recipe suggestion
+      renderRecipeSuggestionTool: renderRecipeSuggestionTool,
 
       // planned meal crud operations
       getPlannedMealsMetadataTool: getPlannedMealsMetadataTool,
@@ -61,7 +61,10 @@ export async function POST(req: Request) {
       // Cooking mode
       enterCookingModeTool: enterCookingModeTool,
     },
-  })
+    onError: (error) => {
+      console.error(error);
+    },
+  });
 
-  return result.toDataStreamResponse()
+  return result.toDataStreamResponse();
 }
