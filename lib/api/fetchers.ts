@@ -15,6 +15,14 @@ export async function fetcher<T = unknown>(
 
   if (!res.ok) {
     const errorText = await res.text();
+    
+    // Handle 404 errors more gracefully - don't log these as they're often expected
+    if (res.status === 404) {
+      const error = new Error('Resource not found');
+      error.name = 'NotFoundError';
+      throw error;
+    }
+    
     handleApiError(errorText, url);
   }
 

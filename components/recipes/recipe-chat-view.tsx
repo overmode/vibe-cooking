@@ -26,7 +26,8 @@ export function RecipeChatView({ recipe }: RecipeChatViewProps) {
     id: recipe.id,
     options: {
       onSuccess: () => {
-        router.push(routes.recipes.all)
+        // Use replace instead of push to prevent back navigation to deleted recipe
+        router.replace(routes.recipes.all)
       },
     },
   })
