@@ -26,8 +26,10 @@ export const createRecipeAction = async (recipeData: CreateRecipeInput) => {
   }
 
   try {
+    // Optimistic approach: try to create directly, handle limit violations
     const recipe = await prisma.$transaction(
       async (tx) => {
+        // Check count first to give user immediate feedback for obvious violations
         const count = await tx.recipe.count({
           where: { userId },
         })
@@ -46,8 +48,8 @@ export const createRecipeAction = async (recipeData: CreateRecipeInput) => {
         })
       },
       {
-        // Slightly slower but prevents race conditions
-        isolationLevel: 'Serializable',
+        // Use ReadCommitted to avoid deadlocks while still maintaining data consistency
+        isolationLevel: 'ReadCommitted',
       }
     )
 

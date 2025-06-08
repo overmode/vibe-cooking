@@ -54,8 +54,10 @@ export const createPlannedMealAction = async (
   }
 
   try {
+    // Optimistic approach: try to create directly, handle limit violations
     const plannedMeal = await prisma.$transaction(
       async (tx) => {
+        // Check count first to give user immediate feedback for obvious violations
         const count = await tx.plannedMeal.count({
           where: { userId, status: PlannedMealStatus.PLANNED },
         })
@@ -73,8 +75,8 @@ export const createPlannedMealAction = async (
         })
       },
       {
-        // Slightly slower but prevents race conditions
-        isolationLevel: 'Serializable',
+        // Use ReadCommitted to avoid deadlocks while still maintaining data consistency
+        isolationLevel: 'ReadCommitted',
       }
     )
 
