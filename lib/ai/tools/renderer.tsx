@@ -1,75 +1,75 @@
-import React from 'react'
-import { RecipePreviewCard } from '@/components/recipes/recipe-preview-card'
-import { ToolInvocation } from 'ai'
+import React from "react";
+import { RecipeSuggestionCard } from "@/components/recipes/recipe-suggestion-card";
+import { ToolInvocation } from "ai";
 import {
   ToolSuccess,
   ToolSpinner,
   ToolError,
-} from '@/components/chat/tool-feedback'
-import { PlannedMealMetadata, RecipeMetadata } from '@/lib/types'
-import { PlannedMeal, Recipe } from '@prisma/client'
-import { ToolResult } from '@/lib/ai/tools/types'
+} from "@/components/chat/tool-feedback";
+import { PlannedMealMetadata, RecipeMetadata } from "@/lib/types";
+import { PlannedMeal, Recipe } from "@prisma/client";
+import { ToolResult } from "@/lib/ai/tools/types";
 
 // Simple type for tool rendering functions
-type ToolRenderer = (toolInvocation: ToolInvocation) => React.ReactNode
+type ToolRenderer = (toolInvocation: ToolInvocation) => React.ReactNode;
 
 // Map of tool names to their rendering functions
-const toolRenderers: Record<string, ToolRenderer> = {}
+const toolRenderers: Record<string, ToolRenderer> = {};
 
 // Simple function to render a tool's output
 export function renderToolInvocation(
   toolInvocation: ToolInvocation
 ): React.ReactNode {
-  const renderer = toolRenderers[toolInvocation.toolName]
+  const renderer = toolRenderers[toolInvocation.toolName];
   if (!renderer)
     return (
       <ToolError
         message={`No renderer found for tool: ${toolInvocation.toolName}`}
       />
-    )
+    );
 
-  return renderer(toolInvocation)
+  return renderer(toolInvocation);
 }
 
 // A simple tool renderer that renders a message for loading and success states
 function toolMessageRenderer<T>({
   loadingMessage,
   successMessage,
-  errorMessage = (error: Extract<ToolResult<T>, { success: false }>['error']) =>
+  errorMessage = (error: Extract<ToolResult<T>, { success: false }>["error"]) =>
     error,
 }: {
-  loadingMessage: string
+  loadingMessage: string;
   successMessage: (
-    data: Extract<ToolResult<T>, { success: true }>['data']
-  ) => string
+    data: Extract<ToolResult<T>, { success: true }>["data"]
+  ) => string;
   errorMessage?: (
-    error: Extract<ToolResult<T>, { success: false }>['error']
-  ) => string
+    error: Extract<ToolResult<T>, { success: false }>["error"]
+  ) => string;
 }): (toolInvocation: ToolInvocation) => React.ReactNode {
   const renderer = (toolInvocation: ToolInvocation) => {
     switch (toolInvocation.state) {
-      case 'partial-call':
-        return <ToolSpinner message={loadingMessage} />
-      case 'call':
-        return <ToolSpinner message={loadingMessage} />
-      case 'result':
+      case "partial-call":
+        return <ToolSpinner message={loadingMessage} />;
+      case "call":
+        return <ToolSpinner message={loadingMessage} />;
+      case "result":
         if (!toolInvocation.result.success) {
           return (
             <ToolError message={errorMessage(toolInvocation.result.error)} />
-          )
+          );
         }
         return (
           <ToolSuccess message={successMessage(toolInvocation.result.data)} />
-        )
+        );
       default:
-        return <ToolError message="Unknown tool state" />
+        return <ToolError message="Unknown tool state" />;
     }
-  }
+  };
 
   // Add display name to fix ESLint warning
-  renderer.displayName = 'ToolMessageRenderer'
+  renderer.displayName = "ToolMessageRenderer";
 
-  return renderer
+  return renderer;
 }
 
 // TODO in all functions below, tighter typing for result.data => should be linked to the actual tool
@@ -77,8 +77,8 @@ function toolMessageRenderer<T>({
 const renderGetRecipesMetadataTool = toolMessageRenderer<RecipeMetadata[]>({
   loadingMessage: `Retrieving recipes metadata...`,
   successMessage: (data) =>
-    `Retrieved ${data.length} recipe${data.length > 1 ? 's' : ''} metadata!`,
-})
+    `Retrieved ${data.length} recipe${data.length > 1 ? "s" : ""} metadata!`,
+});
 
 const renderGetPlannedMealsMetadataTool = toolMessageRenderer<
   PlannedMealMetadata[]
@@ -86,89 +86,90 @@ const renderGetPlannedMealsMetadataTool = toolMessageRenderer<
   loadingMessage: `Retrieving planned meals metadata...`,
   successMessage: (data) =>
     `Retrieved ${data.length} planned meal${
-      data.length > 1 ? 's' : ''
+      data.length > 1 ? "s" : ""
     } metadata!`,
-})
+});
 
 const renderGetPlannedMealsTool = toolMessageRenderer<PlannedMealMetadata[]>({
   loadingMessage: `Retrieving planned meals...`,
   successMessage: (data) =>
-    `Retrieved ${data.length} planned meal${data.length > 1 ? 's' : ''}!`,
-})
+    `Retrieved ${data.length} planned meal${data.length > 1 ? "s" : ""}!`,
+});
 
 const renderCreateRecipeTool = toolMessageRenderer<Recipe>({
-  loadingMessage: 'Creating recipe...',
+  loadingMessage: "Creating recipe...",
   successMessage: (data) => `Recipe "${data.name}" created successfully!`,
-})
+});
 
 const renderCreatePlannedMealTool = toolMessageRenderer<PlannedMeal>({
-  loadingMessage: 'Planning recipe...',
-  successMessage: () => 'Recipe planned successfully!',
-})
+  loadingMessage: "Planning recipe...",
+  successMessage: () => "Recipe planned successfully!",
+});
 
 const renderDeleteRecipeTool = toolMessageRenderer<Recipe>({
-  loadingMessage: 'Deleting recipe...',
-  successMessage: () => 'Recipe deleted successfully!',
-})
+  loadingMessage: "Deleting recipe...",
+  successMessage: () => "Recipe deleted successfully!",
+});
 
 const renderDeletePlannedMealTool = toolMessageRenderer<PlannedMeal>({
-  loadingMessage: 'Deleting planned meal...',
-  successMessage: () => 'Planned meal deleted successfully!',
-})
+  loadingMessage: "Deleting planned meal...",
+  successMessage: () => "Planned meal deleted successfully!",
+});
 
 const renderUpdateRecipeTool = toolMessageRenderer<Recipe>({
-  loadingMessage: 'Updating recipe...',
-  successMessage: () => 'Recipe updated successfully!',
-})
+  loadingMessage: "Updating recipe...",
+  successMessage: () => "Recipe updated successfully!",
+});
 
 const renderUpdatePlannedMealTool = toolMessageRenderer<PlannedMeal>({
-  loadingMessage: 'Updating planned meal...',
-  successMessage: () => 'Planned meal updated successfully!',
-})
+  loadingMessage: "Updating planned meal...",
+  successMessage: () => "Planned meal updated successfully!",
+});
 
 const renderGetRecipeByIdTool = toolMessageRenderer<Recipe>({
-  loadingMessage: 'Retrieving recipe...',
-  successMessage: () => 'Recipe retrieved successfully!',
-})
+  loadingMessage: "Retrieving recipe...",
+  successMessage: () => "Recipe retrieved successfully!",
+});
 
 const renderGetPlannedMealByIdTool = toolMessageRenderer<PlannedMeal>({
-  loadingMessage: 'Retrieving planned meal...',
-  successMessage: () => 'Planned meal retrieved successfully!',
-})
+  loadingMessage: "Retrieving planned meal...",
+  successMessage: () => "Planned meal retrieved successfully!",
+});
 
 const renderEnterCookingModeTool = toolMessageRenderer<void>({
-  loadingMessage: 'Entering cooking mode...',
-  successMessage: () => 'Cooking mode entered successfully!',
-})
+  loadingMessage: "Entering cooking mode...",
+  successMessage: () => "Cooking mode entered successfully!",
+});
 
-function renderRecipePreviewTool(
+function renderRecipeSuggestionTool(
   toolInvocation: ToolInvocation
 ): React.ReactNode {
   switch (toolInvocation.state) {
-    case 'partial-call':
-      return <ToolSpinner message={`Rendering recipe preview...`} />
-    case 'call':
-      return <ToolSpinner message={`Rendering recipe preview...`} />
-    case 'result':
+    case "partial-call":
+      return <ToolSpinner message={`Generating recipe suggestion...`} />;
+    case "call":
+      return <ToolSpinner message={`Generating recipe suggestion...`} />;
+    case "result":
       return (
-        <RecipePreviewCard
+        <RecipeSuggestionCard
           cardData={toolInvocation.args}
           id={toolInvocation.toolCallId}
         />
-      )
+      );
   }
 }
 
-toolRenderers['renderRecipePreviewTool'] = renderRecipePreviewTool
-toolRenderers['createRecipeTool'] = renderCreateRecipeTool
-toolRenderers['deleteRecipeTool'] = renderDeleteRecipeTool
-toolRenderers['getRecipesMetadataTool'] = renderGetRecipesMetadataTool
-toolRenderers['updateRecipeTool'] = renderUpdateRecipeTool
-toolRenderers['getRecipeByIdTool'] = renderGetRecipeByIdTool
-toolRenderers['getPlannedMealsMetadataTool'] = renderGetPlannedMealsMetadataTool
-toolRenderers['getPlannedMealsTool'] = renderGetPlannedMealsTool
-toolRenderers['createPlannedMealTool'] = renderCreatePlannedMealTool
-toolRenderers['deletePlannedMealTool'] = renderDeletePlannedMealTool
-toolRenderers['updatePlannedMealTool'] = renderUpdatePlannedMealTool
-toolRenderers['getPlannedMealByIdTool'] = renderGetPlannedMealByIdTool
-toolRenderers['enterCookingModeTool'] = renderEnterCookingModeTool
+toolRenderers["renderRecipeSuggestionTool"] = renderRecipeSuggestionTool;
+toolRenderers["createRecipeTool"] = renderCreateRecipeTool;
+toolRenderers["deleteRecipeTool"] = renderDeleteRecipeTool;
+toolRenderers["getRecipesMetadataTool"] = renderGetRecipesMetadataTool;
+toolRenderers["updateRecipeTool"] = renderUpdateRecipeTool;
+toolRenderers["getRecipeByIdTool"] = renderGetRecipeByIdTool;
+toolRenderers["getPlannedMealsMetadataTool"] =
+  renderGetPlannedMealsMetadataTool;
+toolRenderers["getPlannedMealsTool"] = renderGetPlannedMealsTool;
+toolRenderers["createPlannedMealTool"] = renderCreatePlannedMealTool;
+toolRenderers["deletePlannedMealTool"] = renderDeletePlannedMealTool;
+toolRenderers["updatePlannedMealTool"] = renderUpdatePlannedMealTool;
+toolRenderers["getPlannedMealByIdTool"] = renderGetPlannedMealByIdTool;
+toolRenderers["enterCookingModeTool"] = renderEnterCookingModeTool;

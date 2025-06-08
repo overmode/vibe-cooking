@@ -10,8 +10,18 @@ export async function GET(
     //Auth is done in the action
     const recipe = await getRecipeByIdAction(id)
     return NextResponse.json(recipe)
-  } catch {
-    // TODO better error handling with custom error classes and status codes
+  } catch (error) {
+    // Handle recipe not found vs other errors
+    if (error instanceof Error && error.message.includes('Recipe not found')) {
+      return NextResponse.json(
+        { error: 'Recipe not found' },
+        { status: 404 }
+      )
+    }
+    
+    // Log the actual error for debugging
+    console.error('[API] /api/recipe/[id] GET error:', error)
+    
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }

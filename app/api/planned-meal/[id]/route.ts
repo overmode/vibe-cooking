@@ -15,8 +15,18 @@ export async function GET(
     //Auth is done in the action
     const plannedMeal = await getPlannedMealByIdAction(id)
     return NextResponse.json(plannedMeal)
-  } catch {
-    // TODO better error handling with custom error classes and status codes
+  } catch (error) {
+    // Handle planned meal not found vs other errors
+    if (error instanceof Error && error.message.includes('not found')) {
+      return NextResponse.json(
+        { error: 'Planned meal not found' },
+        { status: 404 }
+      )
+    }
+    
+    // Log the actual error for debugging
+    console.error('[API] /api/planned-meal/[id] GET error:', error)
+    
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }
@@ -66,8 +76,18 @@ export async function DELETE(
   try {
     await deletePlannedMealAction(id)
     return NextResponse.json({ success: true })
-  } catch {
-    // TODO better error handling with custom error classes and status codes
+  } catch (error) {
+    // Handle planned meal not found vs other errors
+    if (error instanceof Error && error.message.includes('Planned meal not found')) {
+      return NextResponse.json(
+        { error: 'Planned meal not found' },
+        { status: 404 }
+      )
+    }
+    
+    // Log the actual error for debugging
+    console.error('[API] /api/planned-meal/[id] DELETE error:', error)
+    
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }

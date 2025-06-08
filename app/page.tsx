@@ -28,10 +28,10 @@ export default function Home() {
       ],
       // run client-side tools that are automatically executed:
       async onToolCall({ toolCall }) {
-        if (toolCall.toolName === 'renderRecipePreviewTool') {
+        if (toolCall.toolName === 'renderRecipeSuggestionTool') {
           return {
             success: true,
-            data: 'The recipe was successfully rendered',
+            data: 'The recipe suggestion was successfully rendered',
           } as ToolResult<string>
         }
         if (toolCall.toolName === 'enterCookingModeTool') {

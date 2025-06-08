@@ -8,7 +8,11 @@ import {
   updatePlannedMealInputSchema,
 } from "@/lib/validators/plannedMeals";
 import { defineTool } from "@/lib/ai/tools/types";
-import { RecipeMetadata, PlannedMealMetadata, asTypedSchema } from "@/lib/types";
+import {
+  RecipeMetadata,
+  PlannedMealMetadata,
+  asTypedSchema,
+} from "@/lib/types";
 import { Recipe, PlannedMeal } from "@prisma/client";
 
 export const getRecipesMetadataDefinition = defineTool({
@@ -18,13 +22,15 @@ export const getRecipesMetadataDefinition = defineTool({
 });
 
 export const getPlannedMealsMetadataDefinition = defineTool({
-  description: "Get the metadata of all planned meals with status PLANNED belonging to the user.",
+  description:
+    "Get the metadata of all planned meals with status PLANNED belonging to the user.",
   parameters: z.object({}),
   result: asTypedSchema<PlannedMealMetadata[]>(),
 });
 
 export const getPlannedMealsDefinition = defineTool({
-  description: "Get all planned meals with status PLANNED belonging to the user. Useful for fetching all ingredients of upcoming meals.",
+  description:
+    "Get all planned meals with status PLANNED belonging to the user. Useful for fetching all ingredients of upcoming meals.",
   parameters: z.object({}),
   result: asTypedSchema<PlannedMeal[]>(),
 });
@@ -85,8 +91,9 @@ export const deletePlannedMealDefinition = defineTool({
   result: asTypedSchema<string>(),
 });
 
-export const renderRecipePreviewDefinition = defineTool({
-  description: "Renders a preview of a full recipe.",
+export const renderRecipeSuggestionDefinition = defineTool({
+  description:
+    "Renders a suggestion for a recipe without creating it. Use this to show users recipe ideas they can choose to create later. You can create any number and make multiple suggestions in a row.",
   parameters: createRecipeInputSchema,
   result: asTypedSchema<string>(),
 });

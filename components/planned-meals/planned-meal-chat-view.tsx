@@ -27,7 +27,8 @@ export function PlannedMealChatView({ plannedMeal }: PlannedMealChatViewProps) {
     id: plannedMeal.id,
     options: {
       onSuccess: () => {
-        router.push(routes.plannedMeal.all)
+        // Use replace instead of push to prevent back navigation to deleted planned meal
+        router.replace(routes.plannedMeal.all)
       },
     },
   })

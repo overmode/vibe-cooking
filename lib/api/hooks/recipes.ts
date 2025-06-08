@@ -56,8 +56,20 @@ export const useDeleteRecipeById = ({
   return useMutation({
     ...options,
     mutationFn: async () => await deleteRecipeById(id),
+    onMutate: async () => {
+      // Cancel any outgoing queries for this recipe to prevent race conditions
+      await queryClient.cancelQueries({
+        queryKey: queryKeys.recipes.byId(id),
+      })
+    },
     onSuccess: (data, variables, context) => {
       options.onSuccess?.(data, variables, context)
+      
+      // Remove the specific recipe from cache instead of just invalidating
+      queryClient.removeQueries({
+        queryKey: queryKeys.recipes.byId(id),
+      })
+      
       queryClient.invalidateQueries({
         queryKey: queryKeys.recipes.all,
       })

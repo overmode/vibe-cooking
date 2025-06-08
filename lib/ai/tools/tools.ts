@@ -12,7 +12,7 @@ import {
   deletePlannedMealDefinition,
   getPlannedMealByIdDefinition,
   getPlannedMealsDefinition,
-  renderRecipePreviewDefinition,
+  renderRecipeSuggestionDefinition,
   enterCookingModeDefinition,
 } from '@/lib/ai/tools/definitions'
 
@@ -96,9 +96,9 @@ export const deletePlannedMealTool = tool({
   execute: deletePlannedMealExecute,
 })
 
-export const renderRecipePreviewTool = tool({
-  description: renderRecipePreviewDefinition.description,
-  parameters: renderRecipePreviewDefinition.parameters,
+export const renderRecipeSuggestionTool = tool({
+  description: renderRecipeSuggestionDefinition.description,
+  parameters: renderRecipeSuggestionDefinition.parameters,
   // client-side only
 })
 
@@ -120,6 +120,6 @@ export const tools = [
   updatePlannedMealTool,
   deleteRecipeTool,
   deletePlannedMealTool,
-  renderRecipePreviewTool,
+  renderRecipeSuggestionTool,
   enterCookingModeTool,
 ]
