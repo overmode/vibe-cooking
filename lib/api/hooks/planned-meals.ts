@@ -235,13 +235,19 @@ export const useDeletePlannedMealMutation = ({
       );
       options.onError?.(error, variables, context);
     },
+    onSuccess: (data, variables, context) => {
+      options.onSuccess?.(data, variables, context)
+      
+      // Remove the specific planned meal from cache instead of just invalidating
+      queryClient.removeQueries({
+        queryKey: queryKeys.plannedMeals.byId(id),
+      })
+      
+      queryClient.invalidateQueries({ queryKey: queryKeys.plannedMeals.all })
+      queryClient.invalidateQueries({ queryKey: queryKeys.recipes.all })
+    },
     onSettled: (data, error, variables, context) => {
       options.onSettled?.(data, error, variables, context);
-      queryClient.invalidateQueries({ queryKey: queryKeys.plannedMeals.all });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.plannedMeals.byId(id),
-      });
-      queryClient.invalidateQueries({ queryKey: queryKeys.recipes.all });
     },
   });
 };
