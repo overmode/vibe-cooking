@@ -1,19 +1,19 @@
-'use client'
+"use client";
 
 import {
   SignedOut,
   SignInButton,
   SignUpButton,
   UserButton,
-} from '@clerk/nextjs'
-import { SignedIn } from '@clerk/nextjs'
-import { HeaderLogo } from '@/components/layout/header-logo'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import { Menu } from 'lucide-react'
-import { useState } from 'react'
+} from "@clerk/nextjs";
+import { SignedIn } from "@clerk/nextjs";
+import { HeaderLogo } from "@/components/layout/header-logo";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Menu } from "lucide-react";
+import { useState } from "react";
 import {
   Sheet,
   SheetContent,
@@ -21,26 +21,27 @@ import {
   SheetTitle,
   SheetTrigger,
   SheetClose,
-} from '@/components/ui/sheet'
-import { routes } from '@/lib/routes'
+} from "@/components/ui/sheet";
+import { routes } from "@/lib/routes";
 
 // Navigation items
 const navItems = [
-  { href: routes.home, label: 'Assistant' },
-  { href: routes.recipes.all, label: 'Recipes' },
-  { href: routes.plannedMeal.all, label: 'Planned Meals' },
-]
+  { href: routes.home, label: "Assistant" },
+  { href: routes.recipes.all, label: "Recipes" },
+  { href: routes.plannedMeal.all, label: "Planned Meals" },
+  { href: routes.preferences, label: "Preferences" },
+];
 
 export function Header() {
-  const pathname = usePathname()
-  const [isOpen, setIsOpen] = useState(false)
+  const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <header
       className={cn(
-        'sticky top-0 z-50 flex justify-between items-center px-4 border-b',
-        'h-16 py-3',
-        'bg-card/80 backdrop-blur-md transition-colors duration-200'
+        "sticky top-0 z-50 flex justify-between items-center px-4 border-b",
+        "h-16 py-3",
+        "bg-card/80 backdrop-blur-md transition-colors duration-200"
       )}
     >
       <div className="flex items-center gap-4">
@@ -49,16 +50,16 @@ export function Header() {
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-4">
           {navItems.map((item) => {
-            const isActive = pathname === item.href
+            const isActive = pathname === item.href;
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  'relative px-1 flex items-center h-8 text-sm font-medium transition-colors',
+                  "relative px-1 flex items-center h-8 text-sm font-medium transition-colors",
                   isActive
-                    ? 'text-primary'
-                    : 'text-muted-foreground hover:text-foreground'
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 {item.label}
@@ -66,7 +67,7 @@ export function Header() {
                   <span className="absolute left-0 right-0 bottom-0 h-0.5 bg-primary rounded-full" />
                 )}
               </Link>
-            )
+            );
           })}
         </nav>
       </div>
@@ -92,22 +93,22 @@ export function Header() {
             </SheetHeader>
             <nav className="flex flex-col gap-2 mt-4">
               {navItems.map((item) => {
-                const isActive = pathname === item.href
+                const isActive = pathname === item.href;
                 return (
                   <SheetClose asChild key={item.href}>
                     <Link
                       href={item.href}
                       className={cn(
-                        'flex items-center h-10 px-4 py-2 text-sm font-medium rounded-md transition-colors',
+                        "flex items-center h-10 px-4 py-2 text-sm font-medium rounded-md transition-colors",
                         isActive
-                          ? 'bg-accent text-accent-foreground'
-                          : 'text-muted-foreground hover:text-foreground hover:bg-accent/50 active:bg-accent/70'
+                          ? "bg-accent text-accent-foreground"
+                          : "text-muted-foreground hover:text-foreground hover:bg-accent/50 active:bg-accent/70"
                       )}
                     >
                       {item.label}
                     </Link>
                   </SheetClose>
-                )
+                );
               })}
             </nav>
           </SheetContent>
@@ -129,5 +130,5 @@ export function Header() {
         </SignedIn>
       </div>
     </header>
-  )
+  );
 }

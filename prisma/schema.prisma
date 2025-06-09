@@ -19,13 +19,13 @@ model Recipe {
   userId        String
   name          String        @db.VarChar(100)
   servings      Int
-  ingredients   String[]     
+  ingredients   String[]
   instructions  String        @db.VarChar(10000)
   duration      Int?          // duration in minutes
   difficulty    Int?          // scale: 1 (easy) to 10 (hard)
   isFavorite    Boolean       @default(false)
   createdAt     DateTime      @default(now())
-  plannedMeals  PlannedMeal[] 
+  plannedMeals  PlannedMeal[]
   cookCount     Int           @default(0)
 }
 
@@ -44,6 +44,15 @@ model PlannedMeal {
   status               PlannedMealStatus @default(PLANNED)
   createdAt            DateTime          @default(now())
   cookedAt             DateTime?
+}
+
+model UserDietaryPreferences {
+  userId      String   @id
+  preferences String   @db.VarChar(10000)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId])
 }
 
 enum PlannedMealStatus {

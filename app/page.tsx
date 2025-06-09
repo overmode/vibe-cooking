@@ -1,57 +1,63 @@
-'use client'
+"use client";
 
-import { useChat } from '@ai-sdk/react'
-import { ToolResult } from '@/lib/ai/tools/types'
-import { chatSuggestions } from '@/lib/constants/chat-suggestions'
-import { triggerToolEffects } from '@/lib/ai/tools/effects'
-import { useQueryClient } from '@tanstack/react-query'
-import { routes } from '@/lib/routes'
-import { useRouter } from 'next/navigation'
-import { enterCookingModeDefinition } from '@/lib/ai/tools/definitions'
-import { z } from 'zod'
-import { apiRoutes } from '@/lib/api/api-routes'
-import { Chat } from '@/components/chat/chat'
-import { ChatSuggestion } from '@/lib/types'
+import { useChat } from "@ai-sdk/react";
+import { ToolResult } from "@/lib/ai/tools/types";
+import { chatSuggestions } from "@/lib/constants/chat-suggestions";
+import { triggerToolEffects } from "@/lib/ai/tools/effects";
+import { useQueryClient } from "@tanstack/react-query";
+import { routes } from "@/lib/routes";
+import { useRouter } from "next/navigation";
+import { enterCookingModeDefinition } from "@/lib/ai/tools/definitions";
+import { z } from "zod";
+import { apiRoutes } from "@/lib/api/api-routes";
+import { Chat } from "@/components/chat/chat";
+import { ChatSuggestion } from "@/lib/types";
+import { useUserDietaryPreferences } from "@/lib/api/hooks/preferences";
 export default function Home() {
-  const queryClient = useQueryClient()
-  const router = useRouter()
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  const { data: userDietaryPreferences } = useUserDietaryPreferences({});
 
   const { messages, input, handleInputChange, handleSubmit, setInput, error } =
     useChat({
       api: apiRoutes.assistants.planning,
+      body: {
+        userDietaryPreferences: userDietaryPreferences?.preferences,
+      },
       initialMessages: [
         {
-          id: '1',
-          content: 'Welcome to Vibe Cooking! How can I help you today? 🌴 ',
-          role: 'assistant',
+          id: "1",
+          content: "Welcome to Vibe Cooking! How can I help you today? 🌴 ",
+          role: "assistant",
         },
       ],
       // run client-side tools that are automatically executed:
       async onToolCall({ toolCall }) {
-        if (toolCall.toolName === 'renderRecipeSuggestionTool') {
+        if (toolCall.toolName === "renderRecipeSuggestionTool") {
           return {
             success: true,
-            data: 'The recipe suggestion was successfully rendered',
-          } as ToolResult<string>
+            data: "The recipe suggestion was successfully rendered",
+          } as ToolResult<string>;
         }
-        if (toolCall.toolName === 'enterCookingModeTool') {
+        if (toolCall.toolName === "enterCookingModeTool") {
           const id = (
             toolCall.args as z.infer<
               typeof enterCookingModeDefinition.parameters
             >
-          ).id
-          router.push(routes.plannedMeal.cooking(id))
+          ).id;
+          router.push(routes.plannedMeal.cooking(id));
         }
       },
       onFinish: (message) => {
         // client-side side effects such as cache invalidation
-        triggerToolEffects(message, queryClient)
+        triggerToolEffects(message, queryClient);
       },
-    })
+    });
 
   const handleSuggestionClick = (suggestion: ChatSuggestion) => {
-    setInput(suggestion.message)
-  }
+    setInput(suggestion.message);
+  };
 
   return (
     <Chat
@@ -63,5 +69,5 @@ export default function Home() {
       suggestions={chatSuggestions}
       handleSuggestionClick={handleSuggestionClick}
     />
-  )
+  );
 }
