@@ -17,6 +17,7 @@ import { plannedMealToRecipe } from "@/lib/utils/plannedMealUtils";
 import { UseChatOptions } from "@ai-sdk/react";
 import { apiRoutes } from "@/lib/api/api-routes";
 import { routes } from "@/lib/routes";
+import { useUserDietaryPreferences } from "@/lib/api/hooks/preferences";
 interface CookingViewProps {
   plannedMealWithRecipe: PlannedMealWithRecipe;
 }
@@ -25,10 +26,13 @@ export function CookingView({ plannedMealWithRecipe }: CookingViewProps) {
   const queryClient = useQueryClient();
   const router = useRouter();
 
+  const { data: userDietaryPreferences } = useUserDietaryPreferences({});
+
   const chatOptions: UseChatOptions = {
     api: apiRoutes.assistants.cooking,
     body: {
       plannedMealWithRecipe,
+      userDietaryPreferences: userDietaryPreferences?.preferences,
     },
     initialMessages: [
       {

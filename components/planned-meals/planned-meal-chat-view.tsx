@@ -1,59 +1,64 @@
-'use client'
+"use client";
 
-import { UseChatOptions } from '@ai-sdk/react'
-import { RecipeViewer } from '@/components/recipes/recipe-viewer'
-import { triggerToolEffects } from '@/lib/ai/tools/effects'
-import { useQueryClient } from '@tanstack/react-query'
-import { ChatCanva } from '@/components/chat/chat-canva'
-import { useDeletePlannedMealMutation } from '@/lib/api/hooks/planned-meals'
-import { routes } from '@/lib/routes'
-import { PlannedMealWithRecipe } from '@/lib/types'
-import { apiRoutes } from '@/lib/api/api-routes'
-import { useRouter } from 'next/navigation'
-import { plannedMealToRecipe } from '@/lib/utils/plannedMealUtils'
-import { Button } from '@/components/ui/button'
-import { Trash } from 'lucide-react'
-import { useState } from 'react'
-import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog'
+import { UseChatOptions } from "@ai-sdk/react";
+import { RecipeViewer } from "@/components/recipes/recipe-viewer";
+import { triggerToolEffects } from "@/lib/ai/tools/effects";
+import { useQueryClient } from "@tanstack/react-query";
+import { ChatCanva } from "@/components/chat/chat-canva";
+import { useDeletePlannedMealMutation } from "@/lib/api/hooks/planned-meals";
+import { routes } from "@/lib/routes";
+import { PlannedMealWithRecipe } from "@/lib/types";
+import { apiRoutes } from "@/lib/api/api-routes";
+import { useRouter } from "next/navigation";
+import { plannedMealToRecipe } from "@/lib/utils/plannedMealUtils";
+import { Button } from "@/components/ui/button";
+import { Trash } from "lucide-react";
+import { useState } from "react";
+import { DeleteConfirmationDialog } from "@/components/ui/delete-confirmation-dialog";
+import { useUserDietaryPreferences } from "@/lib/api/hooks/preferences";
 
 interface PlannedMealChatViewProps {
-  plannedMeal: PlannedMealWithRecipe
+  plannedMeal: PlannedMealWithRecipe;
 }
 
 export function PlannedMealChatView({ plannedMeal }: PlannedMealChatViewProps) {
-  const queryClient = useQueryClient()
-  const router = useRouter()
+  const queryClient = useQueryClient();
+  const router = useRouter();
   const deletePlannedMealMutation = useDeletePlannedMealMutation({
     id: plannedMeal.id,
     options: {
       onSuccess: () => {
         // Use replace instead of push to prevent back navigation to deleted planned meal
-        router.replace(routes.plannedMeal.all)
+        router.replace(routes.plannedMeal.all);
       },
     },
-  })
+  });
+
+  const { data: userDietaryPreferences } = useUserDietaryPreferences({});
+
   const chatOptions: UseChatOptions = {
     api: apiRoutes.assistants.plannedMeal,
     body: {
       plannedMeal,
+      userDietaryPreferences: userDietaryPreferences?.preferences,
     },
     initialMessages: [
       {
-        id: 'planned-meal-intro',
+        id: "planned-meal-intro",
         content: `I'm here to help you with your planned meal! I can answer questions about it or help you make edits (note that these edits will not propagate to the recipe). What would you like to do? 🌴`,
-        role: 'assistant',
+        role: "assistant",
       },
     ],
     onFinish: (message) => {
       // client-side side effects such as cache invalidation
-      triggerToolEffects(message, queryClient)
+      triggerToolEffects(message, queryClient);
     },
-  }
+  };
 
-  const plannedMealAsRecipe = plannedMealToRecipe(plannedMeal)
+  const plannedMealAsRecipe = plannedMealToRecipe(plannedMeal);
 
   // Delete action
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const deleteAction = (
     <>
       <Button
@@ -75,7 +80,7 @@ export function PlannedMealChatView({ plannedMeal }: PlannedMealChatViewProps) {
         deleteButtonText="Delete Planned Meal"
       />
     </>
-  )
+  );
 
   return (
     <ChatCanva
@@ -86,5 +91,5 @@ export function PlannedMealChatView({ plannedMeal }: PlannedMealChatViewProps) {
       chatTabLabel="Assistant"
       actions={deleteAction}
     />
-  )
+  );
 }

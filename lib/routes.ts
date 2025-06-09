@@ -1,12 +1,13 @@
 export const routes = {
-  home: '/',
+  home: "/",
   plannedMeal: {
-    all: '/planned-meals',
+    all: "/planned-meals",
     byId: (id: string) => `/planned-meals/${id}`,
     cooking: (id: string) => `/planned-meals/${id}/cook`,
   },
   recipes: {
-    all: '/recipes',
+    all: "/recipes",
     byId: (id: string) => `/recipes/${id}`,
   },
-} as const
+  preferences: "/preferences",
+} as const;

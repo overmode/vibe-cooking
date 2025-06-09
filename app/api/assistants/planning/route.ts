@@ -22,7 +22,7 @@ import { validateAssistantsRequest } from "@/app/api/assistants/validate-assista
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
-  const { messages } = await req.json();
+  const { messages, userDietaryPreferences } = await req.json();
 
   const { error } = await validateAssistantsRequest(messages);
   if (error) {
@@ -31,7 +31,10 @@ export async function POST(req: Request) {
 
   const prompt = await getPrompt({
     promptName: "planning-assistant",
-    promptVars: { date: new Date().toISOString() },
+    promptVars: {
+      date: new Date().toISOString(),
+      user_dietary_preferences: userDietaryPreferences ?? "No preferences.",
+    },
   });
 
   const result = streamText({
