@@ -9,6 +9,7 @@ import {
 import { Check } from "lucide-react";
 import { useState, useCallback, useRef, useEffect } from "react";
 import { debounce } from "lodash";
+import { MAX_PREFERENCES_LENGTH } from "@/lib/constants/app_validation";
 
 export default function PreferencesPage() {
   const [localPreferences, setLocalPreferences] = useState("");
@@ -51,6 +52,7 @@ export default function PreferencesPage() {
     localPreferences === (serverPreferences?.preferences || "");
 
   // Debounced save function
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSave = useCallback(
     debounce((value: string) => {
       updateMutation.mutate(value);
@@ -104,12 +106,12 @@ export default function PreferencesPage() {
               value={localPreferences}
               onChange={(e) => handlePreferencesChange(e.target.value)}
               className="min-h-40 max-h-96 resize-none border-border/50 focus-visible:border-border"
-              maxLength={10000}
+              maxLength={MAX_PREFERENCES_LENGTH}
             />
             <div className="flex justify-between items-center">
-              {localPreferences.length > 10000 && (
+              {localPreferences.length >= MAX_PREFERENCES_LENGTH && (
                 <p className="text-xs text-destructive">
-                  {localPreferences.length}/10,000 characters (limit exceeded)
+                  {localPreferences.length}/{MAX_PREFERENCES_LENGTH} characters
                 </p>
               )}
               <div className="flex items-center gap-2 ml-auto">
