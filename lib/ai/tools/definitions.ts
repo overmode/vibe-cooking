@@ -93,7 +93,7 @@ export const deletePlannedMealDefinition = defineTool({
 
 export const renderRecipeSuggestionDefinition = defineTool({
   description:
-    "Renders a suggestion for a recipe without creating it. Use this to show users recipe ideas they can choose to create later. You can create any number and make multiple suggestions in a row.",
+    "Renders a recipe suggestion in a nicely formatted way, without creating it or providing any interaction buttons. This is a visualization-only tool - you must explicitly ask the user if they want to create the recipe after showing it, and then use createRecipeTool if they agree. You can show multiple suggestions in sequence to give users different options.",
   parameters: createRecipeInputSchema,
   result: asTypedSchema<string>(),
 });

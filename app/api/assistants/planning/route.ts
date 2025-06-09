@@ -40,7 +40,7 @@ export async function POST(req: Request) {
   const result = streamText({
     model: openai("gpt-4.1", { parallelToolCalls: false }),
     system: prompt[0].content,
-    maxSteps: 5,
+    maxSteps: 10,
     messages,
     tools: {
       // Recipe crud operations

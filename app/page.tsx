@@ -1,7 +1,6 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import { ToolResult } from "@/lib/ai/tools/types";
 import { chatSuggestions } from "@/lib/constants/chat-suggestions";
 import { triggerToolEffects } from "@/lib/ai/tools/effects";
 import { useQueryClient } from "@tanstack/react-query";
@@ -34,12 +33,6 @@ export default function Home() {
       ],
       // run client-side tools that are automatically executed:
       async onToolCall({ toolCall }) {
-        if (toolCall.toolName === "renderRecipeSuggestionTool") {
-          return {
-            success: true,
-            data: "The recipe suggestion was successfully rendered",
-          } as ToolResult<string>;
-        }
         if (toolCall.toolName === "enterCookingModeTool") {
           const id = (
             toolCall.args as z.infer<

@@ -35,7 +35,7 @@ export async function POST(req: Request) {
       parallelToolCalls: false,
     }),
     system: prompt[0].content,
-    maxSteps: 5,
+    maxSteps: 10,
     messages,
     tools: {
       updateRecipeTool: updateRecipeTool,
