@@ -11,6 +11,8 @@ export async function GET(request: NextRequest) {
 
     await prisma.recipe.findFirst();
 
+    console.log("Supabase keepalive successful.");
+
     return NextResponse.json("success");
   } catch (error) {
     console.error("Supabase keepalive failed:", error);
