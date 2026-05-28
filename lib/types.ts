@@ -1,4 +1,4 @@
-import { Prisma, Recipe } from '@prisma/client'
+import { Prisma, Recipe } from '@/generated/prisma/browser'
 import { z } from 'zod'
 
 export type CardDisplayMetadata = Pick<

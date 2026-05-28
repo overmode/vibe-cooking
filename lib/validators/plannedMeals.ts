@@ -15,7 +15,7 @@ import {
   MIN_INGREDIENT_LENGTH,
   MAX_INGREDIENT_LENGTH,
 } from '@/lib/constants/models_validation'
-import { PlannedMealStatus } from '@prisma/client'
+import { PlannedMealStatus } from '@/generated/prisma/browser'
 
 export const createPlannedMealInputSchema = z
   .object({

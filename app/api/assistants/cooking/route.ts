@@ -1,10 +1,9 @@
 import { openai } from "@ai-sdk/openai";
-import { streamText } from "ai";
+import { convertToModelMessages, stepCountIs, streamText } from "ai";
 import { updatePlannedMealTool } from "@/lib/ai/tools/tools";
 import { getPrompt } from "@/lib/ai/prompts";
 import { validateAssistantsRequest } from "@/app/api/assistants/validate-assistant-request";
 
-// Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
@@ -32,14 +31,15 @@ export async function POST(req: Request) {
   });
 
   const result = streamText({
-    model: openai("gpt-4.1", { parallelToolCalls: false }),
+    model: openai("gpt-4.1"),
+    providerOptions: { openai: { parallelToolCalls: false } },
     system: prompt[0].content,
-    maxSteps: 10,
-    messages,
+    stopWhen: stepCountIs(10),
+    messages: await convertToModelMessages(messages),
     tools: {
-      updatePlannedMealTool: updatePlannedMealTool,
+      updatePlannedMealTool,
     },
   });
 
-  return result.toDataStreamResponse();
+  return result.toUIMessageStreamResponse();
 }

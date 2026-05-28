@@ -7,7 +7,7 @@ import {
   useUpdateUserDietaryPreferences,
 } from "@/lib/api/hooks/preferences";
 import { Check } from "lucide-react";
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { debounce } from "lodash";
 import { MAX_PREFERENCES_LENGTH } from "@/lib/constants/app_validation";
 
@@ -51,13 +51,12 @@ export default function PreferencesPage() {
     hasUserMadeChanges &&
     localPreferences === (serverPreferences?.preferences || "");
 
-  // Debounced save function
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedSave = useCallback(
-    debounce((value: string) => {
-      updateMutation.mutate(value);
-    }, 1000),
-    [updateMutation.mutate]
+  const debouncedSave = useMemo(
+    () =>
+      debounce((value: string) => {
+        updateMutation.mutate(value);
+      }, 1000),
+    [updateMutation]
   );
 
   const handlePreferencesChange = (value: string) => {

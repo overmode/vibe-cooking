@@ -33,79 +33,79 @@ import {
 
 export const getRecipesMetadataTool = tool({
   description: getRecipesMetadataDefinition.description,
-  parameters: getRecipesMetadataDefinition.parameters,
+  inputSchema: getRecipesMetadataDefinition.inputSchema,
   execute: getRecipesMetadataExecute,
 });
 
 export const getPlannedMealsMetadataTool = tool({
   description: getPlannedMealsMetadataDefinition.description,
-  parameters: getPlannedMealsMetadataDefinition.parameters,
+  inputSchema: getPlannedMealsMetadataDefinition.inputSchema,
   execute: getPlannedMealsMetadataExecute,
 });
 
 export const getPlannedMealsTool = tool({
   description: getPlannedMealsDefinition.description,
-  parameters: getPlannedMealsDefinition.parameters,
+  inputSchema: getPlannedMealsDefinition.inputSchema,
   execute: getPlannedMealsExecute,
 });
 
 export const getRecipeByIdTool = tool({
   description: getRecipeByIdDefinition.description,
-  parameters: getRecipeByIdDefinition.parameters,
+  inputSchema: getRecipeByIdDefinition.inputSchema,
   execute: getRecipeByIdExecute,
 });
 
 export const getPlannedMealByIdTool = tool({
   description: getPlannedMealByIdDefinition.description,
-  parameters: getPlannedMealByIdDefinition.parameters,
+  inputSchema: getPlannedMealByIdDefinition.inputSchema,
   execute: getPlannedMealByIdExecute,
 });
 
 export const createRecipeTool = tool({
   description: createRecipeDefinition.description,
-  parameters: createRecipeDefinition.parameters,
+  inputSchema: createRecipeDefinition.inputSchema,
   execute: createRecipeExecute,
 });
 
 export const createPlannedMealTool = tool({
   description: createPlannedMealDefinition.description,
-  parameters: createPlannedMealDefinition.parameters,
+  inputSchema: createPlannedMealDefinition.inputSchema,
   execute: createPlannedMealExecute,
 });
 
 export const updateRecipeTool = tool({
   description: updateRecipeDefinition.description,
-  parameters: updateRecipeDefinition.parameters,
+  inputSchema: updateRecipeDefinition.inputSchema,
   execute: updateRecipeExecute,
 });
 
 export const updatePlannedMealTool = tool({
   description: updatePlannedMealDefinition.description,
-  parameters: updatePlannedMealDefinition.parameters,
+  inputSchema: updatePlannedMealDefinition.inputSchema,
   execute: updatePlannedMealExecute,
 });
 
 export const deleteRecipeTool = tool({
   description: deleteRecipeDefinition.description,
-  parameters: deleteRecipeDefinition.parameters,
+  inputSchema: deleteRecipeDefinition.inputSchema,
   execute: deleteRecipeExecute,
 });
 
 export const deletePlannedMealTool = tool({
   description: deletePlannedMealDefinition.description,
-  parameters: deletePlannedMealDefinition.parameters,
+  inputSchema: deletePlannedMealDefinition.inputSchema,
   execute: deletePlannedMealExecute,
 });
 
 export const renderRecipeSuggestionTool = tool({
   description: renderRecipeSuggestionDefinition.description,
-  parameters: renderRecipeSuggestionDefinition.parameters,
+  inputSchema: renderRecipeSuggestionDefinition.inputSchema,
   execute: renderRecipeSuggestionExecute,
 });
 
 export const enterCookingModeTool = tool({
   description: enterCookingModeDefinition.description,
-  parameters: enterCookingModeDefinition.parameters,
+  inputSchema: enterCookingModeDefinition.inputSchema,
   // client-side only
 });
 

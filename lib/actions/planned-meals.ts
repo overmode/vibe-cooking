@@ -18,7 +18,7 @@ import {
 } from '@/lib/validators/plannedMeals'
 import { PlannedMealMetadata, PlannedMealWithRecipe } from '@/lib/types'
 import prisma from '@/prisma/client'
-import { PlannedMealStatus } from '@prisma/client'
+import { PlannedMealStatus } from '@/generated/prisma/client'
 import {
   decrementCookedCount,
   incrementCookedCount,

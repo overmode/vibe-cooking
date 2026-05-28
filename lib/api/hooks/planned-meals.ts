@@ -6,7 +6,7 @@ import {
   UseQueryOptions,
 } from "@tanstack/react-query";
 import { PlannedMealWithRecipe, PlannedMealMetadata } from "@/lib/types";
-import { PlannedMeal, PlannedMealStatus } from "@prisma/client";
+import { PlannedMeal, PlannedMealStatus } from "@/generated/prisma/browser";
 import {
   getPlannedMealsMetadata,
   getPlannedMealWithRecipeById,
@@ -121,20 +121,20 @@ export const useUpdatePlannedMealStatusMutation = ({
       // Return the previous values to be used in onError
       return { previousPlannedMeal, previousPlannedMealsMetadata };
     },
-    onError: (error, variables, context) => {
+    onError: (error, variables, onMutateResult, context) => {
       // Rollback the previous state
       queryClient.setQueryData(
         queryKeys.plannedMeals.byId(variables.id),
-        context?.previousPlannedMeal
+        onMutateResult?.previousPlannedMeal
       );
       queryClient.setQueryData(
         queryKeys.plannedMeals.all,
-        context?.previousPlannedMealsMetadata
+        onMutateResult?.previousPlannedMealsMetadata
       );
-      options.onError?.(error, variables, context);
+      options.onError?.(error, variables, onMutateResult, context);
     },
-    onSettled: (data, error, variables, context) => {
-      options.onSettled?.(data, error, variables, context);
+    onSettled: (data, error, variables, onMutateResult, context) => {
+      options.onSettled?.(data, error, variables, onMutateResult, context);
       queryClient.invalidateQueries({ queryKey: queryKeys.plannedMeals.all });
       queryClient.invalidateQueries({
         queryKey: queryKeys.plannedMeals.byId(variables.id),
@@ -144,7 +144,6 @@ export const useUpdatePlannedMealStatusMutation = ({
           queryKey: queryKeys.recipes.byId(data.recipeId),
         });
       }
-      options.onSettled?.(data, error, variables, context);
     },
   });
 };
@@ -164,14 +163,14 @@ export const useUpdatePlannedMealMutation = ({
       const updatedPlannedMeal = await updatePlannedMeal(updateData);
       return updatedPlannedMeal;
     },
-    onSuccess: (data, variables, context) => {
-      options.onSuccess?.(data, variables, context);
+    onSuccess: (data, variables, onMutateResult, context) => {
+      options.onSuccess?.(data, variables, onMutateResult, context);
     },
-    onError: (error, variables, context) => {
-      options.onError?.(error, variables, context);
+    onError: (error, variables, onMutateResult, context) => {
+      options.onError?.(error, variables, onMutateResult, context);
     },
-    onSettled: (data, error, variables, context) => {
-      options.onSettled?.(data, error, variables, context);
+    onSettled: (data, error, variables, onMutateResult, context) => {
+      options.onSettled?.(data, error, variables, onMutateResult, context);
       queryClient.invalidateQueries({ queryKey: queryKeys.plannedMeals.all });
       queryClient.invalidateQueries({
         queryKey: queryKeys.plannedMeals.byId(variables.id),
@@ -223,31 +222,31 @@ export const useDeletePlannedMealMutation = ({
       // return the previous values to be used in onError
       return { previousPlannedMeal, previousPlannedMealsMetadata };
     },
-    onError: (error, variables, context) => {
+    onError: (error, variables, onMutateResult, context) => {
       // rollback the previous state
       queryClient.setQueryData(
         queryKeys.plannedMeals.byId(id),
-        context?.previousPlannedMeal
+        onMutateResult?.previousPlannedMeal
       );
       queryClient.setQueryData(
         queryKeys.plannedMeals.all,
-        context?.previousPlannedMealsMetadata
+        onMutateResult?.previousPlannedMealsMetadata
       );
-      options.onError?.(error, variables, context);
+      options.onError?.(error, variables, onMutateResult, context);
     },
-    onSuccess: (data, variables, context) => {
-      options.onSuccess?.(data, variables, context)
-      
+    onSuccess: (data, variables, onMutateResult, context) => {
+      options.onSuccess?.(data, variables, onMutateResult, context)
+
       // Remove the specific planned meal from cache instead of just invalidating
       queryClient.removeQueries({
         queryKey: queryKeys.plannedMeals.byId(id),
       })
-      
+
       queryClient.invalidateQueries({ queryKey: queryKeys.plannedMeals.all })
       queryClient.invalidateQueries({ queryKey: queryKeys.recipes.all })
     },
-    onSettled: (data, error, variables, context) => {
-      options.onSettled?.(data, error, variables, context);
+    onSettled: (data, error, variables, onMutateResult, context) => {
+      options.onSettled?.(data, error, variables, onMutateResult, context);
     },
   });
 };

@@ -1,12 +1,11 @@
 "use client";
 
 import {
-  SignedOut,
+  Show,
   SignInButton,
   SignUpButton,
   UserButton,
 } from "@clerk/nextjs";
-import { SignedIn } from "@clerk/nextjs";
 import { HeaderLogo } from "@/components/layout/header-logo";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -24,7 +23,6 @@ import {
 } from "@/components/ui/sheet";
 import { routes } from "@/lib/routes";
 
-// Navigation items
 const navItems = [
   { href: routes.home, label: "Assistant" },
   { href: routes.recipes.all, label: "Recipes" },
@@ -47,7 +45,6 @@ export function Header() {
       <div className="flex items-center gap-4">
         <HeaderLogo />
 
-        {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-4">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
@@ -73,7 +70,6 @@ export function Header() {
       </div>
 
       <div className="flex items-center gap-2">
-        {/* Mobile Menu Button */}
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild className="md:hidden">
             <Button
@@ -114,8 +110,7 @@ export function Header() {
           </SheetContent>
         </Sheet>
 
-        {/* Auth Buttons */}
-        <SignedOut>
+        <Show when="signed-out">
           <SignInButton mode="modal">
             <Button variant="ghost" size="sm" className="hidden sm:flex">
               Sign In
@@ -124,10 +119,10 @@ export function Header() {
           <SignUpButton mode="modal">
             <Button size="sm">Sign Up</Button>
           </SignUpButton>
-        </SignedOut>
-        <SignedIn>
+        </Show>
+        <Show when="signed-in">
           <UserButton />
-        </SignedIn>
+        </Show>
       </div>
     </header>
   );

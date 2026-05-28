@@ -1,9 +1,11 @@
 "use client";
 
-import { UseChatOptions } from "@ai-sdk/react";
+import { useCallback, useMemo, useState } from "react";
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport, UIMessage } from "ai";
 import { RecipeViewer } from "@/components/recipes/recipe-viewer";
 import { useRouter } from "next/navigation";
-import { Recipe } from "@prisma/client";
+import { Recipe } from "@/generated/prisma/browser";
 import { triggerToolEffects } from "@/lib/ai/tools/effects";
 import { useQueryClient } from "@tanstack/react-query";
 import { useDeleteRecipeById } from "@/lib/api/hooks/recipes";
@@ -11,7 +13,6 @@ import { ChatCanva } from "@/components/chat/chat-canva";
 import { apiRoutes } from "@/lib/api/api-routes";
 import { Button } from "@/components/ui/button";
 import { Trash } from "lucide-react";
-import { useState } from "react";
 import { DeleteConfirmationDialog } from "@/components/ui/delete-confirmation-dialog";
 import { routes } from "@/lib/routes";
 import { useUserDietaryPreferences } from "@/lib/api/hooks/preferences";
@@ -20,6 +21,19 @@ interface RecipeChatViewProps {
   recipe: Recipe;
 }
 
+const initialMessages: UIMessage[] = [
+  {
+    id: "recipe-intro",
+    role: "assistant",
+    parts: [
+      {
+        type: "text",
+        text: `I'm here to help you with your recipe! I can answer questions about it or help you make edits. What would you like to do? 🌴`,
+      },
+    ],
+  },
+];
+
 export function RecipeChatView({ recipe }: RecipeChatViewProps) {
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -27,7 +41,6 @@ export function RecipeChatView({ recipe }: RecipeChatViewProps) {
     id: recipe.id,
     options: {
       onSuccess: () => {
-        // Use replace instead of push to prevent back navigation to deleted recipe
         router.replace(routes.recipes.all);
       },
     },
@@ -35,43 +48,50 @@ export function RecipeChatView({ recipe }: RecipeChatViewProps) {
 
   const { data: userDietaryPreferences } = useUserDietaryPreferences({});
 
-  const chatOptions: UseChatOptions = {
-    api: apiRoutes.assistants.recipe,
-    body: {
-      recipe,
-      userDietaryPreferences: userDietaryPreferences?.preferences,
-    },
-    initialMessages: [
-      {
-        id: "recipe-intro",
-        content: `I'm here to help you with your recipe! I can answer questions about it or help you make edits. What would you like to do? 🌴`,
-        role: "assistant",
-      },
-    ],
-    // We process the deletion client-side to avoid 404 errors
-    async onToolCall({ toolCall }) {
+  const transport = useMemo(
+    () => new DefaultChatTransport({ api: apiRoutes.assistants.recipe }),
+    []
+  );
+
+  const { messages, sendMessage, error } = useChat({
+    transport,
+    messages: initialMessages,
+    onToolCall: ({ toolCall }) => {
       if (toolCall.toolName === "deleteRecipeTool") {
         deleteRecipeMutation.mutate();
       }
     },
-    onFinish: (message) => {
-      // client-side side effects such as cache invalidation
+    onFinish: ({ message }) => {
       triggerToolEffects(message, queryClient);
 
       // Detect recipe deletion and navigate back
       if (
         message.parts?.some(
           (part) =>
-            part.type === "tool-invocation" &&
-            part.toolInvocation.toolName === "deleteRecipeTool"
+            part.type === "tool-deleteRecipeTool" &&
+            "state" in part &&
+            part.state === "output-available"
         )
       ) {
         router.back();
       }
     },
-  };
+  });
 
-  // Add delete action
+  const send = useCallback(
+    (text: string) =>
+      sendMessage(
+        { text },
+        {
+          body: {
+            recipe,
+            userDietaryPreferences: userDietaryPreferences?.preferences,
+          },
+        }
+      ),
+    [sendMessage, recipe, userDietaryPreferences?.preferences]
+  );
+
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const deleteAction = (
@@ -101,7 +121,9 @@ export function RecipeChatView({ recipe }: RecipeChatViewProps) {
     <ChatCanva
       title={recipe.name}
       contentNode={<RecipeViewer recipe={recipe} />}
-      chatOptions={chatOptions}
+      messages={messages}
+      sendMessage={send}
+      error={error}
       contentTabLabel="Recipe"
       chatTabLabel="Assistant"
       actions={deleteAction}

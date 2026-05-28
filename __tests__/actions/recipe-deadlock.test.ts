@@ -43,7 +43,7 @@ describe('Recipe Creation Deadlock Tests', () => {
       getToken: vi.fn(),
       has: vi.fn(),
       debug: vi.fn()
-    } as any)
+    } as unknown as Awaited<ReturnType<typeof mockAuth>>)
 
     const recipeData = {
       name: 'Deadlock Test Recipe',

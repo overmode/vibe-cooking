@@ -1,10 +1,9 @@
 import { openai } from "@ai-sdk/openai";
-import { streamText } from "ai";
+import { convertToModelMessages, stepCountIs, streamText } from "ai";
 import { deleteRecipeTool, updateRecipeTool } from "@/lib/ai/tools/tools";
 import { getPrompt } from "@/lib/ai/prompts";
 import { validateAssistantsRequest } from "@/app/api/assistants/validate-assistant-request";
 
-// Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
@@ -31,28 +30,18 @@ export async function POST(req: Request) {
   });
 
   const result = streamText({
-    model: openai("gpt-4.1", {
-      parallelToolCalls: false,
-    }),
+    model: openai("gpt-4.1"),
+    providerOptions: { openai: { parallelToolCalls: false } },
     system: prompt[0].content,
-    maxSteps: 10,
-    messages,
+    stopWhen: stepCountIs(10),
+    messages: await convertToModelMessages(messages),
     tools: {
-      updateRecipeTool: updateRecipeTool,
-      // We make the deleteRecipeTool available to the model, but it's not
-      // automatically executed.
-      //
-      // This is because we want to detect when the user deletes a recipe and
-      // navigate back to the recipes list.
-      //
-      // If the tool was automatically executed, we wouldn't be able to detect
-      // that a recipe was deleted.
-      deleteRecipeTool: {
-        ...deleteRecipeTool,
-        execute: undefined,
-      },
+      updateRecipeTool,
+      // deleteRecipeTool is exposed without an execute handler so the client
+      // can intercept it to trigger the navigation after deletion.
+      deleteRecipeTool: { ...deleteRecipeTool, execute: undefined },
     },
   });
 
-  return result.toDataStreamResponse();
+  return result.toUIMessageStreamResponse();
 }

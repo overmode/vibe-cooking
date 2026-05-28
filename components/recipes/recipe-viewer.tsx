@@ -1,4 +1,4 @@
-import { Recipe } from '@prisma/client'
+import { Recipe } from '@/generated/prisma/browser'
 import { MemoizedMarkdown } from '@/components/chat/memoized-markdown'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'

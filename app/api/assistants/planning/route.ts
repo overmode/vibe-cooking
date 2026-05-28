@@ -1,5 +1,5 @@
 import { openai } from "@ai-sdk/openai";
-import { streamText } from "ai";
+import { convertToModelMessages, stepCountIs, streamText } from "ai";
 import {
   createRecipeTool,
   deleteRecipeTool,
@@ -18,7 +18,6 @@ import {
 import { getPrompt } from "@/lib/ai/prompts";
 import { validateAssistantsRequest } from "@/app/api/assistants/validate-assistant-request";
 
-// Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
@@ -38,36 +37,33 @@ export async function POST(req: Request) {
   });
 
   const result = streamText({
-    model: openai("gpt-4.1", { parallelToolCalls: false }),
+    model: openai("gpt-4.1"),
+    providerOptions: { openai: { parallelToolCalls: false } },
     system: prompt[0].content,
-    maxSteps: 10,
-    messages,
+    stopWhen: stepCountIs(10),
+    messages: await convertToModelMessages(messages),
     tools: {
-      // Recipe crud operations
-      getRecipesMetadataTool: getRecipesMetadataTool,
-      createRecipeTool: createRecipeTool,
-      updateRecipeTool: updateRecipeTool,
-      deleteRecipeTool: deleteRecipeTool,
-      getRecipeByIdTool: getRecipeByIdTool,
+      getRecipesMetadataTool,
+      createRecipeTool,
+      updateRecipeTool,
+      deleteRecipeTool,
+      getRecipeByIdTool,
 
-      // Recipe suggestion
-      renderRecipeSuggestionTool: renderRecipeSuggestionTool,
+      renderRecipeSuggestionTool,
 
-      // planned meal crud operations
-      getPlannedMealsMetadataTool: getPlannedMealsMetadataTool,
-      getPlannedMealsTool: getPlannedMealsTool,
-      createPlannedMealTool: createPlannedMealTool,
-      updatePlannedMealTool: updatePlannedMealTool,
-      deletePlannedMealTool: deletePlannedMealTool,
-      getPlannedMealByIdTool: getPlannedMealByIdTool,
+      getPlannedMealsMetadataTool,
+      getPlannedMealsTool,
+      createPlannedMealTool,
+      updatePlannedMealTool,
+      deletePlannedMealTool,
+      getPlannedMealByIdTool,
 
-      // Cooking mode
-      enterCookingModeTool: enterCookingModeTool,
+      enterCookingModeTool,
     },
     onError: (error) => {
       console.error(error);
     },
   });
 
-  return result.toDataStreamResponse();
+  return result.toUIMessageStreamResponse();
 }

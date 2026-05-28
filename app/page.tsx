@@ -1,6 +1,8 @@
 "use client";
 
+import { useCallback, useMemo } from "react";
 import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport, UIMessage } from "ai";
 import { chatSuggestions } from "@/lib/constants/chat-suggestions";
 import { triggerToolEffects } from "@/lib/ai/tools/effects";
 import { useQueryClient } from "@tanstack/react-query";
@@ -10,57 +12,69 @@ import { enterCookingModeDefinition } from "@/lib/ai/tools/definitions";
 import { z } from "zod";
 import { apiRoutes } from "@/lib/api/api-routes";
 import { Chat } from "@/components/chat/chat";
-import { ChatSuggestion } from "@/lib/types";
 import { useUserDietaryPreferences } from "@/lib/api/hooks/preferences";
+
+const initialMessages: UIMessage[] = [
+  {
+    id: "1",
+    role: "assistant",
+    parts: [
+      {
+        type: "text",
+        text: "Welcome to Vibe Cooking! How can I help you today? 🌴 ",
+      },
+    ],
+  },
+];
+
 export default function Home() {
   const queryClient = useQueryClient();
   const router = useRouter();
 
   const { data: userDietaryPreferences } = useUserDietaryPreferences({});
 
-  const { messages, input, handleInputChange, handleSubmit, setInput, error } =
-    useChat({
-      api: apiRoutes.assistants.planning,
-      body: {
-        userDietaryPreferences: userDietaryPreferences?.preferences,
-      },
-      initialMessages: [
-        {
-          id: "1",
-          content: "Welcome to Vibe Cooking! How can I help you today? 🌴 ",
-          role: "assistant",
-        },
-      ],
-      // run client-side tools that are automatically executed:
-      async onToolCall({ toolCall }) {
-        if (toolCall.toolName === "enterCookingModeTool") {
-          const id = (
-            toolCall.args as z.infer<
-              typeof enterCookingModeDefinition.parameters
-            >
-          ).id;
-          router.push(routes.plannedMeal.cooking(id));
-        }
-      },
-      onFinish: (message) => {
-        // client-side side effects such as cache invalidation
-        triggerToolEffects(message, queryClient);
-      },
-    });
+  const transport = useMemo(
+    () => new DefaultChatTransport({ api: apiRoutes.assistants.planning }),
+    []
+  );
 
-  const handleSuggestionClick = (suggestion: ChatSuggestion) => {
-    setInput(suggestion.message);
-  };
+  const { messages, sendMessage, error } = useChat({
+    transport,
+    messages: initialMessages,
+    onToolCall: ({ toolCall }) => {
+      if (toolCall.toolName === "enterCookingModeTool") {
+        const id = (
+          toolCall.input as z.infer<
+            typeof enterCookingModeDefinition.inputSchema
+          >
+        ).id;
+        router.push(routes.plannedMeal.cooking(id));
+      }
+    },
+    onFinish: ({ message }) => {
+      triggerToolEffects(message, queryClient);
+    },
+  });
+
+  const send = useCallback(
+    (text: string) =>
+      sendMessage(
+        { text },
+        {
+          body: {
+            userDietaryPreferences: userDietaryPreferences?.preferences,
+          },
+        }
+      ),
+    [sendMessage, userDietaryPreferences?.preferences]
+  );
 
   return (
     <Chat
       messages={messages}
-      input={input}
-      handleInputChange={handleInputChange}
-      handleSubmit={handleSubmit}
+      sendMessage={send}
       error={error}
       suggestions={chatSuggestions}
-      handleSuggestionClick={handleSuggestionClick}
     />
   );
 }

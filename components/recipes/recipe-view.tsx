@@ -31,25 +31,20 @@ export function RecipeView({
 
   const isMobile = useIsMobile()
 
-  // Force grid view on mobile
-  useEffect(() => {
-    if (isMobile && viewMode === 'list') {
-      setViewMode('grid')
-    }
-  }, [isMobile, viewMode])
+  const effectiveViewMode: ViewMode =
+    isMobile && viewMode === 'list' ? 'grid' : viewMode
 
   // Update URL when state changes
   useEffect(() => {
     const params = new URLSearchParams()
-    params.set('view', viewMode)
+    params.set('view', effectiveViewMode)
     params.set('sort', sortField)
     params.set('dir', sortDirection)
 
-    // Update URL without refreshing the page
     router.replace(`${routes.recipes.all}?${params.toString()}`, {
       scroll: false,
     })
-  }, [viewMode, sortField, sortDirection, router])
+  }, [effectiveViewMode, sortField, sortDirection, router])
 
   // Sort recipes
   const sortedRecipes = useMemo(() => {
@@ -99,7 +94,7 @@ export function RecipeView({
           Your Recipes
         </h2>
         <RecipeViewControls
-          viewMode={viewMode}
+          viewMode={effectiveViewMode}
           setViewMode={setViewMode}
           sortField={sortField}
           setSortField={setSortField}
@@ -110,7 +105,7 @@ export function RecipeView({
       </div>
 
       <div className="flex-1 min-h-0">
-        {viewMode === 'grid' ? (
+        {effectiveViewMode === 'grid' ? (
           <ScrollArea className="h-full rounded-md">
             <div className="p-1 pb-6">
               <RecipeGridView recipes={sortedRecipes} />

@@ -1,6 +1,8 @@
 "use client";
 
-import { UseChatOptions } from "@ai-sdk/react";
+import { useCallback, useMemo, useState } from "react";
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport, UIMessage } from "ai";
 import { RecipeViewer } from "@/components/recipes/recipe-viewer";
 import { triggerToolEffects } from "@/lib/ai/tools/effects";
 import { useQueryClient } from "@tanstack/react-query";
@@ -13,13 +15,25 @@ import { useRouter } from "next/navigation";
 import { plannedMealToRecipe } from "@/lib/utils/plannedMealUtils";
 import { Button } from "@/components/ui/button";
 import { Trash } from "lucide-react";
-import { useState } from "react";
 import { DeleteConfirmationDialog } from "@/components/ui/delete-confirmation-dialog";
 import { useUserDietaryPreferences } from "@/lib/api/hooks/preferences";
 
 interface PlannedMealChatViewProps {
   plannedMeal: PlannedMealWithRecipe;
 }
+
+const initialMessages: UIMessage[] = [
+  {
+    id: "planned-meal-intro",
+    role: "assistant",
+    parts: [
+      {
+        type: "text",
+        text: `I'm here to help you with your planned meal! I can answer questions about it or help you make edits (note that these edits will not propagate to the recipe). What would you like to do? 🌴`,
+      },
+    ],
+  },
+];
 
 export function PlannedMealChatView({ plannedMeal }: PlannedMealChatViewProps) {
   const queryClient = useQueryClient();
@@ -28,7 +42,6 @@ export function PlannedMealChatView({ plannedMeal }: PlannedMealChatViewProps) {
     id: plannedMeal.id,
     options: {
       onSuccess: () => {
-        // Use replace instead of push to prevent back navigation to deleted planned meal
         router.replace(routes.plannedMeal.all);
       },
     },
@@ -36,28 +49,35 @@ export function PlannedMealChatView({ plannedMeal }: PlannedMealChatViewProps) {
 
   const { data: userDietaryPreferences } = useUserDietaryPreferences({});
 
-  const chatOptions: UseChatOptions = {
-    api: apiRoutes.assistants.plannedMeal,
-    body: {
-      plannedMeal,
-      userDietaryPreferences: userDietaryPreferences?.preferences,
-    },
-    initialMessages: [
-      {
-        id: "planned-meal-intro",
-        content: `I'm here to help you with your planned meal! I can answer questions about it or help you make edits (note that these edits will not propagate to the recipe). What would you like to do? 🌴`,
-        role: "assistant",
-      },
-    ],
-    onFinish: (message) => {
-      // client-side side effects such as cache invalidation
+  const transport = useMemo(
+    () => new DefaultChatTransport({ api: apiRoutes.assistants.plannedMeal }),
+    []
+  );
+
+  const { messages, sendMessage, error } = useChat({
+    transport,
+    messages: initialMessages,
+    onFinish: ({ message }) => {
       triggerToolEffects(message, queryClient);
     },
-  };
+  });
+
+  const send = useCallback(
+    (text: string) =>
+      sendMessage(
+        { text },
+        {
+          body: {
+            plannedMeal,
+            userDietaryPreferences: userDietaryPreferences?.preferences,
+          },
+        }
+      ),
+    [sendMessage, plannedMeal, userDietaryPreferences?.preferences]
+  );
 
   const plannedMealAsRecipe = plannedMealToRecipe(plannedMeal);
 
-  // Delete action
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const deleteAction = (
     <>
@@ -86,7 +106,9 @@ export function PlannedMealChatView({ plannedMeal }: PlannedMealChatViewProps) {
     <ChatCanva
       title={plannedMealAsRecipe.name}
       contentNode={<RecipeViewer recipe={plannedMealAsRecipe} />}
-      chatOptions={chatOptions}
+      messages={messages}
+      sendMessage={send}
+      error={error}
       contentTabLabel="Planned Meal"
       chatTabLabel="Assistant"
       actions={deleteAction}

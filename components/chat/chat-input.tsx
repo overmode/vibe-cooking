@@ -2,29 +2,29 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { SendHorizontal } from 'lucide-react'
 import { toast } from 'sonner'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import {
   MAX_USER_MESSAGE_LENGTH,
   MESSAGE_COOLDOWN_DURATION,
   MIN_USER_MESSAGE_LENGTH,
 } from '@/lib/constants/app_validation'
+
 interface ChatInputProps {
   input: string
-  handleInputChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
-  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void
+  setInput: (input: string) => void
+  onSend: (text: string) => void
   maxLength?: number
 }
 
 export function ChatInput({
   input,
-  handleInputChange,
-  handleSubmit,
+  setInput,
+  onSend,
   maxLength = MAX_USER_MESSAGE_LENGTH,
 }: ChatInputProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [cooldown, setCooldown] = useState(false)
 
-  // Reset cooldown after 1 second
   useEffect(() => {
     if (cooldown) {
       const timer = setTimeout(
@@ -35,21 +35,7 @@ export function ChatInput({
     }
   }, [cooldown])
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      // Convert the keyboard event to a form event by creating a synthetic event
-      const formEvent = {
-        preventDefault: () => {},
-      } as React.FormEvent<HTMLFormElement>
-      handleFormSubmit(formEvent)
-    }
-  }
-
-  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-
-    // Check if input exceeds max length
+  const submit = () => {
     if (input.length > maxLength) {
       toast.error(`Your message exceeds the ${maxLength} character limit.`)
       return
@@ -62,24 +48,31 @@ export function ChatInput({
       return
     }
 
-    // Check if we're in cooldown or already submitting
-    if (cooldown || isSubmitting) {
-      return
-    }
-
-    // Check if input is empty
-    if (input.trim().length === 0) {
+    if (cooldown || isSubmitting || input.trim().length === 0) {
       return
     }
 
     setIsSubmitting(true)
 
     try {
-      handleSubmit(e)
+      onSend(input)
+      setInput('')
       setCooldown(true)
     } finally {
       setIsSubmitting(false)
     }
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      submit()
+    }
+  }
+
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    submit()
   }
 
   return (
@@ -90,7 +83,7 @@ export function ChatInput({
             <Textarea
               placeholder="Ask anything in any language"
               value={input}
-              onChange={handleInputChange}
+              onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
               className="min-h-16 w-full max-h-48 resize-none"
               rows={1}

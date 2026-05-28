@@ -1,5 +1,5 @@
 import prisma from "@/prisma/client";
-import { PlannedMealStatus, Prisma } from "@prisma/client";
+import { PlannedMealStatus, Prisma } from "@/generated/prisma/client";
 import { CreateRecipeInput, UpdateRecipeInput } from "@/lib/validators/recipe";
 import { handleDbError } from "@/lib/utils/error";
 import { RecipeMetadata } from "@/lib/types";

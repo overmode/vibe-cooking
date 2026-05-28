@@ -2,7 +2,7 @@ import {
   getUserDietaryPreferences,
   updateUserDietaryPreferences,
 } from "@/lib/api/client";
-import { UserDietaryPreferences } from "@prisma/client";
+import { UserDietaryPreferences } from "@/generated/prisma/browser";
 import {
   useMutation,
   UseMutationOptions,
@@ -40,8 +40,8 @@ export const useUpdateUserDietaryPreferences = ({
     ...options,
     mutationFn: async (preferences: string) =>
       await updateUserDietaryPreferences(preferences),
-    onMutate: async (variables) => {
-      options?.onMutate?.(variables);
+    onMutate: async (variables, context) => {
+      options?.onMutate?.(variables, context);
 
       // Cancel any outgoing refetches
       await queryClient.cancelQueries({
@@ -62,16 +62,16 @@ export const useUpdateUserDietaryPreferences = ({
       );
       return { previousPreferences };
     },
-    onError: (error, variables, context) => {
+    onError: (error, variables, onMutateResult, context) => {
       // Rollback the previous state
       queryClient.setQueryData(
         queryKeys.preferences.all,
-        context?.previousPreferences
+        onMutateResult?.previousPreferences
       );
-      options?.onError?.(error, variables, context);
+      options?.onError?.(error, variables, onMutateResult, context);
     },
-    onSettled: (data, error, variables, context) => {
-      options?.onSettled?.(data, error, variables, context);
+    onSettled: (data, error, variables, onMutateResult, context) => {
+      options?.onSettled?.(data, error, variables, onMutateResult, context);
       queryClient.invalidateQueries({ queryKey: queryKeys.preferences.all });
     },
   });

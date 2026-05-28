@@ -1,6 +1,6 @@
 // TODO tighter typing of results
 import { QueryClient } from '@tanstack/react-query'
-import { Message } from 'ai'
+import { UIMessage } from 'ai'
 import { ToolResult, ToolResultSuccess } from '@/lib/ai/tools/types'
 import { queryKeys } from '@/lib/api/query-keys'
 
@@ -56,9 +56,9 @@ export const toolEffects: Record<string, ToolEffect> = {
   },
 }
 
-// Trigger tool effects when a message contains a tool invocation result
+// Trigger tool effects when a message contains a finished tool output part
 export const triggerToolEffects = (
-  message: Message,
+  message: UIMessage,
   queryClient: QueryClient
 ) => {
   if (!message.parts) {
@@ -66,11 +66,13 @@ export const triggerToolEffects = (
   }
   for (const part of message.parts) {
     if (
-      part.type === 'tool-invocation' &&
-      part.toolInvocation.state === 'result'
+      part.type.startsWith('tool-') &&
+      'state' in part &&
+      part.state === 'output-available' &&
+      'output' in part
     ) {
-      const toolName = part.toolInvocation.toolName
-      const result = part.toolInvocation.result
+      const toolName = part.type.slice('tool-'.length)
+      const result = part.output as ToolResult<unknown>
       if (toolName in toolEffects) {
         toolEffects[toolName](queryClient, result)
       }

@@ -1,12 +1,13 @@
-import { Message } from 'ai'
+import { UIMessage } from 'ai'
 import { ChatMessage } from './chat-message'
 import { useEffect, useRef } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { AlertCircle } from 'lucide-react'
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert'
 import { MAX_MESSAGES_PER_DAY } from '@/lib/constants/app_validation'
+
 interface ChatMessagesDisplayProps {
-  messages: Message[]
+  messages: UIMessage[]
   error?: Error
 }
 

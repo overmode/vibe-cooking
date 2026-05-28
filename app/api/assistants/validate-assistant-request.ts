@@ -1,9 +1,9 @@
 import { auth } from "@clerk/nextjs/server";
 import { chatLimiter } from "@/lib/rate-limiter";
 import { MAX_USER_MESSAGE_LENGTH } from "@/lib/constants/app_validation";
-import { Message } from "ai";
+import { UIMessage } from "ai";
 
-export async function validateAssistantsRequest(messages: Message[]) {
+export async function validateAssistantsRequest(messages: UIMessage[]) {
   const { userId } = await auth();
 
   if (!userId) {
@@ -16,7 +16,10 @@ export async function validateAssistantsRequest(messages: Message[]) {
   }
 
   const lastMessage = messages[messages.length - 1];
-  const userMessageLength = lastMessage?.content.length ?? 0;
+  const userMessageLength =
+    lastMessage?.parts
+      ?.filter((part) => part.type === "text")
+      .reduce((sum, part) => sum + part.text.length, 0) ?? 0;
 
   if (userMessageLength > MAX_USER_MESSAGE_LENGTH) {
     return {

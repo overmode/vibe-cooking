@@ -1,11 +1,11 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { cn } from '@/lib/utils'
-import { Message } from '@ai-sdk/react'
+import { UIMessage } from 'ai'
 import { MemoizedMarkdown } from '@/components/chat/memoized-markdown'
-import { renderToolInvocation } from '@/lib/ai/tools/renderer'
+import { renderToolInvocation, ToolUIPart } from '@/lib/ai/tools/renderer'
 
 interface ChatMessageProps {
-  message: Message
+  message: UIMessage
 }
 
 const AnimatedDot = ({ delay }: { delay: number }) => {
@@ -29,11 +29,12 @@ const AnimatedDots = () => {
 
 export function ChatMessage({ message }: ChatMessageProps) {
   const isUser = message.role === 'user'
+  const isToolPart = (type: string) => type.startsWith('tool-')
   const isLoading =
     !message.parts ||
     message.parts.length === 0 ||
     message.parts.every(
-      (part) => part.type !== 'text' && part.type !== 'tool-invocation'
+      (part) => part.type !== 'text' && !isToolPart(part.type)
     )
 
   return (
@@ -61,16 +62,12 @@ export function ChatMessage({ message }: ChatMessageProps) {
           )}
           {message.parts?.map((part, index) => {
             let content = null
+            const isTool = isToolPart(part.type)
 
-            switch (part.type) {
-              case 'text':
-                content = (
-                  <MemoizedMarkdown content={part.text} id={message.id} />
-                )
-                break
-              case 'tool-invocation':
-                content = renderToolInvocation(part.toolInvocation)
-                break
+            if (part.type === 'text') {
+              content = <MemoizedMarkdown content={part.text} id={message.id} />
+            } else if (isTool) {
+              content = renderToolInvocation(part as unknown as ToolUIPart)
             }
 
             return content && message.parts ? (
@@ -80,7 +77,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
                   'rounded-lg px-4 py-2 text-sm',
                   isUser
                     ? 'bg-primary text-primary-foreground ml-auto w-fit'
-                    : part.type === 'tool-invocation' || isLoading
+                    : isTool || isLoading
                     ? 'w-full'
                     : 'bg-muted w-fit'
                 )}

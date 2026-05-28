@@ -1,10 +1,10 @@
 import prisma from '@/prisma/client'
-import { Prisma } from '@prisma/client'
+import { Prisma } from '@/generated/prisma/client'
 import {
   CreatePlannedMealInput,
   UpdatePlannedMealInput,
 } from '@/lib/validators/plannedMeals'
-import { PlannedMealStatus } from '@prisma/client'
+import { PlannedMealStatus } from '@/generated/prisma/client'
 import { handleDbError } from '@/lib/utils/error'
 import { PlannedMealMetadata, PlannedMealWithRecipe } from '@/lib/types'
 

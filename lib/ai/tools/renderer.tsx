@@ -1,37 +1,46 @@
 import React from "react";
 import { RecipeSuggestionCard } from "@/components/recipes/recipe-suggestion-card";
-import { ToolInvocation } from "ai";
 import {
   ToolSuccess,
   ToolSpinner,
   ToolError,
 } from "@/components/chat/tool-feedback";
 import { PlannedMealMetadata, RecipeMetadata } from "@/lib/types";
-import { PlannedMeal, Recipe } from "@prisma/client";
+import { PlannedMeal, Recipe } from "@/generated/prisma/browser";
 import { ToolResult } from "@/lib/ai/tools/types";
+import { CreateRecipeInput } from "@/lib/validators/recipe";
 
-// Simple type for tool rendering functions
-type ToolRenderer = (toolInvocation: ToolInvocation) => React.ReactNode;
+// v6 tool UI parts are typed `tool-${name}` with flat state/input/output.
+// We keep a narrow shape so all tools can share a single renderer signature.
+export type ToolUIPart = {
+  type: `tool-${string}`;
+  toolCallId: string;
+  state:
+    | "input-streaming"
+    | "input-available"
+    | "approval-requested"
+    | "approval-responded"
+    | "output-available"
+    | "output-error"
+    | "output-denied";
+  input?: unknown;
+  output?: unknown;
+  errorText?: string;
+};
 
-// Map of tool names to their rendering functions
+type ToolRenderer = (part: ToolUIPart) => React.ReactNode;
+
 const toolRenderers: Record<string, ToolRenderer> = {};
 
-// Simple function to render a tool's output
-export function renderToolInvocation(
-  toolInvocation: ToolInvocation
-): React.ReactNode {
-  const renderer = toolRenderers[toolInvocation.toolName];
+export function renderToolInvocation(part: ToolUIPart): React.ReactNode {
+  const toolName = part.type.replace(/^tool-/, "");
+  const renderer = toolRenderers[toolName];
   if (!renderer)
-    return (
-      <ToolError
-        message={`No renderer found for tool: ${toolInvocation.toolName}`}
-      />
-    );
+    return <ToolError message={`No renderer found for tool: ${toolName}`} />;
 
-  return renderer(toolInvocation);
+  return renderer(part);
 }
 
-// A simple tool renderer that renders a message for loading and success states
 function toolMessageRenderer<T>({
   loadingMessage,
   successMessage,
@@ -45,34 +54,30 @@ function toolMessageRenderer<T>({
   errorMessage?: (
     error: Extract<ToolResult<T>, { success: false }>["error"]
   ) => string;
-}): (toolInvocation: ToolInvocation) => React.ReactNode {
-  const renderer = (toolInvocation: ToolInvocation) => {
-    switch (toolInvocation.state) {
-      case "partial-call":
+}): ToolRenderer {
+  const renderer = (part: ToolUIPart) => {
+    switch (part.state) {
+      case "input-streaming":
+      case "input-available":
         return <ToolSpinner message={loadingMessage} />;
-      case "call":
-        return <ToolSpinner message={loadingMessage} />;
-      case "result":
-        if (!toolInvocation.result.success) {
-          return (
-            <ToolError message={errorMessage(toolInvocation.result.error)} />
-          );
+      case "output-available": {
+        const result = part.output as ToolResult<T>;
+        if (!result.success) {
+          return <ToolError message={errorMessage(result.error)} />;
         }
-        return (
-          <ToolSuccess message={successMessage(toolInvocation.result.data)} />
-        );
+        return <ToolSuccess message={successMessage(result.data)} />;
+      }
+      case "output-error":
+        return <ToolError message={part.errorText ?? "Tool execution failed"} />;
       default:
         return <ToolError message="Unknown tool state" />;
     }
   };
 
-  // Add display name to fix ESLint warning
   renderer.displayName = "ToolMessageRenderer";
 
   return renderer;
 }
-
-// TODO in all functions below, tighter typing for result.data => should be linked to the actual tool
 
 const renderGetRecipesMetadataTool = toolMessageRenderer<RecipeMetadata[]>({
   loadingMessage: `Retrieving recipes metadata...`,
@@ -141,23 +146,22 @@ const renderEnterCookingModeTool = toolMessageRenderer<void>({
   successMessage: () => "Cooking mode entered successfully!",
 });
 
-function renderRecipeSuggestionTool(
-  toolInvocation: ToolInvocation
-): React.ReactNode {
-  switch (toolInvocation.state) {
-    case "partial-call":
+const renderRecipeSuggestionTool: ToolRenderer = (part) => {
+  switch (part.state) {
+    case "input-streaming":
+    case "input-available":
       return <ToolSpinner message={`Generating recipe suggestion...`} />;
-    case "call":
-      return <ToolSpinner message={`Generating recipe suggestion...`} />;
-    case "result":
+    case "output-available":
       return (
         <RecipeSuggestionCard
-          cardData={toolInvocation.args}
-          id={toolInvocation.toolCallId}
+          cardData={part.input as CreateRecipeInput}
+          id={part.toolCallId}
         />
       );
+    default:
+      return <ToolError message="Unknown tool state" />;
   }
-}
+};
 
 toolRenderers["renderRecipeSuggestionTool"] = renderRecipeSuggestionTool;
 toolRenderers["createRecipeTool"] = renderCreateRecipeTool;

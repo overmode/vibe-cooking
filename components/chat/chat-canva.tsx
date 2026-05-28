@@ -1,7 +1,7 @@
 'use client'
 
 import { ReactNode, useState } from 'react'
-import { useChat, UseChatOptions } from '@ai-sdk/react'
+import { UIMessage } from 'ai'
 import { Chat } from './chat'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
@@ -11,7 +11,9 @@ import { useRouter } from 'next/navigation'
 interface ChatCanvaProps {
   title: string
   contentNode: ReactNode
-  chatOptions: UseChatOptions
+  messages: UIMessage[]
+  sendMessage: (text: string) => void
+  error?: Error | undefined
   contentTabLabel: string
   chatTabLabel?: string
   actions?: ReactNode
@@ -21,7 +23,9 @@ interface ChatCanvaProps {
 export function ChatCanva({
   title,
   contentNode,
-  chatOptions,
+  messages,
+  sendMessage,
+  error,
   actions,
   contentTabLabel,
   chatTabLabel = 'Assistant',
@@ -30,11 +34,6 @@ export function ChatCanva({
   const router = useRouter()
   const [activeTab, setActiveTab] = useState<string>('content')
 
-  // Initialize chat with provided options
-  const { messages, input, handleInputChange, handleSubmit } =
-    useChat(chatOptions)
-
-  // Default go back handler uses router.back() if not provided
   const handleGoBack = () => {
     if (onGoBack) {
       onGoBack()
@@ -45,7 +44,6 @@ export function ChatCanva({
 
   return (
     <div className="flex flex-col h-full">
-      {/* Header with back button, title, and actions */}
       <div className="flex justify-between items-center p-2 border-b bg-background sticky top-0 z-10">
         <div className="flex items-center w-full">
           <Button
@@ -58,12 +56,11 @@ export function ChatCanva({
           </Button>
           <h3 className="text-sm font-medium mx-auto">{title}</h3>
           <div className="flex items-center gap-2">
-            {actions || <div className="w-8"></div>} {/* Actions or spacer */}
+            {actions || <div className="w-8"></div>}
           </div>
         </div>
       </div>
 
-      {/* Desktop layout (side by side) */}
       <div className="hidden md:flex flex-1 overflow-hidden">
         <div className="w-1/2 border-r h-full overflow-y-auto">
           {contentNode}
@@ -71,14 +68,12 @@ export function ChatCanva({
         <div className="w-1/2 h-full overflow-y-auto">
           <Chat
             messages={messages}
-            input={input}
-            handleInputChange={handleInputChange}
-            handleSubmit={handleSubmit}
+            sendMessage={sendMessage}
+            error={error}
           />
         </div>
       </div>
 
-      {/* Mobile layout (tabs) */}
       <div className="md:hidden flex-1 overflow-hidden">
         <Tabs
           value={activeTab}
@@ -96,9 +91,8 @@ export function ChatCanva({
             <TabsContent value="chat" className="h-full overflow-y-auto">
               <Chat
                 messages={messages}
-                input={input}
-                handleInputChange={handleInputChange}
-                handleSubmit={handleSubmit}
+                sendMessage={sendMessage}
+                error={error}
               />
             </TabsContent>
           </div>

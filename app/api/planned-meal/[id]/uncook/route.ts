@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { updateStatus } from '@/lib/actions/planned-meals'
-import { PlannedMealStatus } from '@prisma/client'
+import { PlannedMealStatus } from '@/generated/prisma/client'
 
 export async function POST(
   request: NextRequest,

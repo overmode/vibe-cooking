@@ -10,7 +10,7 @@ import {
   PlannedMealStatus,
   Recipe,
   UserDietaryPreferences,
-} from "@prisma/client";
+} from "@/generated/prisma/browser";
 import { UpdatePlannedMealInput } from "@/lib/validators/plannedMeals";
 export async function getPlannedMealWithRecipeById(
   id: string

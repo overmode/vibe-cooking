@@ -2,7 +2,7 @@ import { describe, it, expect, vi, afterAll } from 'vitest'
 import { createPlannedMealAction } from '@/lib/actions/planned-meals'
 import { createRecipeAction } from '@/lib/actions/recipe'
 import prisma from '@/prisma/client'
-import { PlannedMealStatus } from '@prisma/client'
+import { PlannedMealStatus } from '@/generated/prisma/client'
 
 // Mock Clerk auth
 vi.mock('@clerk/nextjs/server', () => ({
@@ -51,7 +51,7 @@ describe('Planned Meal Creation Deadlock Tests', () => {
       getToken: vi.fn(),
       has: vi.fn(),
       debug: vi.fn()
-    } as any)
+    } as unknown as Awaited<ReturnType<typeof mockAuth>>)
 
     // First, create a recipe to plan meals from
     const recipe = await createRecipeAction({

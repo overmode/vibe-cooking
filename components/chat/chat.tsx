@@ -1,29 +1,20 @@
+import { useState } from "react";
+import { UIMessage } from "ai";
 import { ChatInput } from "./chat-input";
 import { ChatMessagesDisplay } from "./chat-messages-display";
-
-import { Message } from "ai";
 import { ChatSuggestions } from "./chat-suggestions";
 import { ChatSuggestion } from "@/lib/types";
 
 interface ChatProps {
-  messages: Message[];
-  input: string;
-  handleInputChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  messages: UIMessage[];
+  sendMessage: (text: string) => void;
   error?: Error | undefined;
   suggestions?: ChatSuggestion[];
-  handleSuggestionClick?: (suggestion: ChatSuggestion) => void;
 }
 
-export function Chat({
-  messages,
-  input,
-  handleInputChange,
-  handleSubmit,
-  error,
-  suggestions,
-  handleSuggestionClick,
-}: ChatProps) {
+export function Chat({ messages, sendMessage, error, suggestions }: ChatProps) {
+  const [input, setInput] = useState("");
+
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-hidden">
@@ -31,19 +22,15 @@ export function Chat({
       </div>
 
       <div className="w-full">
-        {messages.length <= 2 && suggestions && handleSuggestionClick && (
+        {messages.length <= 2 && suggestions && (
           <ChatSuggestions
             suggestions={suggestions}
-            onSuggestionClick={handleSuggestionClick}
+            onSuggestionClick={(s) => setInput(s.message)}
           />
         )}
       </div>
       <div className="sticky bottom-0 pb-0">
-        <ChatInput
-          input={input}
-          handleInputChange={handleInputChange}
-          handleSubmit={handleSubmit}
-        />
+        <ChatInput input={input} setInput={setInput} onSend={sendMessage} />
       </div>
     </div>
   );

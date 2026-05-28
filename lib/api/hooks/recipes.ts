@@ -15,7 +15,7 @@ import {
   planRecipe,
 } from '@/lib/api/client'
 import { queryKeys } from '../query-keys'
-import { PlannedMeal, Recipe } from '@prisma/client'
+import { PlannedMeal, Recipe } from '@/generated/prisma/browser'
 export const useRecipesMetadata = ({
   options = {},
 }: {
@@ -62,14 +62,14 @@ export const useDeleteRecipeById = ({
         queryKey: queryKeys.recipes.byId(id),
       })
     },
-    onSuccess: (data, variables, context) => {
-      options.onSuccess?.(data, variables, context)
-      
+    onSuccess: (data, variables, onMutateResult, context) => {
+      options.onSuccess?.(data, variables, onMutateResult, context)
+
       // Remove the specific recipe from cache instead of just invalidating
       queryClient.removeQueries({
         queryKey: queryKeys.recipes.byId(id),
       })
-      
+
       queryClient.invalidateQueries({
         queryKey: queryKeys.recipes.all,
       })
@@ -89,8 +89,8 @@ export const usePlanRecipe = ({
   return useMutation({
     ...options,
     mutationFn: async (id: string) => await planRecipe(id),
-    onMutate: async (variables) => {
-      options.onMutate?.(variables)
+    onMutate: async (variables, context) => {
+      options.onMutate?.(variables, context)
 
       // Optimistic updates for recipes only (to update planned status)
       await queryClient.cancelQueries({
@@ -119,12 +119,15 @@ export const usePlanRecipe = ({
       )
       return { previousRecipes }
     },
-    onError: (error, variables, context) => {
-      options.onError?.(error, variables, context)
-      queryClient.setQueryData(queryKeys.recipes.all, context?.previousRecipes)
+    onError: (error, variables, onMutateResult, context) => {
+      options.onError?.(error, variables, onMutateResult, context)
+      queryClient.setQueryData(
+        queryKeys.recipes.all,
+        onMutateResult?.previousRecipes
+      )
     },
-    onSettled: (data, error, variables, context) => {
-      options.onSettled?.(data, error, variables, context)
+    onSettled: (data, error, variables, onMutateResult, context) => {
+      options.onSettled?.(data, error, variables, onMutateResult, context)
       queryClient.invalidateQueries({
         queryKey: queryKeys.recipes.all,
       })

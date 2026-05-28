@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { handleActionError } from "../utils/error";
-import { UserDietaryPreferences } from "@prisma/client";
+import { UserDietaryPreferences } from "@/generated/prisma/client";
 import {
   getUserDietaryPreferences,
   updateUserDietaryPreferences,

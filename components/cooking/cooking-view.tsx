@@ -1,5 +1,8 @@
 "use client";
 
+import { useCallback, useMemo } from "react";
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport, UIMessage } from "ai";
 import { RecipeViewer } from "@/components/recipes/recipe-viewer";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
@@ -9,15 +12,14 @@ import { PlannedMealWithRecipe } from "@/lib/types";
 import { useUpdatePlannedMealStatusMutation } from "@/lib/api/hooks/planned-meals";
 import { triggerToolEffects } from "@/lib/ai/tools/effects";
 import { useQueryClient } from "@tanstack/react-query";
-import { PlannedMealStatus } from "@prisma/client";
+import { PlannedMealStatus } from "@/generated/prisma/browser";
 import { CookingCongratulationsDialog } from "@/components/cooking/cooking-congratulations-dialog";
-import { ToolResult } from "@/lib/ai/tools/types";
 import { ChatCanva } from "@/components/chat/chat-canva";
 import { plannedMealToRecipe } from "@/lib/utils/plannedMealUtils";
-import { UseChatOptions } from "@ai-sdk/react";
 import { apiRoutes } from "@/lib/api/api-routes";
 import { routes } from "@/lib/routes";
 import { useUserDietaryPreferences } from "@/lib/api/hooks/preferences";
+
 interface CookingViewProps {
   plannedMealWithRecipe: PlannedMealWithRecipe;
 }
@@ -28,36 +30,51 @@ export function CookingView({ plannedMealWithRecipe }: CookingViewProps) {
 
   const { data: userDietaryPreferences } = useUserDietaryPreferences({});
 
-  const chatOptions: UseChatOptions = {
-    api: apiRoutes.assistants.cooking,
-    body: {
-      plannedMealWithRecipe,
-      userDietaryPreferences: userDietaryPreferences?.preferences,
-    },
-    initialMessages: [
+  const initialMessages = useMemo<UIMessage[]>(
+    () => [
       {
         id: "cooking-intro",
-        content: `I'll guide you through cooking ${
-          plannedMealWithRecipe.overrideName ||
-          plannedMealWithRecipe.recipe.name
-        }. Let me know if you have questions at any step or want to make changes!`,
         role: "assistant",
+        parts: [
+          {
+            type: "text",
+            text: `I'll guide you through cooking ${
+              plannedMealWithRecipe.overrideName ||
+              plannedMealWithRecipe.recipe.name
+            }. Let me know if you have questions at any step or want to make changes!`,
+          },
+        ],
       },
     ],
-    // run client-side tools that are automatically executed:
-    async onToolCall({ toolCall }) {
-      if (toolCall.toolName === "renderRecipeSuggestionTool") {
-        return {
-          success: true,
-          data: "The recipe was successfully rendered",
-        } as ToolResult<string>;
-      }
-    },
-    onFinish: (message) => {
-      // client-side side effects such as cache invalidation
+    [plannedMealWithRecipe.overrideName, plannedMealWithRecipe.recipe.name]
+  );
+
+  const transport = useMemo(
+    () => new DefaultChatTransport({ api: apiRoutes.assistants.cooking }),
+    []
+  );
+
+  const { messages, sendMessage, error } = useChat({
+    transport,
+    messages: initialMessages,
+    onFinish: ({ message }) => {
       triggerToolEffects(message, queryClient);
     },
-  };
+  });
+
+  const send = useCallback(
+    (text: string) =>
+      sendMessage(
+        { text },
+        {
+          body: {
+            plannedMealWithRecipe,
+            userDietaryPreferences: userDietaryPreferences?.preferences,
+          },
+        }
+      ),
+    [sendMessage, plannedMealWithRecipe, userDietaryPreferences?.preferences]
+  );
 
   const updateCookingStatusMutation = useUpdatePlannedMealStatusMutation({
     options: {
@@ -82,7 +99,6 @@ export function CookingView({ plannedMealWithRecipe }: CookingViewProps) {
     router.push(routes.home);
   };
 
-  // Get the effective recipe data (with overrides)
   const effectiveRecipe = plannedMealToRecipe(plannedMealWithRecipe);
 
   const markAsCookedButton = (
@@ -98,7 +114,6 @@ export function CookingView({ plannedMealWithRecipe }: CookingViewProps) {
   );
   return (
     <div className="flex flex-col h-full">
-      {/* Congratulations Dialog: This is a modal that appears when the meal is cooked */}
       {plannedMealWithRecipe.status === PlannedMealStatus.COOKED && (
         <CookingCongratulationsDialog
           open={true}
@@ -111,7 +126,9 @@ export function CookingView({ plannedMealWithRecipe }: CookingViewProps) {
       <ChatCanva
         title={effectiveRecipe.name}
         contentNode={<RecipeViewer recipe={effectiveRecipe} />}
-        chatOptions={chatOptions}
+        messages={messages}
+        sendMessage={send}
+        error={error}
         contentTabLabel="Recipe"
         chatTabLabel="Assistant"
         actions={markAsCookedButton}
