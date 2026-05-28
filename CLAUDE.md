@@ -58,7 +58,7 @@ This is a Next.js app with a layered architecture for an AI-powered cooking assi
 - Chat-based UX for all interactions
 - Planned meals are temporary variants of base recipes
 - AI tools handle CRUD operations through structured definitions
-- Rate limiting with Upstash Redis
+- Rate limiting with Postgres (`RateLimit` model)
 - Client-side tool rendering for UI updates
 
 ## Claude rules

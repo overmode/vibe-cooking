@@ -51,6 +51,14 @@ model UserDietaryPreferences {
   @@unique([userId])
 }
 
+model RateLimit {
+  userId       String
+  day          DateTime @db.Date
+  messageCount Int      @default(0)
+
+  @@id([userId, day])
+}
+
 enum PlannedMealStatus {
   PLANNED
   COOKED

@@ -31,7 +31,7 @@ export async function POST(req: Request) {
   });
 
   const result = streamText({
-    model: openai("gpt-4.1"),
+    model: openai.chat("gpt-5.4-nano"),
     providerOptions: { openai: { parallelToolCalls: false } },
     system: prompt[0].content,
     stopWhen: stepCountIs(10),
