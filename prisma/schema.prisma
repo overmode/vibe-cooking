@@ -10,36 +10,48 @@ datasource db {
   provider = "postgresql"
 }
 
-model Recipe {
-  id            String        @id @default(cuid())
-  userId        String
-  name          String        @db.VarChar(100)
-  servings      Int
-  ingredients   String[]
-  instructions  String        @db.VarChar(10000)
-  duration      Int?          // duration in minutes
-  difficulty    Int?          // scale: 1 (easy) to 10 (hard)
-  isFavorite    Boolean       @default(false)
-  createdAt     DateTime      @default(now())
-  plannedMeals  PlannedMeal[]
-  cookCount     Int           @default(0)
+model RecipeTemplate {
+  id           String    @id @default(cuid())
+  userId       String
+  name         String    @db.VarChar(100)
+  servings     Int
+  ingredients  String[]
+  instructions String    @db.VarChar(10000)
+  duration     Int? // duration in minutes
+  difficulty   Int? // scale: 1 (easy) to 10 (hard)
+  isFavorite   Boolean   @default(false)
+  archivedAt   DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  instances RecipeInstance[]
+
+  @@index([userId, archivedAt, createdAt])
 }
 
-model PlannedMeal {
-  id                   String   @id @default(cuid())
-  userId               String
-  recipe               Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
-  recipeId             String
-  overrideName         String?  @db.VarChar(100)
-  overrideIngredients  String[] @default([])
-  overrideInstructions String?  @db.VarChar(10000)
-  overrideServings     Int?
-  overrideDuration     Int?
-  overrideDifficulty   Int?
+model RecipeInstance {
+  id         String         @id @default(cuid())
+  userId     String
+  template   RecipeTemplate @relation(fields: [templateId], references: [id], onDelete: Restrict)
+  templateId String
 
-  status               PlannedMealStatus @default(PLANNED)
-  createdAt            DateTime          @default(now())
-  cookedAt             DateTime?
+  name         String   @db.VarChar(100)
+  servings     Int
+  ingredients  String[]
+  instructions String   @db.VarChar(10000)
+  duration     Int?
+  difficulty   Int?
+
+  status      RecipeInstanceStatus @default(PLANNED)
+  plannedFor  DateTime?
+  startedAt   DateTime?
+  cookedAt    DateTime?
+  cancelledAt DateTime?
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+
+  @@index([userId, status, createdAt])
+  @@index([templateId, status])
 }
 
 model UserDietaryPreferences {
@@ -59,7 +71,9 @@ model RateLimit {
   @@id([userId, day])
 }
 
-enum PlannedMealStatus {
+enum RecipeInstanceStatus {
   PLANNED
+  COOKING
   COOKED
+  CANCELLED
 }

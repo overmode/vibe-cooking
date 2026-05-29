@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { updateStatus } from '@/lib/actions/planned-meals'
-import { PlannedMealStatus } from '@/generated/prisma/client'
+import { RecipeInstanceStatus } from '@/generated/prisma/client'
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params
-  const plannedMeal = await updateStatus(id, PlannedMealStatus.PLANNED)
+  const plannedMeal = await updateStatus(id, RecipeInstanceStatus.PLANNED)
   return NextResponse.json(plannedMeal)
 }

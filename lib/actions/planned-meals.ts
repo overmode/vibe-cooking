@@ -18,11 +18,7 @@ import {
 } from '@/lib/validators/plannedMeals'
 import { PlannedMealMetadata, PlannedMealWithRecipe } from '@/lib/types'
 import prisma from '@/prisma/client'
-import { PlannedMealStatus } from '@/generated/prisma/client'
-import {
-  decrementCookedCount,
-  incrementCookedCount,
-} from '@/lib/data-access/recipe'
+import { RecipeInstanceStatus } from '@/generated/prisma/client'
 import { MAX_NUM_PLANNED_MEALS_PER_USER } from '@/lib/constants/app_validation'
 
 export const getPlannedMealsMetadataAction = async (): Promise<
@@ -58,8 +54,8 @@ export const createPlannedMealAction = async (
     const plannedMeal = await prisma.$transaction(
       async (tx) => {
         // Check count first to give user immediate feedback for obvious violations
-        const count = await tx.plannedMeal.count({
-          where: { userId, status: PlannedMealStatus.PLANNED },
+        const count = await tx.recipeInstance.count({
+          where: { userId, status: RecipeInstanceStatus.PLANNED },
         })
 
         if (count >= MAX_NUM_PLANNED_MEALS_PER_USER) {
@@ -122,7 +118,7 @@ export const getPlannedMealByIdAction = async (
 
 export async function updateStatus(
   plannedMealId: string,
-  status: PlannedMealStatus
+  status: RecipeInstanceStatus
 ) {
   const { userId } = await auth()
   if (!userId) {
@@ -142,30 +138,18 @@ export async function updateStatus(
 
     if (plannedMeal.status === status) return plannedMeal
 
-    if (status === PlannedMealStatus.COOKED) {
-      const plannedMeal = await setPlannedMealCooked({
+    if (status === RecipeInstanceStatus.COOKED) {
+      return setPlannedMealCooked({
         id: plannedMealId,
-        userId,
-        transaction: tx,
-      })
-      await incrementCookedCount({
-        id: plannedMeal.recipeId,
-        userId,
-        transaction: tx,
-      })
-    } else {
-      const plannedMeal = await setPlannedMealUnCooked({
-        id: plannedMealId,
-        userId,
-        transaction: tx,
-      })
-      await decrementCookedCount({
-        id: plannedMeal.recipeId,
         userId,
         transaction: tx,
       })
     }
 
-    return plannedMeal
+    return setPlannedMealUnCooked({
+      id: plannedMealId,
+      userId,
+      transaction: tx,
+    })
   })
 }

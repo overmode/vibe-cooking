@@ -15,7 +15,7 @@ import {
   planRecipe,
 } from '@/lib/api/client'
 import { queryKeys } from '../query-keys'
-import { PlannedMeal, Recipe } from '@/generated/prisma/browser'
+import { RecipeInstance, RecipeTemplate } from '@/generated/prisma/browser'
 export const useRecipesMetadata = ({
   options = {},
 }: {
@@ -36,7 +36,7 @@ export const useRecipeById = ({
   options = {},
 }: {
   id: string
-  options?: Omit<UseQueryOptions<Recipe, Error>, 'queryKey' | 'queryFn'>
+  options?: Omit<UseQueryOptions<RecipeTemplate, Error>, 'queryKey' | 'queryFn'>
 }) => {
   return useQuery({
     ...options,
@@ -83,7 +83,7 @@ export const useDeleteRecipeById = ({
 export const usePlanRecipe = ({
   options = {},
 }: {
-  options?: Omit<UseMutationOptions<PlannedMeal, Error, string>, 'mutationFn'>
+  options?: Omit<UseMutationOptions<RecipeInstance, Error, string>, 'mutationFn'>
 } = {}) => {
   const queryClient = useQueryClient()
   return useMutation({

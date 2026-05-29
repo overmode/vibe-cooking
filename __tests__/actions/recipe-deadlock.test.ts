@@ -16,7 +16,7 @@ describe('Recipe Creation Deadlock Tests', () => {
     // Cleanup all test users at the end
     if (testUserIds.length > 0) {
       try {
-        await prisma.recipe.deleteMany({
+        await prisma.recipeTemplate.deleteMany({
           where: { 
             userId: { in: testUserIds }
           }
@@ -43,7 +43,7 @@ describe('Recipe Creation Deadlock Tests', () => {
       getToken: vi.fn(),
       has: vi.fn(),
       debug: vi.fn()
-    } as unknown as Awaited<ReturnType<typeof mockAuth>>)
+    } as unknown as Parameters<typeof mockAuth.mockResolvedValue>[0])
 
     const recipeData = {
       name: 'Deadlock Test Recipe',

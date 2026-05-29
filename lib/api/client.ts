@@ -6,9 +6,9 @@ import {
   RecipeMetadata,
 } from "@/lib/types";
 import {
-  PlannedMeal,
-  PlannedMealStatus,
-  Recipe,
+  RecipeInstance,
+  RecipeInstanceStatus,
+  RecipeTemplate,
   UserDietaryPreferences,
 } from "@/generated/prisma/browser";
 import { UpdatePlannedMealInput } from "@/lib/validators/plannedMeals";
@@ -21,7 +21,7 @@ export async function getPlannedMealWithRecipeById(
 export const updatePlannedMeal = async (
   updatePlannedMealInput: UpdatePlannedMealInput
 ) => {
-  return put<PlannedMeal>(
+  return put<RecipeInstance>(
     apiRoutes.plannedMeal.byId(updatePlannedMealInput.id),
     updatePlannedMealInput
   );
@@ -36,7 +36,7 @@ export const getRecipesMetadata = async () => {
 };
 
 export const getRecipeById = async (id: string) => {
-  return get<Recipe>(apiRoutes.recipe.byId(id));
+  return get<RecipeTemplate>(apiRoutes.recipe.byId(id));
 };
 
 export const deleteRecipeById = async (
@@ -47,17 +47,17 @@ export const deleteRecipeById = async (
 
 export const updatePlannedMealStatus = async (
   id: string,
-  status: PlannedMealStatus
+  status: RecipeInstanceStatus
 ) => {
   const url =
-    status === PlannedMealStatus.COOKED
+    status === RecipeInstanceStatus.COOKED
       ? apiRoutes.plannedMeal.cook(id)
       : apiRoutes.plannedMeal.uncook(id);
-  return post<PlannedMeal>(url, {});
+  return post<RecipeInstance>(url, {});
 };
 
 export const planRecipe = async (id: string) => {
-  return post<PlannedMeal>(apiRoutes.recipe.plan(id), {});
+  return post<RecipeInstance>(apiRoutes.recipe.plan(id), {});
 };
 
 export const deletePlannedMealById = async (id: string) => {

@@ -12,7 +12,6 @@ import { routes } from "@/lib/routes";
 import { PlannedMealWithRecipe } from "@/lib/types";
 import { apiRoutes } from "@/lib/api/api-routes";
 import { useRouter } from "next/navigation";
-import { plannedMealToRecipe } from "@/lib/utils/plannedMealUtils";
 import { Button } from "@/components/ui/button";
 import { Trash } from "lucide-react";
 import { DeleteConfirmationDialog } from "@/components/ui/delete-confirmation-dialog";
@@ -76,7 +75,7 @@ export function PlannedMealChatView({ plannedMeal }: PlannedMealChatViewProps) {
     [sendMessage, plannedMeal, userDietaryPreferences?.preferences]
   );
 
-  const plannedMealAsRecipe = plannedMealToRecipe(plannedMeal);
+  const plannedMealAsRecipe = plannedMeal;
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const deleteAction = (

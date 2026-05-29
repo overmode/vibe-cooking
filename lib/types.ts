@@ -1,60 +1,42 @@
-import { Prisma, Recipe } from '@/generated/prisma/browser'
+import {
+  RecipeTemplate,
+  RecipeInstance,
+  RecipeInstanceStatus,
+} from '@/generated/prisma/browser'
 import { z } from 'zod'
 
 export type CardDisplayMetadata = Pick<
-  Recipe,
+  RecipeTemplate,
   'id' | 'name' | 'duration' | 'difficulty' | 'servings'
 >
 
-export type RecipeMetadata = Prisma.RecipeGetPayload<{
-  select: {
-    id: true
-    name: true
-    createdAt: true
-    servings: true
-    duration: true
-    difficulty: true
-    cookCount: true
-    isFavorite: true
-    plannedMeals: {
-      where: {
-        // TODO: This is a workaround to get the type to work. Should use the enum instead.
-        status: 'PLANNED'
-      }
-      select: {
-        id: true
-        status: true
-      }
-    }
-  }
-}>
+export type RecipeMetadata = Pick<
+  RecipeTemplate,
+  | 'id'
+  | 'name'
+  | 'createdAt'
+  | 'servings'
+  | 'duration'
+  | 'difficulty'
+  | 'isFavorite'
+> & {
+  cookCount: number
+  plannedMeals: { id: string; status: RecipeInstanceStatus }[]
+}
 
-export type PlannedMealMetadata = Prisma.PlannedMealGetPayload<{
-  select: {
-    id: true
-    overrideName: true
-    createdAt: true
-    overrideDifficulty: true
-    overrideDuration: true
-    overrideServings: true
-    status: true
-    cookedAt: true
-    recipe: {
-      select: {
-        name: true
-        servings: true
-        duration: true
-        difficulty: true
-      }
-    }
-  }
-}>
+export type PlannedMealMetadata = Pick<
+  RecipeInstance,
+  | 'id'
+  | 'name'
+  | 'createdAt'
+  | 'difficulty'
+  | 'duration'
+  | 'servings'
+  | 'status'
+  | 'cookedAt'
+>
 
-export type PlannedMealWithRecipe = Prisma.PlannedMealGetPayload<{
-  include: {
-    recipe: true
-  }
-}>
+export type PlannedMealWithRecipe = RecipeInstance
 
 // bypasses a zod schema and accept a type instead. Can be used to type safe values
 export const asTypedSchema = <T>() => ({} as unknown as z.ZodType<T>)

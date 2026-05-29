@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    await prisma.recipe.findFirst();
+    await prisma.recipeTemplate.findFirst();
 
     console.log("Supabase keepalive successful.");
 

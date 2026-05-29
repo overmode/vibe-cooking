@@ -6,7 +6,7 @@ import {
   UseQueryOptions,
 } from "@tanstack/react-query";
 import { PlannedMealWithRecipe, PlannedMealMetadata } from "@/lib/types";
-import { PlannedMeal, PlannedMealStatus } from "@/generated/prisma/browser";
+import { RecipeInstance, RecipeInstanceStatus } from "@/generated/prisma/browser";
 import {
   getPlannedMealsMetadata,
   getPlannedMealWithRecipeById,
@@ -51,7 +51,7 @@ export const usePlannedMealsMetadata = ({
 
 type CookedStatusVars = {
   id: string;
-  status: PlannedMealStatus;
+  status: RecipeInstanceStatus;
 };
 
 type StatusMutationContext = {
@@ -64,7 +64,7 @@ export const useUpdatePlannedMealStatusMutation = ({
 }: {
   options?: Omit<
     UseMutationOptions<
-      PlannedMeal,
+      RecipeInstance,
       Error,
       CookedStatusVars,
       StatusMutationContext
@@ -139,9 +139,9 @@ export const useUpdatePlannedMealStatusMutation = ({
       queryClient.invalidateQueries({
         queryKey: queryKeys.plannedMeals.byId(variables.id),
       });
-      if (data?.recipeId) {
+      if (data?.templateId) {
         queryClient.invalidateQueries({
-          queryKey: queryKeys.recipes.byId(data.recipeId),
+          queryKey: queryKeys.recipes.byId(data.templateId),
         });
       }
     },
@@ -152,7 +152,7 @@ export const useUpdatePlannedMealMutation = ({
   options = {},
 }: {
   options?: Omit<
-    UseMutationOptions<PlannedMeal, Error, UpdatePlannedMealInput>,
+    UseMutationOptions<RecipeInstance, Error, UpdatePlannedMealInput>,
     "mutationFn"
   >;
 } = {}) => {

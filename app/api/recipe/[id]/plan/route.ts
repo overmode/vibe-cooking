@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createPlannedMealAction } from '@/lib/actions/planned-meals'
-import { PlannedMealStatus } from '@/generated/prisma/client'
 
 export async function POST(
   request: NextRequest,
@@ -8,8 +7,7 @@ export async function POST(
 ) {
   const { id } = await params
   const plannedMeal = await createPlannedMealAction({
-    recipeId: id,
-    status: PlannedMealStatus.PLANNED,
+    templateId: id,
   })
   return NextResponse.json(plannedMeal)
 }
