@@ -14,7 +14,6 @@ import {
   MAX_INGREDIENT_LENGTH,
   MIN_INSTRUCTIONS_LENGTH,
   MAX_INSTRUCTIONS_LENGTH,
-  MIN_COOK_COUNT,
   MAX_INGREDIENTS,
 } from '@/lib/constants/models_validation'
 
@@ -96,11 +95,6 @@ export const createRecipeInputSchema = z
     isFavorite: z
       .boolean()
       .describe('Whether the recipe is a favorite')
-      .optional(),
-    cookCount: z
-      .number()
-      .describe('The number of times the recipe has been cooked')
-      .min(0, { message: `Cook count must be at least ${MIN_COOK_COUNT}` })
       .optional(),
   })
   .strict()

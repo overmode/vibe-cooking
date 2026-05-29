@@ -15,18 +15,18 @@ import {
   MIN_INGREDIENT_LENGTH,
   MAX_INGREDIENT_LENGTH,
 } from '@/lib/constants/models_validation'
-import { PlannedMealStatus } from '@/generated/prisma/browser'
+import { RecipeInstanceStatus } from '@/generated/prisma/browser'
 
 export const createPlannedMealInputSchema = z
   .object({
-    recipeId: z
+    templateId: z
       .string()
-      .nonempty({ message: 'Recipe ID is required' })
+      .nonempty({ message: 'Recipe template ID is required' })
       .describe('The ID of the recipe to plan. Required.'),
-    overrideName: z
+    name: z
       .string()
       .describe(
-        "The name of the planned meal. Leave empty if no change compared to the original recipe, otherwise adjust it to reflect the changes, e.g. 'Chicken Parmesan' -> 'Chicken Parmesan (with extra cheese)"
+        "The name of the planned meal. Defaults to the recipe's name; set it to reflect changes, e.g. 'Chicken Parmesan' -> 'Chicken Parmesan (with extra cheese)'."
       )
       .min(MIN_NAME_LENGTH, {
         message: `Name must be at least ${MIN_NAME_LENGTH} characters`,
@@ -35,7 +35,7 @@ export const createPlannedMealInputSchema = z
         message: `Name must be less than ${MAX_NAME_LENGTH} characters`,
       })
       .optional(),
-    overrideIngredients: z
+    ingredients: z
       .array(
         z
           .string()
@@ -47,7 +47,7 @@ export const createPlannedMealInputSchema = z
           })
       )
       .describe(
-        'The ingredients of the planned meal. Leave empty if no change compared to the original recipe, otherwise adjust it to reflect the changes.'
+        "The ingredients of the planned meal. Defaults to the recipe's ingredients; set it to reflect changes."
       )
       .min(MIN_INGREDIENTS, {
         message: `Ingredients must be at least ${MIN_INGREDIENTS}`,
@@ -56,10 +56,10 @@ export const createPlannedMealInputSchema = z
         message: `Ingredients must be less than ${MAX_INGREDIENTS}`,
       })
       .optional(),
-    overrideInstructions: z
+    instructions: z
       .string()
       .describe(
-        'The instructions of the planned meal. Leave empty if no change compared to the original recipe, otherwise adjust it to reflect the changes.'
+        "The instructions of the planned meal. Defaults to the recipe's instructions; set it to reflect changes."
       )
       .min(MIN_INSTRUCTIONS_LENGTH, {
         message: `Instructions must be at least ${MIN_INSTRUCTIONS_LENGTH} characters`,
@@ -68,10 +68,10 @@ export const createPlannedMealInputSchema = z
         message: `Instructions must be less than ${MAX_INSTRUCTIONS_LENGTH} characters`,
       })
       .optional(),
-    overrideServings: z
+    servings: z
       .number()
       .describe(
-        'The number of servings of the planned meal. Leave empty if no change compared to the original recipe, otherwise adjust it to reflect the changes.'
+        "The number of servings of the planned meal. Defaults to the recipe's servings; set it to reflect changes."
       )
       .min(MIN_SERVINGS, {
         message: `Servings must be at least ${MIN_SERVINGS}`,
@@ -80,10 +80,10 @@ export const createPlannedMealInputSchema = z
         message: `Servings must be less than ${MAX_SERVINGS}`,
       })
       .optional(),
-    overrideDuration: z
+    duration: z
       .number()
       .describe(
-        'The duration of the planned meal in minutes. Leave empty if no change compared to the original recipe, otherwise adjust it to reflect the changes.'
+        "The duration of the planned meal in minutes. Defaults to the recipe's duration; set it to reflect changes."
       )
       .min(MIN_DURATION_MINUTES, {
         message: `Duration must be at least ${MIN_DURATION_MINUTES} minutes`,
@@ -92,10 +92,10 @@ export const createPlannedMealInputSchema = z
         message: `Duration must be less than ${MAX_DURATION_MINUTES} minutes`,
       })
       .optional(),
-    overrideDifficulty: z
+    difficulty: z
       .number()
       .describe(
-        'The difficulty of the planned meal. Leave empty if no change compared to the original recipe, otherwise adjust it to reflect the changes.'
+        "The difficulty of the planned meal. Defaults to the recipe's difficulty; set it to reflect changes."
       )
       .min(MIN_DIFFICULTY, {
         message: `Difficulty must be at least ${MIN_DIFFICULTY}`,
@@ -105,10 +105,11 @@ export const createPlannedMealInputSchema = z
       })
       .optional(),
     status: z
-      .nativeEnum(PlannedMealStatus)
+      .nativeEnum(RecipeInstanceStatus)
       .describe(
-        'The status of the planned meal. PLANNED if the meal is not cooked yet, COOKED if the meal has been cooked.'
-      ),
+        'The status of the planned meal. Defaults to PLANNED if not provided.'
+      )
+      .optional(),
     cookedAt: z
       .date()
       .describe(
@@ -119,7 +120,7 @@ export const createPlannedMealInputSchema = z
   .strict()
 
 export const updatePlannedMealInputSchema = createPlannedMealInputSchema
-  .omit({ recipeId: true })
+  .omit({ templateId: true })
   .partial()
   .extend({
     id: z.string().describe('The ID of the planned meal to update'),

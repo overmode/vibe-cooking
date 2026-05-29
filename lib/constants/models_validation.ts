@@ -20,6 +20,3 @@ export const MIN_DIFFICULTY = 1
 
 export const MAX_DURATION_MINUTES = 600
 export const MIN_DURATION_MINUTES = 1
-
-export const MAX_COOK_COUNT = 1000
-export const MIN_COOK_COUNT = 0

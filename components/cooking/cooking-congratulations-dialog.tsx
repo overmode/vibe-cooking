@@ -43,10 +43,7 @@ export function CookingCongratulationsDialog({
           </DialogTitle>
           <DialogDescription className="text-center pt-2 flex flex-col gap-2">
             <span className="font-medium text-primary">
-              You&apos;ve successfully cooked{' '}
-              {plannedMealWithRecipe.overrideName ||
-                plannedMealWithRecipe.recipe.name}
-              !
+              You&apos;ve successfully cooked {plannedMealWithRecipe.name}!
             </span>
             <span className="mt-2">What would you like to do next?</span>
           </DialogDescription>

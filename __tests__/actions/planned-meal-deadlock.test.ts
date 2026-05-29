@@ -2,7 +2,6 @@ import { describe, it, expect, vi, afterAll } from 'vitest'
 import { createPlannedMealAction } from '@/lib/actions/planned-meals'
 import { createRecipeAction } from '@/lib/actions/recipe'
 import prisma from '@/prisma/client'
-import { PlannedMealStatus } from '@/generated/prisma/client'
 
 // Mock Clerk auth
 vi.mock('@clerk/nextjs/server', () => ({
@@ -19,12 +18,12 @@ describe('Planned Meal Creation Deadlock Tests', () => {
     // Cleanup all test data at the end
     if (testUserIds.length > 0) {
       try {
-        await prisma.plannedMeal.deleteMany({
+        await prisma.recipeInstance.deleteMany({
           where: { 
             userId: { in: testUserIds }
           }
         })
-        await prisma.recipe.deleteMany({
+        await prisma.recipeTemplate.deleteMany({
           where: { 
             userId: { in: testUserIds }
           }
@@ -51,7 +50,7 @@ describe('Planned Meal Creation Deadlock Tests', () => {
       getToken: vi.fn(),
       has: vi.fn(),
       debug: vi.fn()
-    } as unknown as Awaited<ReturnType<typeof mockAuth>>)
+    } as unknown as Parameters<typeof mockAuth.mockResolvedValue>[0])
 
     // First, create a recipe to plan meals from
     const recipe = await createRecipeAction({
@@ -66,16 +65,11 @@ describe('Planned Meal Creation Deadlock Tests', () => {
     }
     testRecipeIds.push(recipe.id)
 
-    const plannedMealData = {
-      recipeId: recipe.id,
-      status: PlannedMealStatus.PLANNED
-    }
-
     // Create 10 planned meals in parallel to trigger potential deadlock
     const promises = Array.from({ length: 10 }, (_, i) => 
       createPlannedMealAction({
-        ...plannedMealData,
-        overrideName: `Planned Meal ${i + 1}`
+        templateId: recipe.id,
+        name: `Planned Meal ${i + 1}`
       })
     )
 

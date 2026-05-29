@@ -1,9 +1,15 @@
-import { Recipe } from '@/generated/prisma/browser'
+import { RecipeTemplate } from '@/generated/prisma/browser'
 import { MemoizedMarkdown } from '@/components/chat/memoized-markdown'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { RecipeMetadataDescription } from './shared/recipe-card-base'
-export function RecipeViewer({ recipe }: { recipe: Recipe }) {
+
+type ViewableRecipe = Pick<
+  RecipeTemplate,
+  'id' | 'name' | 'ingredients' | 'instructions' | 'duration' | 'difficulty' | 'servings'
+>
+
+export function RecipeViewer({ recipe }: { recipe: ViewableRecipe }) {
   return (
     <ScrollArea className="h-full">
       <div className="p-6 space-y-8">

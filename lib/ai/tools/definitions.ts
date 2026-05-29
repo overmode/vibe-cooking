@@ -13,7 +13,7 @@ import {
   PlannedMealMetadata,
   asTypedSchema,
 } from "@/lib/types";
-import { Recipe, PlannedMeal } from "@/generated/prisma/browser";
+import { RecipeTemplate, RecipeInstance } from "@/generated/prisma/browser";
 
 export const getRecipesMetadataDefinition = defineTool({
   description: "Get the metadata of all recipes belonging to the user.",
@@ -32,7 +32,7 @@ export const getPlannedMealsDefinition = defineTool({
   description:
     "Get all planned meals with status PLANNED belonging to the user. Useful for fetching all ingredients of upcoming meals.",
   inputSchema: z.object({}),
-  result: asTypedSchema<PlannedMeal[]>(),
+  result: asTypedSchema<RecipeInstance[]>(),
 });
 
 export const getRecipeByIdDefinition = defineTool({
@@ -40,7 +40,7 @@ export const getRecipeByIdDefinition = defineTool({
   inputSchema: z.object({
     id: z.string().describe("The ID of the recipe to get"),
   }),
-  result: asTypedSchema<Recipe>(),
+  result: asTypedSchema<RecipeTemplate>(),
 });
 
 export const getPlannedMealByIdDefinition = defineTool({
@@ -48,31 +48,31 @@ export const getPlannedMealByIdDefinition = defineTool({
   inputSchema: z.object({
     id: z.string().describe("The ID of the planned meal to get"),
   }),
-  result: asTypedSchema<PlannedMeal>(),
+  result: asTypedSchema<RecipeInstance>(),
 });
 
 export const createRecipeDefinition = defineTool({
   description: "Create a Recipe object.",
   inputSchema: createRecipeInputSchema,
-  result: asTypedSchema<Recipe>(),
+  result: asTypedSchema<RecipeTemplate>(),
 });
 
 export const createPlannedMealDefinition = defineTool({
   description: "Create a PlannedMeal object.",
   inputSchema: createPlannedMealInputSchema,
-  result: asTypedSchema<PlannedMeal>(),
+  result: asTypedSchema<RecipeInstance>(),
 });
 
 export const updateRecipeDefinition = defineTool({
   description: "Update a Recipe object.",
   inputSchema: updateRecipeInputSchema,
-  result: asTypedSchema<Recipe>(),
+  result: asTypedSchema<RecipeTemplate>(),
 });
 
 export const updatePlannedMealDefinition = defineTool({
   description: "Update a PlannedMeal object.",
   inputSchema: updatePlannedMealInputSchema,
-  result: asTypedSchema<PlannedMeal>(),
+  result: asTypedSchema<RecipeInstance>(),
 });
 
 export const deleteRecipeDefinition = defineTool({

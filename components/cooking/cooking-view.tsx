@@ -12,10 +12,9 @@ import { PlannedMealWithRecipe } from "@/lib/types";
 import { useUpdatePlannedMealStatusMutation } from "@/lib/api/hooks/planned-meals";
 import { triggerToolEffects } from "@/lib/ai/tools/effects";
 import { useQueryClient } from "@tanstack/react-query";
-import { PlannedMealStatus } from "@/generated/prisma/browser";
+import { RecipeInstanceStatus } from "@/generated/prisma/browser";
 import { CookingCongratulationsDialog } from "@/components/cooking/cooking-congratulations-dialog";
 import { ChatCanva } from "@/components/chat/chat-canva";
-import { plannedMealToRecipe } from "@/lib/utils/plannedMealUtils";
 import { apiRoutes } from "@/lib/api/api-routes";
 import { routes } from "@/lib/routes";
 import { useUserDietaryPreferences } from "@/lib/api/hooks/preferences";
@@ -38,15 +37,12 @@ export function CookingView({ plannedMealWithRecipe }: CookingViewProps) {
         parts: [
           {
             type: "text",
-            text: `I'll guide you through cooking ${
-              plannedMealWithRecipe.overrideName ||
-              plannedMealWithRecipe.recipe.name
-            }. Let me know if you have questions at any step or want to make changes!`,
+            text: `I'll guide you through cooking ${plannedMealWithRecipe.name}. Let me know if you have questions at any step or want to make changes!`,
           },
         ],
       },
     ],
-    [plannedMealWithRecipe.overrideName, plannedMealWithRecipe.recipe.name]
+    [plannedMealWithRecipe.name]
   );
 
   const transport = useMemo(
@@ -86,20 +82,20 @@ export function CookingView({ plannedMealWithRecipe }: CookingViewProps) {
   const handleMarkUncooked = () => {
     updateCookingStatusMutation.mutate({
       id: plannedMealWithRecipe.id,
-      status: PlannedMealStatus.PLANNED,
+      status: RecipeInstanceStatus.PLANNED,
     });
   };
   const handleMarkCooked = () => {
     updateCookingStatusMutation.mutate({
       id: plannedMealWithRecipe.id,
-      status: PlannedMealStatus.COOKED,
+      status: RecipeInstanceStatus.COOKED,
     });
   };
   const handleGoHome = () => {
     router.push(routes.home);
   };
 
-  const effectiveRecipe = plannedMealToRecipe(plannedMealWithRecipe);
+  const effectiveRecipe = plannedMealWithRecipe;
 
   const markAsCookedButton = (
     <Button
@@ -114,7 +110,7 @@ export function CookingView({ plannedMealWithRecipe }: CookingViewProps) {
   );
   return (
     <div className="flex flex-col h-full">
-      {plannedMealWithRecipe.status === PlannedMealStatus.COOKED && (
+      {plannedMealWithRecipe.status === RecipeInstanceStatus.COOKED && (
         <CookingCongratulationsDialog
           open={true}
           onOpenChange={() => {}}

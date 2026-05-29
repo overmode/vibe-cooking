@@ -4,7 +4,7 @@ import {
   CreatePlannedMealInput,
   UpdatePlannedMealInput,
 } from '@/lib/validators/plannedMeals'
-import { PlannedMealStatus } from '@/generated/prisma/client'
+import { RecipeInstanceStatus } from '@/generated/prisma/client'
 import { handleDbError } from '@/lib/utils/error'
 import { PlannedMealMetadata, PlannedMealWithRecipe } from '@/lib/types'
 
@@ -17,11 +17,29 @@ export async function createPlannedMeal({
   userId: string
   data: CreatePlannedMealInput
 }) {
+  const { templateId, ...overrides } = data
+  const client = transaction ?? prisma
   try {
-    const plannedMeal = await (transaction ?? prisma).plannedMeal.create({
+    const template = await client.recipeTemplate.findUnique({
+      where: { id: templateId, userId },
+    })
+
+    if (!template) {
+      throw new Error(`Recipe template with ID ${templateId} not found`)
+    }
+
+    const plannedMeal = await client.recipeInstance.create({
       data: {
-        ...data,
         userId,
+        templateId,
+        name: overrides.name ?? template.name,
+        servings: overrides.servings ?? template.servings,
+        ingredients: overrides.ingredients ?? template.ingredients,
+        instructions: overrides.instructions ?? template.instructions,
+        duration: overrides.duration ?? template.duration,
+        difficulty: overrides.difficulty ?? template.difficulty,
+        status: overrides.status ?? RecipeInstanceStatus.PLANNED,
+        cookedAt: overrides.cookedAt,
       },
     })
     return plannedMeal
@@ -40,13 +58,10 @@ export async function getPlannedMealById({
   userId: string
 }): Promise<PlannedMealWithRecipe> {
   try {
-    const plannedMeal = await (transaction ?? prisma).plannedMeal.findUnique({
+    const plannedMeal = await (transaction ?? prisma).recipeInstance.findUnique({
       where: {
         id,
         userId,
-      },
-      include: {
-        recipe: true,
       },
     })
 
@@ -69,25 +84,17 @@ export async function getPlannedMealsMetadata({
 }): Promise<PlannedMealMetadata[]> {
   try {
     // TODO: Add pagination
-    const plannedMeals = await (transaction ?? prisma).plannedMeal.findMany({
-      where: { userId, status: PlannedMealStatus.PLANNED },
+    const plannedMeals = await (transaction ?? prisma).recipeInstance.findMany({
+      where: { userId, status: RecipeInstanceStatus.PLANNED },
       select: {
         id: true,
-        overrideName: true,
+        name: true,
         createdAt: true,
-        overrideDifficulty: true,
-        overrideDuration: true,
-        overrideServings: true,
+        difficulty: true,
+        duration: true,
+        servings: true,
         status: true,
         cookedAt: true,
-        recipe: {
-          select: {
-            name: true,
-            servings: true,
-            duration: true,
-            difficulty: true,
-          },
-        },
       },
       orderBy: { createdAt: 'desc' },
     })
@@ -105,8 +112,8 @@ export async function getPlannedMeals({
   userId: string
 }) {
   try {
-    const plannedMeals = await (transaction ?? prisma).plannedMeal.findMany({
-      where: { userId, status: PlannedMealStatus.PLANNED },
+    const plannedMeals = await (transaction ?? prisma).recipeInstance.findMany({
+      where: { userId, status: RecipeInstanceStatus.PLANNED },
     })
     return plannedMeals
   } catch (error) {
@@ -125,7 +132,7 @@ export async function updatePlannedMeal({
 }) {
   try {
     const { id, ...updateData } = data
-    const plannedMeal = await (transaction ?? prisma).plannedMeal.update({
+    const plannedMeal = await (transaction ?? prisma).recipeInstance.update({
       where: { id, userId },
       data: updateData,
     })
@@ -148,7 +155,7 @@ export async function setPlannedMealCooked({
     const plannedMeal = await updatePlannedMeal({
       transaction,
       userId,
-      data: { id, cookedAt: new Date(), status: PlannedMealStatus.COOKED },
+      data: { id, cookedAt: new Date(), status: RecipeInstanceStatus.COOKED },
     })
     return plannedMeal
   } catch (error) {
@@ -169,7 +176,7 @@ export async function setPlannedMealUnCooked({
     const plannedMeal = await updatePlannedMeal({
       transaction,
       userId,
-      data: { id, cookedAt: undefined, status: PlannedMealStatus.PLANNED },
+      data: { id, cookedAt: undefined, status: RecipeInstanceStatus.PLANNED },
     })
     return plannedMeal
   } catch (error) {
@@ -187,7 +194,7 @@ export async function deletePlannedMeal({
   userId: string
 }) {
   try {
-    await (transaction ?? prisma).plannedMeal.delete({
+    await (transaction ?? prisma).recipeInstance.delete({
       where: { id, userId },
     })
     return true
