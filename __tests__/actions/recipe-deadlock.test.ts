@@ -2,12 +2,13 @@ import { describe, it, expect, vi, afterAll } from 'vitest'
 import { createRecipeAction } from '@/lib/actions/recipe'
 import prisma from '@/prisma/client'
 
-// Mock Clerk auth
-vi.mock('@clerk/nextjs/server', () => ({
-  auth: vi.fn(),
+vi.mock('@/lib/auth/get-current-user-id', () => ({
+  getCurrentUserId: vi.fn(),
 }))
 
-const mockAuth = vi.mocked(await import('@clerk/nextjs/server')).auth
+const mockGetCurrentUserId = vi.mocked(
+  (await import('@/lib/auth/get-current-user-id')).getCurrentUserId
+)
 
 describe('Recipe Creation Deadlock Tests', () => {
   const testUserIds: string[] = []
@@ -34,16 +35,7 @@ describe('Recipe Creation Deadlock Tests', () => {
     const testUserId = `test-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
     testUserIds.push(testUserId)
     
-    mockAuth.mockResolvedValue({ 
-      userId: testUserId,
-      sessionClaims: {},
-      sessionId: 'test-session',
-      sessionStatus: 'active',
-      actor: null,
-      getToken: vi.fn(),
-      has: vi.fn(),
-      debug: vi.fn()
-    } as unknown as Parameters<typeof mockAuth.mockResolvedValue>[0])
+    mockGetCurrentUserId.mockResolvedValue(testUserId)
 
     const recipeData = {
       name: 'Deadlock Test Recipe',

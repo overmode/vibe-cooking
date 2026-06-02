@@ -1,10 +1,10 @@
-import { auth } from "@clerk/nextjs/server";
+import { getCurrentUserId } from "@/lib/auth/get-current-user-id";
 import { chatLimiter } from "@/lib/rate-limiter";
 import { MAX_USER_MESSAGE_LENGTH } from "@/lib/constants/app_validation";
 import { UIMessage } from "ai";
 
 export async function validateAssistantsRequest(messages: UIMessage[]) {
-  const { userId } = await auth();
+  const userId = await getCurrentUserId();
 
   if (!userId) {
     return { error: new Response("Unauthorized", { status: 401 }) };

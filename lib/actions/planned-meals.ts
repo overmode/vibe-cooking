@@ -1,6 +1,6 @@
 'use server'
 
-import { auth } from '@clerk/nextjs/server'
+import { getCurrentUserId } from '@/lib/auth/get-current-user-id'
 import { handleActionError } from '@/lib/utils/error'
 import {
   createPlannedMeal,
@@ -24,7 +24,7 @@ import { MAX_NUM_PLANNED_MEALS_PER_USER } from '@/lib/constants/app_validation'
 export const getPlannedMealsMetadataAction = async (): Promise<
   PlannedMealMetadata[]
 > => {
-  const { userId } = await auth()
+  const userId = await getCurrentUserId()
   if (!userId) {
     handleActionError('Unauthorized', 'get planned meals metadata')
   }
@@ -33,7 +33,7 @@ export const getPlannedMealsMetadataAction = async (): Promise<
 }
 
 export const getPlannedMealsAction = async () => {
-  const { userId } = await auth()
+  const userId = await getCurrentUserId()
   if (!userId) {
     handleActionError('Unauthorized', 'get planned meals')
   }
@@ -44,7 +44,7 @@ export const getPlannedMealsAction = async () => {
 export const createPlannedMealAction = async (
   plannedMealData: CreatePlannedMealInput
 ) => {
-  const { userId } = await auth()
+  const userId = await getCurrentUserId()
   if (!userId) {
     handleActionError('Unauthorized', 'create planned meal')
   }
@@ -83,7 +83,7 @@ export const createPlannedMealAction = async (
 }
 
 export const deletePlannedMealAction = async (plannedMealId: string) => {
-  const { userId } = await auth()
+  const userId = await getCurrentUserId()
   if (!userId) {
     handleActionError('Unauthorized', 'delete planned meal')
   }
@@ -94,7 +94,7 @@ export const deletePlannedMealAction = async (plannedMealId: string) => {
 export const updatePlannedMealAction = async (
   plannedMealData: UpdatePlannedMealInput
 ) => {
-  const { userId } = await auth()
+  const userId = await getCurrentUserId()
   if (!userId) {
     handleActionError('Unauthorized', 'update planned meal')
   }
@@ -108,7 +108,7 @@ export const updatePlannedMealAction = async (
 export const getPlannedMealByIdAction = async (
   id: string
 ): Promise<PlannedMealWithRecipe> => {
-  const { userId } = await auth()
+  const userId = await getCurrentUserId()
   if (!userId) {
     handleActionError('Unauthorized', 'get planned meal')
   }
@@ -120,7 +120,7 @@ export async function updateStatus(
   plannedMealId: string,
   status: RecipeInstanceStatus
 ) {
-  const { userId } = await auth()
+  const userId = await getCurrentUserId()
   if (!userId) {
     handleActionError('Unauthorized', 'update status')
   }
