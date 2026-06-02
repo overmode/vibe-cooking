@@ -3,17 +3,9 @@ import {
   createRecipeInputSchema,
   updateRecipeInputSchema,
 } from "@/lib/validators/recipe";
-import {
-  createPlannedMealInputSchema,
-  updatePlannedMealInputSchema,
-} from "@/lib/validators/plannedMeals";
 import { defineTool } from "@/lib/ai/tools/types";
-import {
-  RecipeMetadata,
-  PlannedMealMetadata,
-  asTypedSchema,
-} from "@/lib/types";
-import { RecipeTemplate, RecipeInstance } from "@/generated/prisma/browser";
+import { RecipeMetadata, asTypedSchema } from "@/lib/types";
+import { Recipe } from "@/generated/prisma/browser";
 
 export const getRecipesMetadataDefinition = defineTool({
   description: "Get the metadata of all recipes belonging to the user.",
@@ -21,58 +13,25 @@ export const getRecipesMetadataDefinition = defineTool({
   result: asTypedSchema<RecipeMetadata[]>(),
 });
 
-export const getPlannedMealsMetadataDefinition = defineTool({
-  description:
-    "Get the metadata of all planned meals with status PLANNED belonging to the user.",
-  inputSchema: z.object({}),
-  result: asTypedSchema<PlannedMealMetadata[]>(),
-});
-
-export const getPlannedMealsDefinition = defineTool({
-  description:
-    "Get all planned meals with status PLANNED belonging to the user. Useful for fetching all ingredients of upcoming meals.",
-  inputSchema: z.object({}),
-  result: asTypedSchema<RecipeInstance[]>(),
-});
-
 export const getRecipeByIdDefinition = defineTool({
   description: "Get a Recipe object by ID.",
   inputSchema: z.object({
     id: z.string().describe("The ID of the recipe to get"),
   }),
-  result: asTypedSchema<RecipeTemplate>(),
-});
-
-export const getPlannedMealByIdDefinition = defineTool({
-  description: "Get a PlannedMeal object by ID.",
-  inputSchema: z.object({
-    id: z.string().describe("The ID of the planned meal to get"),
-  }),
-  result: asTypedSchema<RecipeInstance>(),
+  result: asTypedSchema<Recipe>(),
 });
 
 export const createRecipeDefinition = defineTool({
-  description: "Create a Recipe object.",
+  description:
+    "Persist a recipe to the user's library. Precondition: the recipe must have been shown via renderRecipeSuggestionTool and the user must have explicitly agreed to save it. Never call this directly from a user request — render a suggestion first, ask, then save. To change an existing recipe, use updateRecipeTool instead.",
   inputSchema: createRecipeInputSchema,
-  result: asTypedSchema<RecipeTemplate>(),
-});
-
-export const createPlannedMealDefinition = defineTool({
-  description: "Create a PlannedMeal object.",
-  inputSchema: createPlannedMealInputSchema,
-  result: asTypedSchema<RecipeInstance>(),
+  result: asTypedSchema<Recipe>(),
 });
 
 export const updateRecipeDefinition = defineTool({
   description: "Update a Recipe object.",
   inputSchema: updateRecipeInputSchema,
-  result: asTypedSchema<RecipeTemplate>(),
-});
-
-export const updatePlannedMealDefinition = defineTool({
-  description: "Update a PlannedMeal object.",
-  inputSchema: updatePlannedMealInputSchema,
-  result: asTypedSchema<RecipeInstance>(),
+  result: asTypedSchema<Recipe>(),
 });
 
 export const deleteRecipeDefinition = defineTool({
@@ -83,25 +42,9 @@ export const deleteRecipeDefinition = defineTool({
   result: asTypedSchema<string>(),
 });
 
-export const deletePlannedMealDefinition = defineTool({
-  description: "Delete a PlannedMeal object.",
-  inputSchema: z.object({
-    id: z.string().describe("The id of the planned meal to be deleted"),
-  }),
-  result: asTypedSchema<string>(),
-});
-
 export const renderRecipeSuggestionDefinition = defineTool({
   description:
-    "Renders a recipe suggestion in a nicely formatted way, without creating it or providing any interaction buttons. This is a visualization-only tool - you must explicitly ask the user if they want to create the recipe after showing it, and then use createRecipeTool if they agree. You can show multiple suggestions in sequence to give users different options.",
+    "ALWAYS use this tool to present a new recipe to the user. NEVER write a full recipe (ingredients + instructions) as plain text in chat. The suggestion card renders the recipe in a structured, readable layout with proper sections — far better UX than a wall of markdown. It is rendering only: it does NOT save anything. After rendering, ask whether to save; only call createRecipeTool if they agree (createRecipeTool requires a prior suggestion). You can render several suggestions in sequence to offer options.",
   inputSchema: createRecipeInputSchema,
-  result: asTypedSchema<string>(),
-});
-
-export const enterCookingModeDefinition = defineTool({
-  description: "Enter cooking mode.",
-  inputSchema: z.object({
-    id: z.string().describe("The id of the planned meal to be cooked"),
-  }),
   result: asTypedSchema<string>(),
 });

@@ -10,12 +10,6 @@ import {
   deleteRecipeDefinition,
   getRecipeByIdDefinition,
   updateRecipeDefinition,
-  getPlannedMealsMetadataDefinition,
-  createPlannedMealDefinition,
-  updatePlannedMealDefinition,
-  deletePlannedMealDefinition,
-  getPlannedMealByIdDefinition,
-  getPlannedMealsDefinition,
   renderRecipeSuggestionDefinition,
 } from "@/lib/ai/tools/definitions";
 
@@ -27,16 +21,6 @@ import {
   updateRecipeAction,
 } from "@/lib/actions/recipe";
 
-import {
-  createPlannedMealAction,
-  deletePlannedMealAction,
-  getPlannedMealByIdAction,
-  getPlannedMealsMetadataAction,
-  getPlannedMealsAction,
-  updatePlannedMealAction,
-} from "@/lib/actions/planned-meals";
-
-// Recipe Tools
 type GetRecipesMetadataResult = ToolRawResult<
   typeof getRecipesMetadataDefinition
 >;
@@ -122,134 +106,9 @@ export const updateRecipeExecute = async (
   }
 };
 
-// Planned Meal Tools
-
-type GetPlannedMealsMetadataResult = ToolRawResult<
-  typeof getPlannedMealsMetadataDefinition
->;
-export const getPlannedMealsMetadataExecute = async (): Promise<
-  ToolResult<GetPlannedMealsMetadataResult>
-> => {
-  try {
-    const meals = await getPlannedMealsMetadataAction();
-    return { success: true, data: meals };
-  } catch (error) {
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Error fetching planned meals metadata",
-    };
-  }
-};
-
-type CreatePlannedMealParams = ToolParameters<
-  typeof createPlannedMealDefinition
->;
-type CreatePlannedMealResult = ToolRawResult<
-  typeof createPlannedMealDefinition
->;
-export const createPlannedMealExecute = async (
-  parameters: CreatePlannedMealParams
-): Promise<ToolResult<CreatePlannedMealResult>> => {
-  try {
-    const meal = await createPlannedMealAction(parameters);
-    return { success: true, data: meal };
-  } catch (error) {
-    return {
-      success: false,
-      error:
-        error instanceof Error ? error.message : "Error creating planned meal",
-    };
-  }
-};
-
-type UpdatePlannedMealParams = ToolParameters<
-  typeof updatePlannedMealDefinition
->;
-type UpdatePlannedMealResult = ToolRawResult<
-  typeof updatePlannedMealDefinition
->;
-export const updatePlannedMealExecute = async (
-  parameters: UpdatePlannedMealParams
-): Promise<ToolResult<UpdatePlannedMealResult>> => {
-  try {
-    const meal = await updatePlannedMealAction(parameters);
-    return { success: true, data: meal };
-  } catch (error) {
-    return {
-      success: false,
-      error:
-        error instanceof Error ? error.message : "Error updating planned meal",
-    };
-  }
-};
-
-type DeletePlannedMealParams = ToolParameters<
-  typeof deletePlannedMealDefinition
->;
-type DeletePlannedMealResult = ToolRawResult<
-  typeof deletePlannedMealDefinition
->;
-export const deletePlannedMealExecute = async (
-  parameters: DeletePlannedMealParams
-): Promise<ToolResult<DeletePlannedMealResult>> => {
-  try {
-    await deletePlannedMealAction(parameters.id);
-    return { success: true, data: "Planned meal deleted successfully" };
-  } catch (error) {
-    return {
-      success: false,
-      error:
-        error instanceof Error ? error.message : "Error deleting planned meal",
-    };
-  }
-};
-
-type GetPlannedMealByIdParams = ToolParameters<
-  typeof getPlannedMealByIdDefinition
->;
-type GetPlannedMealByIdResult = ToolRawResult<
-  typeof getPlannedMealByIdDefinition
->;
-export const getPlannedMealByIdExecute = async (
-  parameters: GetPlannedMealByIdParams
-): Promise<ToolResult<GetPlannedMealByIdResult>> => {
-  try {
-    const meal = await getPlannedMealByIdAction(parameters.id);
-    return { success: true, data: meal };
-  } catch (error) {
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Error fetching planned meal by ID",
-    };
-  }
-};
-
-type GetPlannedMealsResult = ToolRawResult<typeof getPlannedMealsDefinition>;
-export const getPlannedMealsExecute = async (): Promise<
-  ToolResult<GetPlannedMealsResult>
-> => {
-  try {
-    const meals = await getPlannedMealsAction();
-    return { success: true, data: meals };
-  } catch (error) {
-    return {
-      success: false,
-      error:
-        error instanceof Error ? error.message : "Error fetching planned meals",
-    };
-  }
-};
-
 type RenderRecipeSuggestionResult = ToolRawResult<
   typeof renderRecipeSuggestionDefinition
 >;
-// This is server-side because we trust the frontend to avoid a round trip to the client.
 export const renderRecipeSuggestionExecute = async (): Promise<
   ToolResult<RenderRecipeSuggestionResult>
 > => {

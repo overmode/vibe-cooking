@@ -30,7 +30,7 @@ export const createRecipeAction = async (recipeData: CreateRecipeInput) => {
     const recipe = await prisma.$transaction(
       async (tx) => {
         // Check count first to give user immediate feedback for obvious violations
-        const count = await tx.recipeTemplate.count({
+        const count = await tx.recipe.count({
           where: { userId, archivedAt: null },
         })
 
@@ -40,7 +40,7 @@ export const createRecipeAction = async (recipeData: CreateRecipeInput) => {
           )
         }
 
-        return tx.recipeTemplate.create({
+        return tx.recipe.create({
           data: {
             ...recipeData,
             userId,

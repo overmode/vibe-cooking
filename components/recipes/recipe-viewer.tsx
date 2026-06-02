@@ -1,11 +1,11 @@
-import { RecipeTemplate } from '@/generated/prisma/browser'
+import { Recipe } from '@/generated/prisma/browser'
 import { MemoizedMarkdown } from '@/components/chat/memoized-markdown'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { RecipeMetadataDescription } from './shared/recipe-card-base'
 
 type ViewableRecipe = Pick<
-  RecipeTemplate,
+  Recipe,
   'id' | 'name' | 'ingredients' | 'instructions' | 'duration' | 'difficulty' | 'servings'
 >
 

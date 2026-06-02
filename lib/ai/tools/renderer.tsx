@@ -5,13 +5,11 @@ import {
   ToolSpinner,
   ToolError,
 } from "@/components/chat/tool-feedback";
-import { PlannedMealMetadata, RecipeMetadata } from "@/lib/types";
-import { RecipeInstance, RecipeTemplate } from "@/generated/prisma/browser";
+import { RecipeMetadata } from "@/lib/types";
+import { Recipe } from "@/generated/prisma/browser";
 import { ToolResult } from "@/lib/ai/tools/types";
 import { CreateRecipeInput } from "@/lib/validators/recipe";
 
-// v6 tool UI parts are typed `tool-${name}` with flat state/input/output.
-// We keep a narrow shape so all tools can share a single renderer signature.
 export type ToolUIPart = {
   type: `tool-${string}`;
   toolCallId: string;
@@ -79,73 +77,6 @@ function toolMessageRenderer<T>({
   return renderer;
 }
 
-const renderGetRecipesMetadataTool = toolMessageRenderer<RecipeMetadata[]>({
-  loadingMessage: `Retrieving recipes metadata...`,
-  successMessage: (data) =>
-    `Retrieved ${data.length} recipe${data.length > 1 ? "s" : ""} metadata!`,
-});
-
-const renderGetPlannedMealsMetadataTool = toolMessageRenderer<
-  PlannedMealMetadata[]
->({
-  loadingMessage: `Retrieving planned meals metadata...`,
-  successMessage: (data) =>
-    `Retrieved ${data.length} planned meal${
-      data.length > 1 ? "s" : ""
-    } metadata!`,
-});
-
-const renderGetPlannedMealsTool = toolMessageRenderer<PlannedMealMetadata[]>({
-  loadingMessage: `Retrieving planned meals...`,
-  successMessage: (data) =>
-    `Retrieved ${data.length} planned meal${data.length > 1 ? "s" : ""}!`,
-});
-
-const renderCreateRecipeTool = toolMessageRenderer<RecipeTemplate>({
-  loadingMessage: "Creating recipe...",
-  successMessage: (data) => `Recipe "${data.name}" created successfully!`,
-});
-
-const renderCreatePlannedMealTool = toolMessageRenderer<RecipeInstance>({
-  loadingMessage: "Planning recipe...",
-  successMessage: () => "Recipe planned successfully!",
-});
-
-const renderDeleteRecipeTool = toolMessageRenderer<RecipeTemplate>({
-  loadingMessage: "Deleting recipe...",
-  successMessage: () => "Recipe deleted successfully!",
-});
-
-const renderDeletePlannedMealTool = toolMessageRenderer<RecipeInstance>({
-  loadingMessage: "Deleting planned meal...",
-  successMessage: () => "Planned meal deleted successfully!",
-});
-
-const renderUpdateRecipeTool = toolMessageRenderer<RecipeTemplate>({
-  loadingMessage: "Updating recipe...",
-  successMessage: () => "Recipe updated successfully!",
-});
-
-const renderUpdatePlannedMealTool = toolMessageRenderer<RecipeInstance>({
-  loadingMessage: "Updating planned meal...",
-  successMessage: () => "Planned meal updated successfully!",
-});
-
-const renderGetRecipeByIdTool = toolMessageRenderer<RecipeTemplate>({
-  loadingMessage: "Retrieving recipe...",
-  successMessage: () => "Recipe retrieved successfully!",
-});
-
-const renderGetPlannedMealByIdTool = toolMessageRenderer<RecipeInstance>({
-  loadingMessage: "Retrieving planned meal...",
-  successMessage: () => "Planned meal retrieved successfully!",
-});
-
-const renderEnterCookingModeTool = toolMessageRenderer<void>({
-  loadingMessage: "Entering cooking mode...",
-  successMessage: () => "Cooking mode entered successfully!",
-});
-
 const renderRecipeSuggestionTool: ToolRenderer = (part) => {
   switch (part.state) {
     case "input-streaming":
@@ -164,16 +95,24 @@ const renderRecipeSuggestionTool: ToolRenderer = (part) => {
 };
 
 toolRenderers["renderRecipeSuggestionTool"] = renderRecipeSuggestionTool;
-toolRenderers["createRecipeTool"] = renderCreateRecipeTool;
-toolRenderers["deleteRecipeTool"] = renderDeleteRecipeTool;
-toolRenderers["getRecipesMetadataTool"] = renderGetRecipesMetadataTool;
-toolRenderers["updateRecipeTool"] = renderUpdateRecipeTool;
-toolRenderers["getRecipeByIdTool"] = renderGetRecipeByIdTool;
-toolRenderers["getPlannedMealsMetadataTool"] =
-  renderGetPlannedMealsMetadataTool;
-toolRenderers["getPlannedMealsTool"] = renderGetPlannedMealsTool;
-toolRenderers["createPlannedMealTool"] = renderCreatePlannedMealTool;
-toolRenderers["deletePlannedMealTool"] = renderDeletePlannedMealTool;
-toolRenderers["updatePlannedMealTool"] = renderUpdatePlannedMealTool;
-toolRenderers["getPlannedMealByIdTool"] = renderGetPlannedMealByIdTool;
-toolRenderers["enterCookingModeTool"] = renderEnterCookingModeTool;
+toolRenderers["createRecipeTool"] = toolMessageRenderer<Recipe>({
+  loadingMessage: "Creating recipe...",
+  successMessage: (data) => `Recipe "${data.name}" created successfully!`,
+});
+toolRenderers["deleteRecipeTool"] = toolMessageRenderer<Recipe>({
+  loadingMessage: "Deleting recipe...",
+  successMessage: () => "Recipe deleted successfully!",
+});
+toolRenderers["getRecipesMetadataTool"] = toolMessageRenderer<RecipeMetadata[]>({
+  loadingMessage: `Retrieving recipes metadata...`,
+  successMessage: (data) =>
+    `Retrieved ${data.length} recipe${data.length > 1 ? "s" : ""} metadata!`,
+});
+toolRenderers["updateRecipeTool"] = toolMessageRenderer<Recipe>({
+  loadingMessage: "Updating recipe...",
+  successMessage: () => "Recipe updated successfully!",
+});
+toolRenderers["getRecipeByIdTool"] = toolMessageRenderer<Recipe>({
+  loadingMessage: "Retrieving recipe...",
+  successMessage: () => "Recipe retrieved successfully!",
+});

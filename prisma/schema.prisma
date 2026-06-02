@@ -10,7 +10,7 @@ datasource db {
   provider = "postgresql"
 }
 
-model RecipeTemplate {
+model Recipe {
   id           String    @id @default(cuid())
   userId       String
   name         String    @db.VarChar(100)
@@ -24,16 +24,16 @@ model RecipeTemplate {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
-  instances RecipeInstance[]
+  sessions CookSession[]
 
   @@index([userId, archivedAt, createdAt])
 }
 
-model RecipeInstance {
-  id         String         @id @default(cuid())
-  userId     String
-  template   RecipeTemplate @relation(fields: [templateId], references: [id], onDelete: Restrict)
-  templateId String
+model CookSession {
+  id       String @id @default(cuid())
+  userId   String
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Restrict)
+  recipeId String
 
   name         String   @db.VarChar(100)
   servings     Int
@@ -42,16 +42,12 @@ model RecipeInstance {
   duration     Int?
   difficulty   Int?
 
-  status      RecipeInstanceStatus @default(PLANNED)
-  plannedFor  DateTime?
-  startedAt   DateTime?
-  cookedAt    DateTime?
-  cancelledAt DateTime?
-  createdAt   DateTime             @default(now())
-  updatedAt   DateTime             @updatedAt
+  cookedAt  DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
-  @@index([userId, status, createdAt])
-  @@index([templateId, status])
+  @@index([userId, cookedAt, createdAt])
+  @@index([recipeId, cookedAt])
 }
 
 model UserDietaryPreferences {
@@ -59,8 +55,6 @@ model UserDietaryPreferences {
   preferences String   @db.VarChar(10000)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
-  @@unique([userId])
 }
 
 model RateLimit {
@@ -69,11 +63,4 @@ model RateLimit {
   messageCount Int      @default(0)
 
   @@id([userId, day])
-}
-
-enum RecipeInstanceStatus {
-  PLANNED
-  COOKING
-  COOKED
-  CANCELLED
 }

@@ -1,5 +1,5 @@
 import prisma from "@/prisma/client";
-import { RecipeInstanceStatus, Prisma } from "@/generated/prisma/client";
+import { Prisma } from "@/generated/prisma/client";
 import { CreateRecipeInput, UpdateRecipeInput } from "@/lib/validators/recipe";
 import { handleDbError } from "@/lib/utils/error";
 import { RecipeMetadata } from "@/lib/types";
@@ -14,7 +14,7 @@ export async function createRecipe({
   data: CreateRecipeInput;
 }) {
   try {
-    const recipe = await (transaction ?? prisma).recipeTemplate.create({
+    const recipe = await (transaction ?? prisma).recipe.create({
       data: {
         ...data,
         userId,
@@ -36,7 +36,7 @@ export async function getRecipeById({
   userId: string;
 }) {
   try {
-    const recipe = await (transaction ?? prisma).recipeTemplate.findUnique({
+    const recipe = await (transaction ?? prisma).recipe.findUnique({
       where: { id, userId },
     });
 
@@ -59,7 +59,7 @@ export async function getRecipesMetadata({
 }): Promise<RecipeMetadata[]> {
   // TODO: Add pagination
   try {
-    const templates = await (transaction ?? prisma).recipeTemplate.findMany({
+    const templates = await (transaction ?? prisma).recipe.findMany({
       where: {
         userId,
         archivedAt: null,
@@ -72,16 +72,9 @@ export async function getRecipesMetadata({
         duration: true,
         difficulty: true,
         isFavorite: true,
-        instances: {
-          where: {
-            status: {
-              in: [RecipeInstanceStatus.PLANNED, RecipeInstanceStatus.COOKED],
-            },
-          },
-          select: {
-            id: true,
-            status: true,
-          },
+        sessions: {
+          where: { cookedAt: { not: null } },
+          select: { id: true },
         },
       },
       orderBy: {
@@ -89,14 +82,9 @@ export async function getRecipesMetadata({
       },
     });
 
-    return templates.map(({ instances, ...template }) => ({
+    return templates.map(({ sessions, ...template }) => ({
       ...template,
-      plannedMeals: instances.filter(
-        (instance) => instance.status === RecipeInstanceStatus.PLANNED
-      ),
-      cookCount: instances.filter(
-        (instance) => instance.status === RecipeInstanceStatus.COOKED
-      ).length,
+      cookCount: sessions.length,
     }));
   } catch (error) {
     handleDbError(error, "list recipes");
@@ -113,7 +101,7 @@ export async function updateRecipe({
 }) {
   const { id, ...recipeData } = data;
   try {
-    const recipe = await (transaction ?? prisma).recipeTemplate.update({
+    const recipe = await (transaction ?? prisma).recipe.update({
       where: { id, userId },
       data: recipeData,
     });
@@ -156,9 +144,9 @@ export async function deleteRecipe({
   userId: string;
 }) {
   try {
-    // Soft delete: planned/cooked instances keep a valid template reference and
-    // their cooking history, so we archive the template instead of removing it.
-    await (transaction ?? prisma).recipeTemplate.update({
+    // Soft delete: cook sessions keep a valid recipe reference and history,
+    // so we archive the recipe instead of removing it.
+    await (transaction ?? prisma).recipe.update({
       where: { id, userId },
       data: { archivedAt: new Date() },
     });

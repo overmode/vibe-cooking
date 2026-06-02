@@ -1,4 +1,3 @@
-// TODO tighter typing of results
 import { QueryClient } from '@tanstack/react-query'
 import { UIMessage } from 'ai'
 import { ToolResult, ToolResultSuccess } from '@/lib/ai/tools/types'
@@ -21,27 +20,6 @@ function hasId(
 }
 
 export const toolEffects: Record<string, ToolEffect> = {
-  createPlannedMealTool: (qc) =>
-    qc.invalidateQueries({ queryKey: queryKeys.plannedMeals.all }),
-
-  updatePlannedMealTool: (qc, result) => {
-    qc.invalidateQueries({ queryKey: queryKeys.plannedMeals.all })
-    if (hasId(result)) {
-      qc.invalidateQueries({
-        queryKey: queryKeys.plannedMeals.byId(result.data.id),
-      })
-    }
-  },
-
-  deletePlannedMealTool: (qc, result) => {
-    qc.invalidateQueries({ queryKey: queryKeys.plannedMeals.all })
-    if (hasId(result)) {
-      qc.invalidateQueries({
-        queryKey: queryKeys.plannedMeals.byId(result.data.id),
-      })
-    }
-  },
-
   updateRecipeTool: (qc, result) => {
     qc.invalidateQueries({ queryKey: queryKeys.recipes.all })
     if (hasId(result)) {
@@ -49,14 +27,15 @@ export const toolEffects: Record<string, ToolEffect> = {
     }
   },
 
-  // Because delete operations on recipes cascade to planned meals
+  createRecipeTool: (qc) => {
+    qc.invalidateQueries({ queryKey: queryKeys.recipes.all })
+  },
+
   deleteRecipeTool: (qc) => {
-    qc.invalidateQueries({ queryKey: queryKeys.plannedMeals.all })
     qc.invalidateQueries({ queryKey: queryKeys.recipes.all })
   },
 }
 
-// Trigger tool effects when a message contains a finished tool output part
 export const triggerToolEffects = (
   message: UIMessage,
   queryClient: QueryClient
