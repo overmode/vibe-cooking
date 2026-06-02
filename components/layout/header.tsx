@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  Show,
-  SignInButton,
-  SignUpButton,
-  UserButton,
-} from "@clerk/nextjs";
+import { useAuth } from "@workos-inc/authkit-nextjs/components";
 import { HeaderLogo } from "@/components/layout/header-logo";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -33,6 +28,7 @@ const navItems = [
 export function Header() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const { user, loading, signOut } = useAuth();
 
   return (
     <header
@@ -110,19 +106,31 @@ export function Header() {
           </SheetContent>
         </Sheet>
 
-        <Show when="signed-out">
-          <SignInButton mode="modal">
-            <Button variant="ghost" size="sm" className="hidden sm:flex">
-              Sign In
+        {!loading && !user && (
+          <>
+            <Button
+              asChild
+              variant="ghost"
+              size="sm"
+              className="hidden sm:flex"
+            >
+              <Link href="/login">Sign In</Link>
             </Button>
-          </SignInButton>
-          <SignUpButton mode="modal">
-            <Button size="sm">Sign Up</Button>
-          </SignUpButton>
-        </Show>
-        <Show when="signed-in">
-          <UserButton />
-        </Show>
+            <Button asChild size="sm">
+              <Link href="/signup">Sign Up</Link>
+            </Button>
+          </>
+        )}
+        {!loading && user && (
+          <>
+            <span className="hidden sm:block max-w-48 truncate text-sm text-muted-foreground">
+              {user.email}
+            </span>
+            <Button variant="ghost" size="sm" onClick={() => void signOut()}>
+              Sign Out
+            </Button>
+          </>
+        )}
       </div>
     </header>
   );

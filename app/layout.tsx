@@ -1,5 +1,5 @@
 import { type Metadata, type Viewport } from 'next'
-import { ClerkProvider } from '@clerk/nextjs'
+import { AuthKitProvider } from '@workos-inc/authkit-nextjs/components'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import { AppShell } from '@/components/layout/app-shell'
@@ -35,25 +35,22 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <ClerkProvider>
-      <html lang="en" className="h-screen">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground flex flex-col h-full`}
-        >
+    <html lang="en" className="h-screen">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground flex flex-col h-full`}
+      >
+        <AuthKitProvider>
           <QueryProvider>
-            {/* Sticky global header (logo + auth controls) */}
             <Header />
 
-            {/* Shell includes nav + layout spacing */}
             <div className="flex-1 overflow-hidden">
               <AppShell>{children}</AppShell>
             </div>
 
-            {/* Toast notifications */}
             <Toaster position="top-center" />
           </QueryProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+        </AuthKitProvider>
+      </body>
+    </html>
   )
 }

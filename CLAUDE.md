@@ -48,7 +48,7 @@ This is a Next.js app with a layered architecture for an AI-powered cooking assi
 
 - Next.js with App Router
 - PostgreSQL with Prisma ORM
-- Clerk for authentication
+- WorkOS AuthKit for authentication
 - React Query for state management
 - Vercel AI SDK for assistant functionality
 - Radix UI components with Tailwind CSS

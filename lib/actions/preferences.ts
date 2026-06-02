@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/server";
+import { getCurrentUserId } from "@/lib/auth/get-current-user-id";
 import { handleActionError } from "../utils/error";
 import { UserDietaryPreferences } from "@/generated/prisma/client";
 import {
@@ -8,7 +8,7 @@ import {
 
 export const getUserDietaryPreferencesAction =
   async (): Promise<UserDietaryPreferences | null> => {
-    const { userId } = await auth();
+    const userId = await getCurrentUserId();
     if (!userId) {
       handleActionError("Unauthorized", "get user dietary preferences");
     }
@@ -23,7 +23,7 @@ export const getUserDietaryPreferencesAction =
 export const updateUserDietaryPreferencesAction = async (
   preferences: string
 ) => {
-  const { userId } = await auth();
+  const userId = await getCurrentUserId();
   if (!userId) {
     handleActionError("Unauthorized", "update user dietary preferences");
   }

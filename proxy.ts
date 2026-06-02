@@ -1,12 +1,14 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { authkitProxy } from "@workos-inc/authkit-nextjs";
 
-const isProtectedRoute = createRouteMatcher(["api/(.*)", "/(.*)"]);
-const isPublicRoute = createRouteMatcher(["/api/supabase-keepalive"]);
-
-export default clerkMiddleware(async (auth, req) => {
-  if (isProtectedRoute(req) && !isPublicRoute(req)) {
-    await auth.protect();
-  }
+export default authkitProxy({
+  middlewareAuth: {
+    enabled: true,
+    unauthenticatedPaths: [
+      "/callback",
+      "/login",
+      "/signup",
+    ],
+  },
 });
 
 export const config = {

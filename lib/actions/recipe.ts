@@ -4,7 +4,7 @@ import {
   getRecipesMetadata,
   updateRecipe,
 } from '@/lib/data-access/recipe'
-import { auth } from '@clerk/nextjs/server'
+import { getCurrentUserId } from '@/lib/auth/get-current-user-id'
 import { CreateRecipeInput, UpdateRecipeInput } from '@/lib/validators/recipe'
 import { handleActionError } from '@/lib/utils/error'
 import { RecipeMetadata } from '@/lib/types'
@@ -12,7 +12,7 @@ import prisma from '@/prisma/client'
 import { MAX_NUM_RECIPES_PER_USER } from '@/lib/constants/app_validation'
 
 export const getRecipesMetadataAction = async (): Promise<RecipeMetadata[]> => {
-  const { userId } = await auth()
+  const userId = await getCurrentUserId()
   if (!userId) {
     handleActionError('Unauthorized', 'get recipes metadata')
   }
@@ -20,7 +20,7 @@ export const getRecipesMetadataAction = async (): Promise<RecipeMetadata[]> => {
   return recipes
 }
 export const createRecipeAction = async (recipeData: CreateRecipeInput) => {
-  const { userId } = await auth()
+  const userId = await getCurrentUserId()
   if (!userId) {
     return handleActionError('Unauthorized', 'create recipe')
   }
@@ -64,7 +64,7 @@ export const deleteRecipeAction = async ({
 }: {
   recipeId: string
 }) => {
-  const { userId } = await auth()
+  const userId = await getCurrentUserId()
   if (!userId) {
     handleActionError('Unauthorized', 'delete recipe')
   }
@@ -73,7 +73,7 @@ export const deleteRecipeAction = async ({
 }
 
 export const updateRecipeAction = async (recipeData: UpdateRecipeInput) => {
-  const { userId } = await auth()
+  const userId = await getCurrentUserId()
   if (!userId) {
     handleActionError('Unauthorized', 'update recipe')
   }
@@ -85,7 +85,7 @@ export const updateRecipeAction = async (recipeData: UpdateRecipeInput) => {
 }
 
 export const getRecipeByIdAction = async (recipeId: string) => {
-  const { userId } = await auth()
+  const userId = await getCurrentUserId()
   if (!userId) {
     handleActionError('Unauthorized', 'get recipe')
   }
