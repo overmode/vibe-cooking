@@ -19,7 +19,7 @@ export const RecipeSuggestionCard = ({
   return (
     <Card className="w-full mx-auto overflow-hidden shadow-sm">
       <CardHeader>
-        <CardTitle className="text-2xl text-primary">{cardData.name}</CardTitle>
+        <CardTitle className="text-xl sm:text-2xl text-primary">{cardData.name}</CardTitle>
         <CardDescription>
           <RecipeMetadataDescription
             duration={cardData.duration}
@@ -43,7 +43,7 @@ export const RecipeSuggestionCard = ({
                     key={i}
                     className="flex items-start gap-2 text-sm text-muted-foreground"
                   >
-                    <span className="inline-block h-2 w-2 rounded-full bg-primary mt-1.5 flex-shrink-0"></span>
+                    <span className="inline-block h-2 w-2 rounded-full bg-primary mt-1.5 shrink-0"></span>
                     <span>{ingredient}</span>
                   </li>
                 ))}
