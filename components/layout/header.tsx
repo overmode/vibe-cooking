@@ -65,18 +65,36 @@ export function Header() {
       </div>
 
       <div className="flex items-center gap-2">
+        {/* Desktop: sign out / auth buttons */}
+        {!loading && !user && (
+          <Button asChild size="sm" className="hidden md:flex">
+            <Link href="/login">Sign In</Link>
+          </Button>
+        )}
+        {!loading && user && (
+          <>
+            <span className="hidden md:block max-w-48 truncate text-sm text-muted-foreground">
+              {user.email}
+            </span>
+            <Button variant="ghost" size="sm" className="hidden md:flex" onClick={() => void signOut()}>
+              Sign Out
+            </Button>
+          </>
+        )}
+
+        {/* Hamburger: mobile nav + auth */}
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
-          <SheetTrigger asChild className="md:hidden">
+          <SheetTrigger asChild>
             <Button
               variant="ghost"
               size="icon"
-              className="h-9 w-9 hover:bg-accent/50"
+              className="h-9 w-9 hover:bg-accent/50 md:hidden"
             >
               <Menu className="h-5 w-5" />
               <span className="sr-only">Toggle menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-[250px] sm:w-[300px]">
+          <SheetContent side="left" className="w-[250px] sm:w-[300px]" aria-describedby={undefined}>
             <SheetHeader className="pb-4">
               <SheetTitle>
                 <HeaderLogo />
@@ -102,34 +120,30 @@ export function Header() {
                 );
               })}
             </nav>
+            {!loading && user && (
+              <div className="mt-4 border-t pt-4">
+                <p className="px-4 pb-2 text-xs text-muted-foreground truncate">{user.email}</p>
+                <SheetClose asChild>
+                  <button
+                    onClick={() => void signOut()}
+                    className="flex items-center h-10 w-full px-4 py-2 text-sm font-medium rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors"
+                  >
+                    Sign Out
+                  </button>
+                </SheetClose>
+              </div>
+            )}
+            {!loading && !user && (
+              <div className="mt-4 border-t pt-4 flex flex-col gap-2 px-4">
+                <SheetClose asChild>
+                  <Link href="/login" className="flex items-center justify-center h-9 rounded-md border text-sm font-medium transition-colors hover:bg-accent">
+                    Sign In
+                  </Link>
+                </SheetClose>
+              </div>
+            )}
           </SheetContent>
         </Sheet>
-
-        {!loading && !user && (
-          <>
-            <Button
-              asChild
-              variant="ghost"
-              size="sm"
-              className="hidden sm:flex"
-            >
-              <Link href="/login">Sign In</Link>
-            </Button>
-            <Button asChild size="sm">
-              <Link href="/signup">Sign Up</Link>
-            </Button>
-          </>
-        )}
-        {!loading && user && (
-          <>
-            <span className="hidden sm:block max-w-48 truncate text-sm text-muted-foreground">
-              {user.email}
-            </span>
-            <Button variant="ghost" size="sm" onClick={() => void signOut()}>
-              Sign Out
-            </Button>
-          </>
-        )}
       </div>
     </header>
   );

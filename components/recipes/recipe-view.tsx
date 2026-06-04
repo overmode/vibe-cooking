@@ -6,9 +6,12 @@ import { SortField, SortDirection, ViewMode } from '@/components/recipes/types'
 import { RecipeViewControls } from '@/components/recipes/recipe-view-controls'
 import { RecipeGridView } from '@/components/recipes/recipe-grid-view'
 import { RecipeListView } from '@/components/recipes/recipe-list-view'
+import { RecipeMobileListView } from '@/components/recipes/recipe-mobile-list-view'
 import { routes } from '@/lib/routes'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useIsMobile } from '@/lib/hooks/use-is-mobile'
+import { Input } from '@/components/ui/input'
+import { Search, ScrollText } from 'lucide-react'
 
 export function RecipeView({
   recipeMetadata,
@@ -28,11 +31,11 @@ export function RecipeView({
   const [sortField, setSortField] = useState<SortField>(initialSortField)
   const [sortDirection, setSortDirection] =
     useState<SortDirection>(initialSortDirection)
+  const [query, setQuery] = useState('')
 
   const isMobile = useIsMobile()
 
-  const effectiveViewMode: ViewMode =
-    isMobile && viewMode === 'list' ? 'grid' : viewMode
+  const effectiveViewMode: ViewMode = viewMode
 
   // Update URL when state changes
   useEffect(() => {
@@ -46,17 +49,17 @@ export function RecipeView({
     })
   }, [effectiveViewMode, sortField, sortDirection, router])
 
+  const allRecipes = useMemo(() => recipeMetadata ?? [], [recipeMetadata])
+
   // Sort recipes
   const sortedRecipes = useMemo(() => {
-    if (!recipeMetadata) {
-      return []
-    }
+    const strippedName = (name: string) => name.replace(/[^a-z0-9]/gi, '').toLowerCase()
 
-    return [...recipeMetadata].sort((a, b) => {
+    return [...allRecipes].sort((a, b) => {
       let comparison = 0
 
       if (sortField === 'name') {
-        comparison = a.name.localeCompare(b.name)
+        comparison = strippedName(a.name).localeCompare(strippedName(b.name))
       } else if (sortField === 'createdAt') {
         comparison =
           new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
@@ -71,10 +74,16 @@ export function RecipeView({
       }
       return sortDirection === 'asc' ? comparison : -comparison
     })
-  }, [recipeMetadata, sortField, sortDirection])
+  }, [allRecipes, sortField, sortDirection])
+
+  const filteredRecipes = useMemo(() => {
+    const trimmed = query.trim().toLowerCase()
+    if (!trimmed) return sortedRecipes
+    return sortedRecipes.filter((r) => r.name.toLowerCase().includes(trimmed))
+  }, [sortedRecipes, query])
 
   // Empty recipe view
-  if (!recipeMetadata || recipeMetadata.length === 0) {
+  if (allRecipes.length === 0) {
     return <NoRecipes />
   }
 
@@ -88,34 +97,58 @@ export function RecipeView({
   }
 
   return (
-    <div className="container mx-auto py-8 flex flex-col h-full">
-      <div className="flex justify-between items-center mb-8">
+    <div className="container mx-auto py-4 sm:py-8 flex flex-col h-full">
+      <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-8">
         <h2 className="text-2xl font-medium tracking-tight text-primary">
           Your Recipes
         </h2>
-        <RecipeViewControls
-          viewMode={effectiveViewMode}
-          setViewMode={setViewMode}
-          sortField={sortField}
-          setSortField={setSortField}
-          sortDirection={sortDirection}
-          setSortDirection={setSortDirection}
-          isMobile={isMobile}
-        />
+        <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+          <div className="relative w-full sm:w-56">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+            <Input
+              placeholder="Search recipes..."
+              value={query}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
+              className="pl-8"
+            />
+          </div>
+          <RecipeViewControls
+            viewMode={effectiveViewMode}
+            setViewMode={setViewMode}
+            sortField={sortField}
+            setSortField={setSortField}
+            sortDirection={sortDirection}
+            setSortDirection={setSortDirection}
+          />
+        </div>
       </div>
 
       <div className="flex-1 min-h-0">
-        {effectiveViewMode === 'grid' ? (
+        {filteredRecipes.length === 0 ? (
+          <div className="flex min-h-[40vh] flex-col items-center justify-center gap-4 text-center">
+            <ScrollText className="text-primary" size={40} strokeWidth={1.5} aria-hidden />
+            <div className="flex flex-col items-center gap-1">
+              <p className="text-sm font-semibold">No recipes found</p>
+              <p className="text-sm text-muted-foreground">Try adjusting your search.</p>
+            </div>
+          </div>
+        ) : effectiveViewMode === 'grid' ? (
           <ScrollArea className="h-full rounded-md">
             <div className="p-1 pb-6">
-              <RecipeGridView recipes={sortedRecipes} />
+              <RecipeGridView recipes={filteredRecipes} />
+            </div>
+          </ScrollArea>
+        ) : isMobile ? (
+          <ScrollArea className="h-full rounded-md">
+            <div className="pb-6">
+              <RecipeMobileListView recipes={filteredRecipes} />
             </div>
           </ScrollArea>
         ) : (
           <ScrollArea className="h-full rounded-md">
             <div className="pb-6">
               <RecipeListView
-                recipes={sortedRecipes}
+                recipes={filteredRecipes}
                 handleSort={handleSort}
                 sortField={sortField}
                 sortDirection={sortDirection}

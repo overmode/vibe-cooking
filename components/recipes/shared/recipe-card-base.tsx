@@ -1,11 +1,12 @@
+import { Badge } from '@/components/ui/badge'
 import {
   Card,
-  CardContent,
-  CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Clock, Users } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { Clock, Flame, Users } from 'lucide-react'
 import Link from 'next/link'
 import { CardDisplayMetadata } from '@/lib/types'
 
@@ -18,46 +19,36 @@ export const RecipeMetadataDescription = ({
   difficulty: number | null | undefined
   servings: number | null | undefined
 }) => {
+  const items = [
+    duration && (
+      <span key="duration" className="flex items-center gap-1.5">
+        <Clock className="h-3.5 w-3.5 opacity-80" />
+        {duration} min
+      </span>
+    ),
+    difficulty && (
+      <span key="difficulty">Level {difficulty}/10</span>
+    ),
+    servings && (
+      <span key="servings" className="flex items-center gap-1.5">
+        <Users className="h-3.5 w-3.5 opacity-80" />
+        {servings} servings
+      </span>
+    ),
+  ].filter(Boolean)
+
   return (
-    <div className="flex flex-wrap items-center">
-      {duration && (
-        <>
-          <div className="flex flex-wrap items-center">
-            <span
-              className={`flex items-center gap-1.5 text-muted-foreground text-sm font-medium`}
-            >
-              <Clock className="h-3.5 w-3.5 opacity-80" />
-              <span>{duration} min</span>
-            </span>
-          </div>
-          <span className="mx-2 text-muted-foreground">•</span>
-        </>
-      )}
-      {difficulty && (
-        <>
-          <div className="flex flex-wrap items-center">
-            <span
-              className={`flex items-center gap-1.5 text-muted-foreground text-sm font-medium`}
-            >
-              <span>Level {difficulty}/10</span>
-            </span>
-          </div>
-          <span className="mx-2 text-muted-foreground">•</span>
-        </>
-      )}
-      {servings && (
-        <div className="flex flex-wrap items-center">
-          <span
-            className={`flex items-center gap-1.5 text-muted-foreground text-sm font-medium`}
-          >
-            <Users className="h-3.5 w-3.5 opacity-80" />
-            <span>{servings} servings</span>
-          </span>
-        </div>
-      )}
+    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-medium text-muted-foreground">
+      {items.map((item, i) => (
+        <span key={i} className="flex items-center gap-1.5">
+          {i > 0 && <span className="opacity-40">•</span>}
+          {item}
+        </span>
+      ))}
     </div>
   )
 }
+
 
 export interface RecipeCardBaseProps {
   metadata: CardDisplayMetadata
@@ -77,30 +68,48 @@ export function RecipeCardBase({
   return (
     <Link
       href={linkHref}
-      className="block transition-transform hover:scale-[1.02] focus:scale-[1.02] focus:outline-none"
+      className="block rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
       <Card
-        className={`h-full overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 ${
-          className || ''
-        }`}
+        className={cn(
+          'h-full min-h-[160px] overflow-hidden',
+          'border-l-[3px] border-l-primary/40 hover:border-l-primary/80',
+          'shadow-sm hover:shadow-md transition-all duration-200',
+          className
+        )}
       >
         <CardHeader>
-          <CardTitle className="leading-tight line-clamp-2">{name}</CardTitle>
-          <CardDescription>
-            <RecipeMetadataDescription
-              duration={duration}
-              difficulty={difficulty}
-              servings={servings}
-            />
-          </CardDescription>
+          <CardTitle className="text-base font-semibold leading-snug line-clamp-2">
+            {name}
+          </CardTitle>
         </CardHeader>
-        <CardContent>
-          {actionContent && (
-            <div className="mt-auto pt-3 opacity-90 hover:opacity-100 transition-opacity">
-              {actionContent}
-            </div>
+
+        <CardFooter className="mt-auto flex flex-wrap gap-1.5">
+          {duration && (
+            <Badge variant="secondary" className="gap-1">
+              <Clock className="h-3 w-3" />
+              {duration} min
+            </Badge>
           )}
-        </CardContent>
+          {difficulty && (
+            <Badge variant="secondary" className="gap-1">
+              <Flame className="h-3 w-3" />
+              Level {difficulty}/10
+            </Badge>
+          )}
+          {servings && (
+            <Badge variant="secondary" className="gap-1">
+              <Users className="h-3 w-3" />
+              {servings}
+            </Badge>
+          )}
+        </CardFooter>
+
+        {actionContent && (
+          <CardFooter>
+            {actionContent}
+          </CardFooter>
+        )}
       </Card>
     </Link>
   )

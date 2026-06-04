@@ -21,7 +21,7 @@ export const createRecipeInputSchema = z
   .object({
     name: z
       .string()
-      .describe('The name of the recipe')
+      .describe('The name of the recipe. MUST start with a single relevant food emoji (e.g. "🍝 Spaghetti Carbonara"), unless the user explicitly asks for no emoji.')
       .min(MIN_NAME_LENGTH, {
         message: `Name must be at least ${MIN_NAME_LENGTH} characters`,
       })
