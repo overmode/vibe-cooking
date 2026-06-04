@@ -51,7 +51,7 @@ export function RecipeChatView({ recipe }: RecipeChatViewProps) {
     []
   );
 
-  const { messages, sendMessage, error } = useChat({
+  const { messages, sendMessage, error, status } = useChat({
     transport,
     messages: initialMessages,
     onToolCall: ({ toolCall }) => {
@@ -122,6 +122,7 @@ export function RecipeChatView({ recipe }: RecipeChatViewProps) {
       contentTabLabel="Recipe"
       chatTabLabel="Assistant"
       actions={deleteAction}
+      isWaiting={status === 'submitted'}
     />
   );
 }

@@ -66,8 +66,8 @@ export async function POST(req: Request) {
   }
 
   const result = streamText({
-    model: openai.chat("gpt-5.4-nano"),
-    providerOptions: { openai: { parallelToolCalls: false } },
+    model: openai.responses("gpt-5.4-nano"),
+    providerOptions: { openai: { parallelToolCalls: false, store: false } },
     system: compileAssistantPrompt({
       appContext: resolvedAppContext,
       userDietaryPreferences: preferences?.preferences ?? null,
@@ -75,6 +75,7 @@ export async function POST(req: Request) {
     stopWhen: stepCountIs(10),
     messages: await convertToModelMessages(messages),
     tools: {
+      webSearch: openai.tools.webSearch({}),
       getRecipesMetadataTool,
       createRecipeTool,
       updateRecipeTool,

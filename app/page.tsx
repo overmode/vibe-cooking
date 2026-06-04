@@ -31,7 +31,7 @@ export default function Home() {
     []
   );
 
-  const { messages, sendMessage, error } = useChat({
+  const { messages, sendMessage, error, status } = useChat({
     transport,
     messages: initialMessages,
     onFinish: ({ message }) => {
@@ -53,6 +53,7 @@ export default function Home() {
       sendMessage={send}
       error={error}
       suggestions={chatSuggestions}
+      isWaiting={status === 'submitted'}
     />
   );
 }

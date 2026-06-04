@@ -8,7 +8,7 @@ interface ChatMessageProps {
   message: UIMessage
 }
 
-const AnimatedDot = ({ delay }: { delay: number }) => {
+export const AnimatedDot = ({ delay }: { delay: number }) => {
   return (
     <span
       className="inline-block w-2 h-2 bg-primary rounded-full opacity-75 animate-pulse"
@@ -17,7 +17,7 @@ const AnimatedDot = ({ delay }: { delay: number }) => {
   )
 }
 
-const AnimatedDots = () => {
+export const AnimatedDots = () => {
   return (
     <div className="flex items-center gap-1.5">
       <AnimatedDot delay={0} />
@@ -46,7 +46,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
         )}
       >
         {!isUser && (
-          <Avatar className="h-10 w-10 flex-shrink-0">
+          <Avatar className="h-8 w-8 shrink-0">
             <AvatarImage src="/logo.svg" alt="Vibe Cooking Logo" />
             <AvatarFallback className="bg-accent text-accent-foreground">
               🍳
@@ -79,7 +79,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
                     ? 'bg-primary text-primary-foreground ml-auto w-fit'
                     : isTool || isLoading
                     ? 'w-full'
-                    : 'bg-muted w-fit'
+                    : 'bg-muted w-fit prose prose-sm dark:prose-invert max-w-none'
                 )}
               >
                 {content}

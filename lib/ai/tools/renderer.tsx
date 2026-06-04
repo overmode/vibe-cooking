@@ -94,6 +94,21 @@ const renderRecipeSuggestionTool: ToolRenderer = (part) => {
   }
 };
 
+toolRenderers["webSearch"] = (part: ToolUIPart) => {
+  const query = (part.input as { query?: string } | undefined)?.query;
+  switch (part.state) {
+    case "input-streaming":
+    case "input-available":
+      return <ToolSpinner message="Searching the web..." />;
+    case "output-available":
+      return <ToolSuccess message={query ? `Searched: "${query}"` : "Web search complete"} />;
+    case "output-error":
+      return <ToolError message={part.errorText ?? "Web search failed"} />;
+    default:
+      return null;
+  }
+};
+
 toolRenderers["renderRecipeSuggestionTool"] = renderRecipeSuggestionTool;
 toolRenderers["createRecipeTool"] = toolMessageRenderer<Recipe>({
   loadingMessage: "Creating recipe...",

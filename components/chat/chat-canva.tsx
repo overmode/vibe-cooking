@@ -18,6 +18,7 @@ interface ChatCanvaProps {
   chatTabLabel?: string
   actions?: ReactNode
   onGoBack?: () => void
+  isWaiting: boolean
 }
 
 export function ChatCanva({
@@ -30,6 +31,7 @@ export function ChatCanva({
   contentTabLabel,
   chatTabLabel = 'Assistant',
   onGoBack,
+  isWaiting,
 }: ChatCanvaProps) {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState<string>('content')
@@ -70,6 +72,7 @@ export function ChatCanva({
             messages={messages}
             sendMessage={sendMessage}
             error={error}
+            isWaiting={isWaiting}
           />
         </div>
       </div>
@@ -93,6 +96,7 @@ export function ChatCanva({
                 messages={messages}
                 sendMessage={sendMessage}
                 error={error}
+                isWaiting={isWaiting}
               />
             </TabsContent>
           </div>

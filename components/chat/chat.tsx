@@ -10,15 +10,16 @@ interface ChatProps {
   sendMessage: (text: string) => void;
   error?: Error | undefined;
   suggestions?: ChatSuggestion[];
+  isWaiting: boolean;
 }
 
-export function Chat({ messages, sendMessage, error, suggestions }: ChatProps) {
+export function Chat({ messages, sendMessage, error, suggestions, isWaiting }: ChatProps) {
   const [input, setInput] = useState("");
 
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-hidden">
-        <ChatMessagesDisplay messages={messages} error={error} />
+        <ChatMessagesDisplay messages={messages} error={error} isWaiting={isWaiting} />
       </div>
 
       <div className="w-full">
