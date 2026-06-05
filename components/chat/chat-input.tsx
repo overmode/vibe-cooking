@@ -76,7 +76,7 @@ export function ChatInput({
   }
 
   return (
-    <form onSubmit={handleFormSubmit} className="pb-4">
+    <form onSubmit={handleFormSubmit} className="px-4 pb-4">
       <div className="flex gap-2 sm:gap-3 items-end">
         <Textarea
           placeholder="Ask anything"

@@ -12,10 +12,16 @@ import { useDeleteRecipeById } from "@/lib/api/hooks/recipes";
 import { ChatCanva } from "@/components/chat/chat-canva";
 import { apiRoutes } from "@/lib/api/api-routes";
 import { Button } from "@/components/ui/button";
-import { Trash } from "lucide-react";
+import { MoreHorizontal, Trash } from "lucide-react";
 import { DeleteConfirmationDialog } from "@/components/ui/delete-confirmation-dialog";
 import { routes } from "@/lib/routes";
 import { AppContext } from "@/lib/ai/app-context";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface RecipeChatViewProps {
   recipe: Recipe;
@@ -89,17 +95,42 @@ export function RecipeChatView({ recipe }: RecipeChatViewProps) {
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const deleteAction = (
+  const recipeMenu = (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 text-muted-foreground"
+          disabled={deleteRecipeMutation.isPending}
+        >
+          <MoreHorizontal className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem
+          onClick={() => setShowDeleteDialog(true)}
+          className="text-destructive focus:text-destructive"
+        >
+          <Trash className="h-4 w-4 mr-2" />
+          Delete recipe
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+
+  return (
     <>
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => setShowDeleteDialog(true)}
-        disabled={deleteRecipeMutation.isPending}
-        className="text-destructive hover:text-destructive/80 hover:bg-destructive/10 dark:hover:bg-destructive/20"
-      >
-        <Trash className="h-4 w-4" />
-      </Button>
+      <ChatCanva
+        contentNode={<RecipeViewer recipe={recipe} actions={recipeMenu} />}
+        contentActions={recipeMenu}
+        messages={messages}
+        sendMessage={send}
+        error={error}
+        contentTabLabel="Recipe"
+        chatTabLabel="Assistant"
+        isWaiting={status === 'submitted'}
+      />
 
       <DeleteConfirmationDialog
         title="Delete Recipe"
@@ -110,19 +141,5 @@ export function RecipeChatView({ recipe }: RecipeChatViewProps) {
         deleteButtonText="Delete Recipe"
       />
     </>
-  );
-
-  return (
-    <ChatCanva
-      title={recipe.name}
-      contentNode={<RecipeViewer recipe={recipe} />}
-      messages={messages}
-      sendMessage={send}
-      error={error}
-      contentTabLabel="Recipe"
-      chatTabLabel="Assistant"
-      actions={deleteAction}
-      isWaiting={status === 'submitted'}
-    />
   );
 }
