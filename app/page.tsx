@@ -1,14 +1,21 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, UIMessage } from "ai";
+import { useRouter, useSearchParams } from "next/navigation";
 import { chatSuggestions } from "@/lib/constants/chat-suggestions";
 import { triggerToolEffects } from "@/lib/ai/tools/effects";
 import { useQueryClient } from "@tanstack/react-query";
 import { apiRoutes } from "@/lib/api/api-routes";
 import { Chat } from "@/components/chat/chat";
 import { AppContext } from "@/lib/ai/app-context";
+import { routes } from "@/lib/routes";
+import {
+  MESSAGE_PRESET_PARAM,
+  messagePresets,
+  isMessagePresetId,
+} from "@/lib/constants/message-presets";
 
 const initialMessages: UIMessage[] = [
   {
@@ -25,6 +32,9 @@ const initialMessages: UIMessage[] = [
 
 export default function Home() {
   const queryClient = useQueryClient();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const hasTriggeredPreset = useRef(false);
 
   const transport = useMemo(
     () => new DefaultChatTransport({ api: apiRoutes.assistant }),
@@ -47,13 +57,24 @@ export default function Home() {
     [sendMessage]
   );
 
+  useEffect(() => {
+    if (hasTriggeredPreset.current) return;
+
+    const presetId = searchParams.get(MESSAGE_PRESET_PARAM);
+    if (!presetId || !isMessagePresetId(presetId)) return;
+
+    hasTriggeredPreset.current = true;
+    router.replace(routes.home);
+    send(messagePresets[presetId]);
+  }, [searchParams, router, send]);
+
   return (
     <Chat
       messages={messages}
       sendMessage={send}
       error={error}
       suggestions={chatSuggestions}
-      isWaiting={status === 'submitted'}
+      isWaiting={status === "submitted"}
     />
   );
 }

@@ -6,6 +6,7 @@ import {
   deleteRecipeDefinition,
   getRecipeByIdDefinition,
   updateRecipeDefinition,
+  updateUserProfileDefinition,
   renderRecipeSuggestionDefinition,
 } from "@/lib/ai/tools/definitions";
 
@@ -15,6 +16,7 @@ import {
   deleteRecipeExecute,
   getRecipeByIdExecute,
   updateRecipeExecute,
+  updateUserProfileExecute,
   renderRecipeSuggestionExecute,
 } from "@/lib/ai/tools/execution";
 
@@ -52,4 +54,10 @@ export const renderRecipeSuggestionTool = tool({
   description: renderRecipeSuggestionDefinition.description,
   inputSchema: renderRecipeSuggestionDefinition.inputSchema,
   execute: renderRecipeSuggestionExecute,
+});
+
+export const updateUserProfileTool = tool({
+  description: updateUserProfileDefinition.description,
+  inputSchema: updateUserProfileDefinition.inputSchema,
+  execute: updateUserProfileExecute,
 });

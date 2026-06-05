@@ -34,6 +34,10 @@ export const toolEffects: Record<string, ToolEffect> = {
   deleteRecipeTool: (qc) => {
     qc.invalidateQueries({ queryKey: queryKeys.recipes.all })
   },
+
+  updateUserProfileTool: (qc) => {
+    qc.invalidateQueries({ queryKey: queryKeys.preferences.all })
+  },
 }
 
 export const triggerToolEffects = (

@@ -6,7 +6,7 @@ import {
   ToolError,
 } from "@/components/chat/tool-feedback";
 import { RecipeMetadata } from "@/lib/types";
-import { Recipe } from "@/generated/prisma/browser";
+import { Recipe, UserDietaryPreferences } from "@/generated/prisma/browser";
 import { ToolResult } from "@/lib/ai/tools/types";
 import { CreateRecipeInput } from "@/lib/validators/recipe";
 
@@ -131,3 +131,25 @@ toolRenderers["getRecipeByIdTool"] = toolMessageRenderer<Recipe>({
   loadingMessage: "Retrieving recipe...",
   successMessage: () => "Recipe retrieved successfully!",
 });
+toolRenderers["updateUserProfileTool"] = (part) => {
+  switch (part.state) {
+    case "input-streaming":
+    case "input-available":
+      return (
+        <p className="text-muted-foreground py-2">Updating your profile...</p>
+      );
+    case "output-available": {
+      const result = part.output as ToolResult<UserDietaryPreferences>;
+      if (!result.success) {
+        return <ToolError message={result.error} />;
+      }
+      return (
+        <p className="text-muted-foreground py-2">Updated your profile</p>
+      );
+    }
+    case "output-error":
+      return <ToolError message={"Couldn't update your profile"} />;
+    default:
+      return null;
+  }
+};

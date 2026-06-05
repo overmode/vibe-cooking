@@ -5,7 +5,8 @@ import {
 } from "@/lib/validators/recipe";
 import { defineTool } from "@/lib/ai/tools/types";
 import { RecipeMetadata, asTypedSchema } from "@/lib/types";
-import { Recipe } from "@/generated/prisma/browser";
+import { Recipe, UserDietaryPreferences } from "@/generated/prisma/browser";
+import { MAX_USER_PROFILE_LENGTH } from "@/lib/constants/app_validation";
 
 export const getRecipesMetadataDefinition = defineTool({
   description: "Get the metadata of all recipes belonging to the user.",
@@ -40,6 +41,18 @@ export const deleteRecipeDefinition = defineTool({
     id: z.string().describe("The id of the recipe to be deleted"),
   }),
   result: asTypedSchema<string>(),
+});
+
+export const updateUserProfileDefinition = defineTool({
+  description:
+    "Save the user profile. Merge with existing. Ask before saving in normal chat; save incrementally during profile setup.",
+  inputSchema: z.object({
+    profile: z
+      .string()
+      .max(MAX_USER_PROFILE_LENGTH)
+      .describe("The full user profile text"),
+  }),
+  result: asTypedSchema<UserDietaryPreferences>(),
 });
 
 export const renderRecipeSuggestionDefinition = defineTool({

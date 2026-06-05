@@ -96,14 +96,7 @@ export function RecipeListView({
                     <div className="flex items-center">
                       <div className="w-24 h-2 bg-muted rounded-full overflow-hidden">
                         <div
-                          className={cn(
-                            'h-full rounded-full',
-                            recipe.difficulty <= 3
-                              ? 'bg-primary/60'
-                              : recipe.difficulty <= 6
-                                ? 'bg-amber-500'
-                                : 'bg-destructive/70'
-                          )}
+                          className="h-full rounded-full bg-primary/60"
                           style={{ width: `${recipe.difficulty * 10}%` }}
                         />
                       </div>

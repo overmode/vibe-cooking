@@ -7,5 +7,5 @@ export const MESSAGE_COOLDOWN_DURATION = 500;
 // Recipes
 export const MAX_NUM_RECIPES_PER_USER = 100;
 
-// Preferences
-export const MAX_PREFERENCES_LENGTH = 10_000;
+// User profile
+export const MAX_USER_PROFILE_LENGTH = 10_000;

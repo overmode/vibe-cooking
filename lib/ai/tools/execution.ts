@@ -10,6 +10,7 @@ import {
   deleteRecipeDefinition,
   getRecipeByIdDefinition,
   updateRecipeDefinition,
+  updateUserProfileDefinition,
   renderRecipeSuggestionDefinition,
 } from "@/lib/ai/tools/definitions";
 
@@ -20,6 +21,7 @@ import {
   getRecipesMetadataAction,
   updateRecipeAction,
 } from "@/lib/actions/recipe";
+import { updateUserDietaryPreferencesAction } from "@/lib/actions/preferences";
 
 type GetRecipesMetadataResult = ToolRawResult<
   typeof getRecipesMetadataDefinition
@@ -113,4 +115,23 @@ export const renderRecipeSuggestionExecute = async (): Promise<
   ToolResult<RenderRecipeSuggestionResult>
 > => {
   return { success: true, data: "Recipe suggestion rendered successfully." };
+};
+
+type UpdateUserProfileParams = ToolParameters<typeof updateUserProfileDefinition>;
+type UpdateUserProfileResult = ToolRawResult<typeof updateUserProfileDefinition>;
+export const updateUserProfileExecute = async (
+  parameters: UpdateUserProfileParams
+): Promise<ToolResult<UpdateUserProfileResult>> => {
+  try {
+    const profile = await updateUserDietaryPreferencesAction(parameters.profile);
+    return { success: true, data: profile };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Error updating user profile",
+    };
+  }
 };

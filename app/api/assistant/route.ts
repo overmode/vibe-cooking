@@ -13,6 +13,7 @@ import {
   getRecipesMetadataTool,
   renderRecipeSuggestionTool,
   updateRecipeTool,
+  updateUserProfileTool,
 } from "@/lib/ai/tools/tools";
 import { compileAssistantPrompt } from "@/lib/ai/prompts/assistant";
 import { truncateMessagesToTokenLimit } from "@/lib/ai/truncate-messages";
@@ -78,7 +79,7 @@ export async function POST(req: Request) {
     providerOptions: { openai: { parallelToolCalls: false, store: false } },
     system: compileAssistantPrompt({
       appContext: resolvedAppContext,
-      userDietaryPreferences: preferences?.preferences ?? null,
+      userProfile: preferences?.preferences ?? null,
     }),
     stopWhen: stepCountIs(10),
     messages: await convertToModelMessages(modelMessages),
@@ -87,6 +88,7 @@ export async function POST(req: Request) {
       getRecipesMetadataTool,
       createRecipeTool,
       updateRecipeTool,
+      updateUserProfileTool,
       getRecipeByIdTool,
       renderRecipeSuggestionTool,
       deleteRecipeTool: { ...deleteRecipeTool, execute: undefined },

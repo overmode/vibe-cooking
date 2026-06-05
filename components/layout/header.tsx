@@ -21,7 +21,7 @@ import { routes } from "@/lib/routes";
 const navItems = [
   { href: routes.home, label: "Assistant" },
   { href: routes.recipes.all, label: "Recipes" },
-  { href: routes.preferences, label: "Preferences" },
+  { href: routes.preferences, label: "About you" },
 ];
 
 export function Header() {
