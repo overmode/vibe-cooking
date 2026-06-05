@@ -11,7 +11,8 @@ import { routes } from '@/lib/routes'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useIsMobile } from '@/lib/hooks/use-is-mobile'
 import { Input } from '@/components/ui/input'
-import { Search, ScrollText } from 'lucide-react'
+import { MascotIllustration } from '@/components/illustrations/mascot-illustration'
+import { Search } from 'lucide-react'
 
 export function RecipeView({
   recipeMetadata,
@@ -126,7 +127,7 @@ export function RecipeView({
       <div className="flex-1 min-h-0">
         {filteredRecipes.length === 0 ? (
           <div className="flex min-h-[40vh] flex-col items-center justify-center gap-4 text-center">
-            <ScrollText className="text-primary" size={40} strokeWidth={1.5} aria-hidden />
+            <MascotIllustration expression="x-eyes" className="size-20 opacity-90" />
             <div className="flex flex-col items-center gap-1">
               <p className="text-sm font-semibold">No recipes found</p>
               <p className="text-sm text-muted-foreground">Try adjusting your search.</p>

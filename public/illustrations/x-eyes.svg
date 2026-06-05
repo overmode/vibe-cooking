@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="180 195 905 905">
+  <!-- mascot body (from logo.svg) -->
+  <path d="M 210 540 A 410 146 0.5 0 0 1030 540 L 1030 540 A 416 416 0 1 1 209 540 Z" fill="rgb(186, 118, 56)" stroke="rgb(64, 42, 18)" stroke-width="36"/>
+  <ellipse cx="620" cy="540" rx="410" ry="146" transform="rotate(0.5 620 540)" fill="rgb(254, 254, 254)" stroke="rgb(64, 42, 18)" stroke-width="36"/>
+  <ellipse cx="615" cy="542" rx="336" ry="90" transform="rotate(0.6 615 542)" fill="rgb(252, 234, 208)"/>
+  <g stroke="rgb(64, 42, 18)" stroke-width="24" stroke-linejoin="round">
+    <path d="M 870 256 Q 1053 376 892 523 Q 795 396 870 256 Z" fill="rgb(98, 175, 41)"/>
+    <path d="M 1069 341 Q 1060 509 892 523 Q 898 352 1069 341 Z" fill="rgb(98, 175, 41)"/>
+  </g>
+
+  <!-- x eyes -->
+  <g stroke="rgb(64, 42, 18)" stroke-width="30" stroke-linecap="round">
+    <line x1="452" y1="763" x2="522" y2="833"/>
+    <line x1="522" y1="763" x2="452" y2="833"/>
+    <line x1="714" y1="763" x2="784" y2="833"/>
+    <line x1="784" y1="763" x2="714" y2="833"/>
+  </g>
+  <path d="M 584 852 L 652 852" fill="none" stroke="rgb(64, 42, 18)" stroke-width="28" stroke-linecap="round"/>
+</svg>
