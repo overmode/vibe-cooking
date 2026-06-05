@@ -28,7 +28,7 @@ export function Chat({ messages, sendMessage, error, suggestions, isWaiting }: C
           {messages.length <= 2 && suggestions && (
             <ChatSuggestions
               suggestions={suggestions}
-              onSuggestionClick={(s) => setInput(s.message)}
+              onSuggestionClick={(s) => { sendMessage(s.message); }}
             />
           )}
         </div>

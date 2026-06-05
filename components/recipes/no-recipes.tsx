@@ -13,7 +13,7 @@ export function NoRecipes() {
         </h3>
       </div>
 
-      <Link href={routes.home}>
+      <Link href={routes.homeWithMessagePreset("first-recipe")}>
         <Button className="gap-2">Surprise me</Button>
       </Link>
     </div>

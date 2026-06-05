@@ -3,7 +3,6 @@
 import { EmptyAboutYou } from "@/components/preferences/empty-about-you";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
 import {
   useUserDietaryPreferences,
   useUpdateUserDietaryPreferences,
@@ -81,18 +80,17 @@ export default function PreferencesPage() {
   return (
     <div className="flex h-full min-h-0 flex-col">
       <div className="mx-auto w-full max-w-2xl shrink-0 px-4 pt-6">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="mb-2 text-2xl font-semibold">About you</h1>
-            <p className="text-sm text-muted-foreground">
-              Tell us about yourself to get personalized cooking recommendations.
-            </p>
-          </div>
-          <Button asChild variant="outline" size="sm" className="shrink-0">
-            <Link href={routes.homeWithMessagePreset("about-you")}>
-              Let&apos;s get to know each other
-            </Link>
-          </Button>
+        <div className="flex flex-col gap-2">
+          <h1 className="text-2xl font-semibold">About you</h1>
+          <p className="text-sm text-muted-foreground">
+            Tell us about yourself to get personalized cooking recommendations.
+          </p>
+          <Link
+            href={routes.homeWithMessagePreset("about-you")}
+            className="w-fit text-sm underline underline-offset-4"
+          >
+            Let&apos;s get to know each other →
+          </Link>
         </div>
       </div>
 

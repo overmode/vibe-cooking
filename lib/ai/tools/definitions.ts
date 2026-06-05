@@ -45,12 +45,12 @@ export const deleteRecipeDefinition = defineTool({
 
 export const updateUserProfileDefinition = defineTool({
   description:
-    "Save the user profile. Merge with existing. Ask before saving in normal chat; save incrementally during profile setup.",
+    "Save the user profile. Merge with existing. Only include information explicitly stated by the user — no inference or extrapolation. Ask before saving in normal chat; save incrementally during profile setup.",
   inputSchema: z.object({
     profile: z
       .string()
       .max(MAX_USER_PROFILE_LENGTH)
-      .describe("The full user profile text"),
+      .describe("The full user profile text, written in first person as if the user were writing naturally (e.g. \"I live in Paris and I'm vegetarian...\")"),
   }),
   result: asTypedSchema<UserDietaryPreferences>(),
 });
