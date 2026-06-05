@@ -76,33 +76,29 @@ export function ChatInput({
   }
 
   return (
-    <form onSubmit={handleFormSubmit} className="pb-4 pl-4 pr-4">
-      <div className="flex flex-col w-full">
-        <div className="flex gap-3 items-end">
-          <div className="relative w-full">
-            <Textarea
-              placeholder="Ask anything in any language"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              className="min-h-16 w-full max-h-48 resize-none"
-              rows={1}
-              maxLength={maxLength}
-            />
-          </div>
-          <Button
-            type="submit"
-            size="icon"
-            disabled={input.trim().length === 0 || isSubmitting || cooldown}
-            className="h-16 w-16 transition-all"
-          >
-            <SendHorizontal
-              className={`h-5 w-5 ${
-                isSubmitting || cooldown ? 'opacity-50' : ''
-              }`}
-            />
-          </Button>
-        </div>
+    <form onSubmit={handleFormSubmit} className="px-4 pb-4">
+      <div className="flex gap-2 sm:gap-3 items-end">
+        <Textarea
+          placeholder="Ask anything"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          className="min-h-10 sm:min-h-14 w-full max-h-48 resize-none"
+          rows={1}
+          maxLength={maxLength}
+        />
+        <Button
+          type="submit"
+          size="icon"
+          disabled={input.trim().length === 0 || isSubmitting || cooldown}
+          className="h-10 w-10 sm:h-14 sm:w-14 shrink-0 transition-all"
+        >
+          <SendHorizontal
+            className={`h-4 w-4 sm:h-5 sm:w-5 ${
+              isSubmitting || cooldown ? 'opacity-50' : ''
+            }`}
+          />
+        </Button>
       </div>
     </form>
   )

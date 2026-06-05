@@ -9,27 +9,25 @@ import { ChevronLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 interface ChatCanvaProps {
-  title: string
   contentNode: ReactNode
   messages: UIMessage[]
   sendMessage: (text: string) => void
   error?: Error | undefined
   contentTabLabel: string
   chatTabLabel?: string
-  actions?: ReactNode
+  contentActions?: ReactNode
   onGoBack?: () => void
   isWaiting: boolean
 }
 
 export function ChatCanva({
-  title,
   contentNode,
   messages,
   sendMessage,
   error,
-  actions,
   contentTabLabel,
   chatTabLabel = 'Assistant',
+  contentActions,
   onGoBack,
   isWaiting,
 }: ChatCanvaProps) {
@@ -46,28 +44,11 @@ export function ChatCanva({
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex justify-between items-center p-2 border-b bg-background sticky top-0 z-10">
-        <div className="flex items-center w-full">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleGoBack}
-            className="h-8 w-8"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <h3 className="text-sm font-medium mx-auto">{title}</h3>
-          <div className="flex items-center gap-2">
-            {actions || <div className="w-8"></div>}
-          </div>
-        </div>
-      </div>
-
       <div className="hidden md:flex flex-1 overflow-hidden">
         <div className="w-1/2 border-r h-full overflow-y-auto">
           {contentNode}
         </div>
-        <div className="w-1/2 h-full overflow-y-auto">
+        <div className="w-1/2 h-full overflow-hidden">
           <Chat
             messages={messages}
             sendMessage={sendMessage}
@@ -83,15 +64,38 @@ export function ChatCanva({
           onValueChange={setActiveTab}
           className="h-full flex flex-col"
         >
-          <TabsList className="grid grid-cols-2 w-full sticky top-0 z-10">
-            <TabsTrigger value="content">{contentTabLabel}</TabsTrigger>
-            <TabsTrigger value="chat">{chatTabLabel}</TabsTrigger>
-          </TabsList>
+          <div className="flex items-center gap-1 border-b sticky top-0 z-10 bg-background px-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleGoBack}
+              className="h-8 w-8 shrink-0 text-muted-foreground"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <TabsList className="flex-1 h-auto justify-center gap-6 rounded-none border-0 bg-transparent p-0">
+              <TabsTrigger
+                value="content"
+                className="h-auto rounded-none border-0 border-b-2 border-transparent bg-transparent px-1 py-2.5 text-sm font-normal text-muted-foreground shadow-none data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none"
+              >
+                {contentTabLabel}
+              </TabsTrigger>
+              <TabsTrigger
+                value="chat"
+                className="h-auto rounded-none border-0 border-b-2 border-transparent bg-transparent px-1 py-2.5 text-sm font-normal text-muted-foreground shadow-none data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none"
+              >
+                {chatTabLabel}
+              </TabsTrigger>
+            </TabsList>
+            {contentActions && (
+              <div className="shrink-0 pr-1">{contentActions}</div>
+            )}
+          </div>
           <div className="flex-1 overflow-hidden">
             <TabsContent value="content" className="h-full overflow-y-auto">
               {contentNode}
             </TabsContent>
-            <TabsContent value="chat" className="h-full overflow-y-auto">
+            <TabsContent value="chat" className="h-full overflow-hidden">
               <Chat
                 messages={messages}
                 sendMessage={sendMessage}

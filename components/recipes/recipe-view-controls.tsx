@@ -17,7 +17,6 @@ interface RecipeViewControlsProps {
   setSortField: (field: SortField) => void
   sortDirection: SortDirection
   setSortDirection: (direction: SortDirection) => void
-  isMobile?: boolean
 }
 
 export function RecipeViewControls({
@@ -27,7 +26,6 @@ export function RecipeViewControls({
   setSortField,
   sortDirection,
   setSortDirection,
-  isMobile,
 }: RecipeViewControlsProps) {
   // Format the sort field name for display
   const formatSortFieldName = (field: SortField): string => {
@@ -162,9 +160,7 @@ export function RecipeViewControls({
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      {/* List view doesn't work UX-wise on mobile */}
-      {!isMobile && (
-        <div className="flex border rounded-md overflow-hidden shadow-sm">
+      <div className="flex border rounded-md overflow-hidden shadow-sm">
           <Button
             variant={viewMode === 'grid' ? 'default' : 'ghost'}
             size="sm"
@@ -190,7 +186,6 @@ export function RecipeViewControls({
             <List className="h-4 w-4" />
           </Button>
         </div>
-      )}
     </div>
   )
 }

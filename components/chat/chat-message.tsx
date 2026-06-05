@@ -74,12 +74,12 @@ export function ChatMessage({ message }: ChatMessageProps) {
               <div
                 key={index}
                 className={cn(
-                  'rounded-lg px-4 py-2 text-sm',
+                  'rounded-lg text-sm',
                   isUser
-                    ? 'bg-primary text-primary-foreground ml-auto w-fit'
-                    : isTool || isLoading
+                    ? 'bg-primary text-primary-foreground ml-auto w-fit px-4 py-2'
+                    : isTool
                     ? 'w-full'
-                    : 'bg-muted w-fit prose prose-sm dark:prose-invert max-w-none'
+                    : 'bg-muted w-fit px-4 py-2 prose prose-sm dark:prose-invert max-w-none'
                 )}
               >
                 {content}

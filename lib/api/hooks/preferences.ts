@@ -43,36 +43,33 @@ export const useUpdateUserDietaryPreferences = ({
     onMutate: async (variables, context) => {
       options?.onMutate?.(variables, context);
 
-      // Cancel any outgoing refetches
       await queryClient.cancelQueries({
         queryKey: queryKeys.preferences.all,
       });
 
-      // Snapshot the previous value
       const previousPreferences =
         queryClient.getQueryData<UserDietaryPreferences>(
           queryKeys.preferences.all
         );
 
-      // Optimistically update the cache
       queryClient.setQueryData(
         queryKeys.preferences.all,
         (old: UserDietaryPreferences) =>
           old ? { ...old, preferences: variables } : old
       );
+
       return { previousPreferences };
     },
+    onSuccess: (data, variables, onMutateResult, context) => {
+      queryClient.setQueryData(queryKeys.preferences.all, data);
+      options?.onSuccess?.(data, variables, onMutateResult, context);
+    },
     onError: (error, variables, onMutateResult, context) => {
-      // Rollback the previous state
       queryClient.setQueryData(
         queryKeys.preferences.all,
         onMutateResult?.previousPreferences
       );
       options?.onError?.(error, variables, onMutateResult, context);
-    },
-    onSettled: (data, error, variables, onMutateResult, context) => {
-      options?.onSettled?.(data, error, variables, onMutateResult, context);
-      queryClient.invalidateQueries({ queryKey: queryKeys.preferences.all });
     },
   });
 };

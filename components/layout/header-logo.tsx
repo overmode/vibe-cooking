@@ -9,8 +9,10 @@ export function HeaderLogo() {
           src="/logo.svg"
           alt="Vibe Cooking Logo"
           width={36}
-          height={31}
-          style={{ height: "auto" }}
+          height={34}
+          priority
+          unoptimized
+          className="w-9 h-[34px]"
         />
         <span className="font-semibold text-xl text-muted-foreground">
           Vibe Cooking
