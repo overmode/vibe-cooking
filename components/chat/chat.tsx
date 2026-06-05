@@ -2,6 +2,7 @@ import { useState } from "react";
 import { UIMessage } from "ai";
 import { ChatInput } from "./chat-input";
 import { ChatMessagesDisplay } from "./chat-messages-display";
+import { ChatSendProvider } from "./chat-send-context";
 import { ChatSuggestions } from "./chat-suggestions";
 import { ChatSuggestion } from "@/lib/types";
 
@@ -17,22 +18,24 @@ export function Chat({ messages, sendMessage, error, suggestions, isWaiting }: C
   const [input, setInput] = useState("");
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex-1 overflow-hidden">
-        <ChatMessagesDisplay messages={messages} error={error} isWaiting={isWaiting} />
-      </div>
+    <ChatSendProvider sendMessage={sendMessage}>
+      <div className="flex flex-col h-full">
+        <div className="flex-1 overflow-hidden">
+          <ChatMessagesDisplay messages={messages} error={error} isWaiting={isWaiting} />
+        </div>
 
-      <div className="w-full">
-        {messages.length <= 2 && suggestions && (
-          <ChatSuggestions
-            suggestions={suggestions}
-            onSuggestionClick={(s) => setInput(s.message)}
-          />
-        )}
+        <div className="w-full">
+          {messages.length <= 2 && suggestions && (
+            <ChatSuggestions
+              suggestions={suggestions}
+              onSuggestionClick={(s) => setInput(s.message)}
+            />
+          )}
+        </div>
+        <div className="sticky bottom-0 pb-0">
+          <ChatInput input={input} setInput={setInput} onSend={sendMessage} />
+        </div>
       </div>
-      <div className="sticky bottom-0 pb-0">
-        <ChatInput input={input} setInput={setInput} onSend={sendMessage} />
-      </div>
-    </div>
+    </ChatSendProvider>
   );
 }

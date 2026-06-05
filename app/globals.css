@@ -33,6 +33,7 @@
   --color-secondary: var(--secondary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary: var(--primary);
+  --color-primary-text: var(--primary-text);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
@@ -60,6 +61,7 @@
   /* ---------- brand actions ---------------------------------------------- */
   --primary: oklch(0.711 0.153 134.18); /* updated asparagus */
   --primary-foreground: oklch(1 0 0); /* white */
+  --primary-text: oklch(0.48 0.11 134.18); /* readable green on white */
 
   --secondary: oklch(0.967 0.001 286.375);
   --secondary-foreground: oklch(0.21 0.006 285.885);
@@ -111,6 +113,7 @@
 
   --primary: oklch(0.48 0.1 133.67); /* darker asparagus */
   --primary-foreground: oklch(0.985 0 0);
+  --primary-text: oklch(0.72 0.13 134); /* readable green on dark surfaces */
 
   --secondary: oklch(0.274 0.006 286.033);
   --secondary-foreground: var(--foreground);
@@ -155,4 +158,29 @@ body {
   height: 100%;
   /* Prevent bounce effects on iOS */
   overscroll-behavior: none;
+}
+
+@layer utilities {
+  .scrollbar-fade {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+  }
+
+  .scrollbar-fade.is-scrolling {
+    scrollbar-color: color-mix(in oklch, var(--muted-foreground) 35%, transparent)
+      transparent;
+  }
+
+  .scrollbar-fade::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .scrollbar-fade::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 9999px;
+  }
+
+  .scrollbar-fade.is-scrolling::-webkit-scrollbar-thumb {
+    background-color: color-mix(in oklch, var(--muted-foreground) 35%, transparent);
+  }
 }

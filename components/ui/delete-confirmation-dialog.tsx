@@ -69,7 +69,7 @@ export function DeleteConfirmationDialog({
           </AlertDialogTitle>
           <AlertDialogDescription className="text-center">
             Are you sure you want to delete{' '}
-            <span className="font-medium text-primary">{itemName}</span>
+            <span className="font-medium text-primary-text">{itemName}</span>
             ?
             <br />
             This action cannot be undone.

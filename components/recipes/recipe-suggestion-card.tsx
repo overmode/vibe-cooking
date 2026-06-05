@@ -1,14 +1,53 @@
+"use client";
+
+import { useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
+  CardFooter,
   CardTitle,
   CardHeader,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CreateRecipeInput } from "@/lib/validators/recipe";
 import { MemoizedMarkdown } from "@/components/chat/memoized-markdown";
-import { Clock, Flame, Users } from "lucide-react";
+import { useChatSend } from "@/components/chat/chat-send-context";
+import { cn } from "@/lib/utils";
+import { Clock, Flame, Plus, Users } from "lucide-react";
+
+function RecipeCardScrollArea({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [isScrolling, setIsScrolling] = useState(false);
+
+  const handleScroll = () => {
+    setIsScrolling(true);
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
+    }
+    scrollTimeoutRef.current = setTimeout(() => setIsScrolling(false), 600);
+  };
+
+  return (
+    <div
+      onScroll={handleScroll}
+      className={cn(
+        "overflow-y-auto pr-1 scrollbar-fade max-h-52 sm:max-h-64",
+        isScrolling && "is-scrolling",
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
+}
 
 export const RecipeSuggestionCard = ({
   cardData,
@@ -17,10 +56,12 @@ export const RecipeSuggestionCard = ({
   cardData: CreateRecipeInput;
   id: string;
 }) => {
+  const sendMessage = useChatSend();
+
   return (
     <Card className="w-full overflow-hidden shadow-sm py-3 gap-3 sm:py-6 sm:gap-6">
       <CardHeader className="px-3 sm:px-6">
-        <CardTitle className="text-base sm:text-lg text-primary leading-snug">
+        <CardTitle className="text-base sm:text-lg text-primary-text leading-snug">
           {cardData.name}
         </CardTitle>
         <div className="flex flex-wrap gap-1.5">
@@ -52,28 +93,44 @@ export const RecipeSuggestionCard = ({
             <TabsTrigger value="instructions">Instructions</TabsTrigger>
           </TabsList>
           <TabsContent value="ingredients">
-            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 max-h-52 sm:max-h-64 overflow-y-auto pr-1">
-              {cardData.ingredients.map((ingredient, i) => (
-                <li
-                  key={i}
-                  className="flex items-start gap-2 text-sm text-muted-foreground"
-                >
-                  <span className="inline-block h-2 w-2 rounded-full bg-primary mt-1.5 shrink-0" />
-                  <span>{ingredient}</span>
-                </li>
-              ))}
-            </ul>
+            <RecipeCardScrollArea>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                {cardData.ingredients.map((ingredient, i) => (
+                  <li
+                    key={i}
+                    className="flex items-start gap-2 text-sm text-muted-foreground"
+                  >
+                    <span className="inline-block h-2 w-2 rounded-full bg-primary mt-1.5 shrink-0" />
+                    <span>{ingredient}</span>
+                  </li>
+                ))}
+              </ul>
+            </RecipeCardScrollArea>
           </TabsContent>
           <TabsContent value="instructions" className="mt-0">
-            <div className="text-sm text-muted-foreground prose prose-primary max-w-none max-h-52 sm:max-h-64 overflow-y-auto pr-1">
+            <RecipeCardScrollArea className="text-sm text-muted-foreground prose prose-primary max-w-none">
               <MemoizedMarkdown
                 content={cardData.instructions}
                 id={`instructions-${id}`}
               />
-            </div>
+            </RecipeCardScrollArea>
           </TabsContent>
         </Tabs>
       </CardContent>
+
+      {sendMessage && (
+        <CardFooter className="px-3 sm:px-6 pt-0 sm:justify-end">
+          <Button
+            className="w-full sm:w-auto sm:max-w-48"
+            onClick={() =>
+              sendMessage(`Save "${cardData.name}" to my recipe library.`)
+            }
+          >
+            <Plus className="h-4 w-4" />
+            Save to library
+          </Button>
+        </CardFooter>
+      )}
     </Card>
   );
 };

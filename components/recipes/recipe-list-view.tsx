@@ -77,7 +77,7 @@ export function RecipeListView({
                 className="hover:cursor-pointer"
               >
                 <TableCell className="py-3">
-                  <span>{recipe.name}</span>
+                  <span className="font-medium text-primary-text">{recipe.name}</span>
                 </TableCell>
                 <TableCell>
                   {recipe.duration ? (

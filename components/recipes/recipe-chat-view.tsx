@@ -12,7 +12,7 @@ import { useDeleteRecipeById } from "@/lib/api/hooks/recipes";
 import { ChatCanva } from "@/components/chat/chat-canva";
 import { apiRoutes } from "@/lib/api/api-routes";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, Trash } from "lucide-react";
+import { MoreHorizontal, Trash2 } from "lucide-react";
 import { DeleteConfirmationDialog } from "@/components/ui/delete-confirmation-dialog";
 import { routes } from "@/lib/routes";
 import { AppContext } from "@/lib/ai/app-context";
@@ -103,17 +103,18 @@ export function RecipeChatView({ recipe }: RecipeChatViewProps) {
           size="icon"
           className="h-8 w-8 text-muted-foreground"
           disabled={deleteRecipeMutation.isPending}
+          aria-label="Recipe options"
         >
           <MoreHorizontal className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="w-32">
         <DropdownMenuItem
           onClick={() => setShowDeleteDialog(true)}
-          className="text-destructive focus:text-destructive"
+          className="text-muted-foreground"
         >
-          <Trash className="h-4 w-4 mr-2" />
-          Delete recipe
+          <Trash2 />
+          Delete
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

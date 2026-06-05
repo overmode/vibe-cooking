@@ -73,13 +73,12 @@ export function RecipeCardBase({
       <Card
         className={cn(
           'h-full min-h-[160px] overflow-hidden',
-          'border-l-[3px] border-l-primary/40 hover:border-l-primary/80',
           'shadow-sm hover:shadow-md transition-all duration-200',
           className
         )}
       >
         <CardHeader>
-          <CardTitle className="text-base font-semibold leading-snug line-clamp-2">
+          <CardTitle className="text-base font-semibold text-primary-text leading-snug line-clamp-2">
             {name}
           </CardTitle>
         </CardHeader>

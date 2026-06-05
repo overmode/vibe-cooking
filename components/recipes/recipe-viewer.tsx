@@ -29,7 +29,7 @@ export function RecipeViewer({ recipe, actions }: { recipe: ViewableRecipe; acti
 
       <div className="px-4 pb-6 pt-3 md:pt-0 sm:px-6 space-y-8">
         <div className="space-y-3">
-          <h1 className="text-xl sm:text-2xl font-bold text-primary leading-snug">
+          <h1 className="text-xl sm:text-2xl font-bold text-primary-text leading-snug">
             {recipe.name}
           </h1>
           <RecipeMetadataDescription
@@ -42,7 +42,7 @@ export function RecipeViewer({ recipe, actions }: { recipe: ViewableRecipe; acti
         <Separator className="bg-muted/60" />
 
         <section className="space-y-4">
-          <h2 className="text-xl font-semibold text-primary">Ingredients</h2>
+          <h2 className="text-xl font-semibold text-primary-text">Ingredients</h2>
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {recipe.ingredients.map((ingredient, i) => (
               <li
@@ -59,8 +59,8 @@ export function RecipeViewer({ recipe, actions }: { recipe: ViewableRecipe; acti
         <Separator className="bg-muted/60" />
 
         <section className="space-y-4">
-          <h2 className="text-xl font-semibold text-primary">Instructions</h2>
-          <div className="text-sm text-foreground/80 prose prose-headings:text-primary prose-a:text-primary max-w-none">
+          <h2 className="text-xl font-semibold text-primary-text">Instructions</h2>
+          <div className="text-sm text-foreground/80 prose prose-headings:text-primary-text prose-a:text-primary max-w-none">
             <MemoizedMarkdown
               content={recipe.instructions}
               id={`cooking-instructions-${recipe.id}`}

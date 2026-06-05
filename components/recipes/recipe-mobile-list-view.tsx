@@ -13,9 +13,9 @@ export function RecipeMobileListView({ recipes }: RecipeMobileListViewProps) {
         <Link
           key={recipe.id}
           href={routes.recipes.byId(recipe.id)}
-          className="flex items-center gap-3 py-3 px-1 border-l-[3px] border-l-primary/40 hover:border-l-primary/80 hover:bg-muted/40 transition-all pl-3"
+          className="flex items-center gap-3 py-3 px-1 hover:bg-muted/40 transition-colors"
         >
-          <span className="flex-1 min-w-0 text-sm font-medium truncate">
+          <span className="flex-1 min-w-0 text-sm font-medium text-primary-text truncate">
             {recipe.name}
           </span>
         </Link>

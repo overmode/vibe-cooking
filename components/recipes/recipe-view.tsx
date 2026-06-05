@@ -99,7 +99,7 @@ export function RecipeView({
   return (
     <div className="container mx-auto py-4 sm:py-8 flex flex-col h-full">
       <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-8">
-        <h2 className="text-2xl font-medium tracking-tight text-primary">
+        <h2 className="text-2xl font-medium tracking-tight text-primary-text">
           Your Recipes
         </h2>
         <div className="flex flex-wrap items-center gap-3 sm:gap-4">

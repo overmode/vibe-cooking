@@ -15,6 +15,7 @@ import {
   updateRecipeTool,
 } from "@/lib/ai/tools/tools";
 import { compileAssistantPrompt } from "@/lib/ai/prompts/assistant";
+import { truncateMessagesToTokenLimit } from "@/lib/ai/truncate-messages";
 import { appContextSchema, ResolvedAppContext } from "@/lib/ai/app-context";
 import { getCurrentUserId } from "@/lib/auth/get-current-user-id";
 import { chatLimiter } from "@/lib/rate-limiter";
@@ -65,6 +66,13 @@ export async function POST(req: Request) {
     resolvedAppContext = { kind: "mainAssistant" };
   }
 
+  // Chats stay short in practice; 100k is a generous ceiling with headroom for
+  // system prompt, tools, and model output.
+  const modelMessages = truncateMessagesToTokenLimit(messages, 100_000);
+  if (messages.length > 0 && modelMessages.length === 0) {
+    return new Response("Conversation exceeds token limit.", { status: 400 });
+  }
+
   const result = streamText({
     model: openai.responses("gpt-5.4-nano"),
     providerOptions: { openai: { parallelToolCalls: false, store: false } },
@@ -73,7 +81,7 @@ export async function POST(req: Request) {
       userDietaryPreferences: preferences?.preferences ?? null,
     }),
     stopWhen: stepCountIs(10),
-    messages: await convertToModelMessages(messages),
+    messages: await convertToModelMessages(modelMessages),
     tools: {
       webSearch: openai.tools.webSearch({}),
       getRecipesMetadataTool,

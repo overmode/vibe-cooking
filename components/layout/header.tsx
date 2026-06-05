@@ -50,7 +50,7 @@ export function Header() {
                 className={cn(
                   "relative px-1 flex items-center h-8 text-sm font-medium transition-colors",
                   isActive
-                    ? "text-primary"
+                    ? "text-foreground"
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >

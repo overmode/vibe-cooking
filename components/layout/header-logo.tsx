@@ -14,7 +14,7 @@ export function HeaderLogo() {
           unoptimized
           className="w-9 h-[34px]"
         />
-        <span className="font-semibold text-xl text-muted-foreground">
+        <span className="font-medium text-xl text-foreground">
           Vibe Cooking
         </span>
       </div>
