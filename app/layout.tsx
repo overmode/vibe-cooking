@@ -27,6 +27,10 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: 'Vibe Cooking',
   description: 'Assistant-powered cooking app',
+  icons: {
+    icon: '/logo.svg',
+    apple: '/logo.svg',
+  },
 }
 
 export default function RootLayout({
