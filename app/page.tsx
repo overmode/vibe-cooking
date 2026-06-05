@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, UIMessage } from "ai";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -30,7 +30,7 @@ const initialMessages: UIMessage[] = [
   },
 ];
 
-export default function Home() {
+function HomeContent() {
   const queryClient = useQueryClient();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -76,5 +76,13 @@ export default function Home() {
       suggestions={chatSuggestions}
       isWaiting={status === "submitted"}
     />
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense>
+      <HomeContent />
+    </Suspense>
   );
 }
