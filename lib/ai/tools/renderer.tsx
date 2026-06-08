@@ -5,8 +5,8 @@ import {
   ToolSpinner,
   ToolError,
 } from "@/components/chat/tool-feedback";
-import { RecipeMetadata } from "@/lib/types";
-import { Recipe, UserDietaryPreferences } from "@/generated/prisma/browser";
+import { RecipeMetadata, UserProfile } from "@/lib/types";
+import { Recipe } from "@/generated/prisma/browser";
 import { ToolResult } from "@/lib/ai/tools/types";
 import { CreateRecipeInput } from "@/lib/validators/recipe";
 
@@ -139,7 +139,7 @@ toolRenderers["updateUserProfileTool"] = (part) => {
         <p className="text-muted-foreground py-2">Updating your profile...</p>
       );
     case "output-available": {
-      const result = part.output as ToolResult<UserDietaryPreferences>;
+      const result = part.output as ToolResult<UserProfile>;
       if (!result.success) {
         return <ToolError message={result.error} />;
       }

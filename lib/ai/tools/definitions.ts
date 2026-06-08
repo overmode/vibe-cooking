@@ -4,8 +4,8 @@ import {
   updateRecipeInputSchema,
 } from "@/lib/validators/recipe";
 import { defineTool } from "@/lib/ai/tools/types";
-import { RecipeMetadata, asTypedSchema } from "@/lib/types";
-import { Recipe, UserDietaryPreferences } from "@/generated/prisma/browser";
+import { RecipeMetadata, UserProfile, asTypedSchema } from "@/lib/types";
+import { Recipe } from "@/generated/prisma/browser";
 import { MAX_USER_PROFILE_LENGTH } from "@/lib/constants/app_validation";
 
 export const getRecipesMetadataDefinition = defineTool({
@@ -52,7 +52,7 @@ export const updateUserProfileDefinition = defineTool({
       .max(MAX_USER_PROFILE_LENGTH)
       .describe("The full user profile text, written in first person as if the user were writing naturally (e.g. \"I live in Paris and I'm vegetarian...\")"),
   }),
-  result: asTypedSchema<UserDietaryPreferences>(),
+  result: asTypedSchema<UserProfile>(),
 });
 
 export const renderRecipeSuggestionDefinition = defineTool({

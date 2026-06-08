@@ -21,7 +21,7 @@ import { appContextSchema, ResolvedAppContext } from "@/lib/ai/app-context";
 import { getCurrentUserId } from "@/lib/auth/get-current-user-id";
 import { chatLimiter } from "@/lib/rate-limiter";
 import { MAX_USER_MESSAGE_LENGTH } from "@/lib/constants/app_validation";
-import { getUserDietaryPreferences } from "@/lib/data-access/preferences";
+import { getLatestUserProfileRevision } from "@/lib/data-access/user-profile";
 import { getRecipeById } from "@/lib/data-access/recipe";
 
 export const maxDuration = 30;
@@ -49,9 +49,9 @@ export async function POST(req: Request) {
   const userId = await getCurrentUserId();
   if (!userId) return new Response("Unauthorized", { status: 401 });
 
-  const [{ success }, preferences, recipe] = await Promise.all([
+  const [{ success }, profileRevision, recipe] = await Promise.all([
     chatLimiter.limit(userId),
-    getUserDietaryPreferences({ userId }),
+    getLatestUserProfileRevision({ userId }),
     appContext.kind === "recipeView"
       ? getRecipeById({ id: appContext.recipeId, userId }).catch(() => null)
       : Promise.resolve(null),
@@ -79,7 +79,7 @@ export async function POST(req: Request) {
     providerOptions: { openai: { parallelToolCalls: false, store: false } },
     system: compileAssistantPrompt({
       appContext: resolvedAppContext,
-      userProfile: preferences?.preferences ?? null,
+      userProfile: profileRevision?.content ?? null,
     }),
     stopWhen: stepCountIs(10),
     messages: await convertToModelMessages(modelMessages),

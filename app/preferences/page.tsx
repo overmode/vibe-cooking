@@ -1,22 +1,17 @@
 "use client";
 
-import { MascotIllustration } from "@/components/illustrations/mascot-illustration";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  useUserDietaryPreferences,
-  useUpdateUserDietaryPreferences,
-} from "@/lib/api/hooks/preferences";
+  useUserProfile,
+  useUpdateUserProfile,
+} from "@/lib/api/hooks/user-profile";
 import { routes } from "@/lib/routes";
-import { Check } from "lucide-react";
 import Link from "next/link";
-import { useState, useMemo, useEffect } from "react";
-import { debounce } from "lodash";
+import { useState } from "react";
 import { MAX_USER_PROFILE_LENGTH } from "@/lib/constants/app_validation";
 import { cn } from "@/lib/utils";
-
-const SAVE_DEBOUNCE_MS = 1000;
 
 const ABOUT_YOU_PLACEHOLDER = `• I'm vegetarian and allergic to nuts
 • I love spicy food and prefer quick 30-minute meals
@@ -25,44 +20,27 @@ const ABOUT_YOU_PLACEHOLDER = `• I'm vegetarian and allergic to nuts
 • I have intermediate cooking skills`;
 
 export default function PreferencesPage() {
-  const [draft, setDraft] = useState("");
-  const [isDirty, setIsDirty] = useState(false);
+  const [draft, setDraft] = useState<string | null>(null);
 
   const {
-    data: serverPreferences,
+    data: serverProfile,
     isLoading,
     isError,
-  } = useUserDietaryPreferences({});
+  } = useUserProfile({});
 
-  const serverValue = serverPreferences?.preferences ?? "";
-
-  // show local edits while dirty, otherwise follow the server value
-  const value = isDirty ? draft : serverValue;
+  const serverValue = serverProfile?.content ?? "";
+  const isEditing = draft !== null;
 
   const {
     mutate,
     isPending,
-    isSuccess,
     isError: saveError,
-  } = useUpdateUserDietaryPreferences({
-    options: { onSuccess: () => setIsDirty(false) },
+  } = useUpdateUserProfile({
+    options: { onSuccess: () => setDraft(null) },
   });
 
-  const debouncedSave = useMemo(
-    () => debounce((next: string) => mutate(next), SAVE_DEBOUNCE_MS),
-    [mutate]
-  );
-
-  useEffect(() => () => debouncedSave.cancel(), [debouncedSave]);
-
-  const isSaved = isSuccess && !isPending && !isDirty;
-  const isEmpty = !value.trim();
-
-  const handlePreferencesChange = (next: string) => {
-    setDraft(next);
-    setIsDirty(true);
-    debouncedSave(next);
-  };
+  const value = draft ?? serverValue;
+  const hasChanges = isEditing && value !== serverValue;
 
   if (isLoading) {
     return (
@@ -87,68 +65,66 @@ export default function PreferencesPage() {
         <div className="flex flex-col gap-2">
           <h1 className="text-2xl font-semibold">About you</h1>
           <p className="text-sm text-muted-foreground">
-            Tell us about yourself to get personalized cooking recommendations.
+            Tell us about yourself to get personalized cooking recommendations,
+            or{" "}
+            <Link
+              href={routes.homeWithMessagePreset("about-you")}
+              className="text-primary underline-offset-4 hover:underline"
+            >
+              take the quiz
+            </Link>
+            .
           </p>
         </div>
       </div>
 
       <div className="mx-auto flex min-h-0 w-full max-w-2xl flex-1 flex-col gap-3 px-4 pb-6 pt-4">
-        <div className="relative min-h-0 flex-1">
+        <div className="min-h-0 flex-1">
           <Textarea
             id="preferences"
             value={value}
-            onChange={(e) => handlePreferencesChange(e.target.value)}
+            onChange={(e) => setDraft(e.target.value)}
+            onFocus={() => !isEditing && setDraft(serverValue)}
+            onBlur={() => !hasChanges && setDraft(null)}
             placeholder={ABOUT_YOU_PLACEHOLDER}
-            className="field-sizing-fixed h-full min-h-0 resize-none overflow-y-auto border-border/50 focus-visible:border-border"
+            className={cn(
+              "field-sizing-fixed h-full min-h-0 resize-none overflow-y-auto transition-colors",
+              isEditing
+                ? "border-border focus-visible:border-border"
+                : "cursor-text border-transparent bg-transparent shadow-none hover:border-border hover:bg-accent/40 focus-visible:ring-0 [@media(hover:none)]:border-border/60"
+            )}
             maxLength={MAX_USER_PROFILE_LENGTH}
           />
-          <div
-            aria-hidden={isEmpty ? undefined : true}
-            className={cn(
-              "pointer-events-none absolute inset-0 flex flex-col items-center justify-end gap-4 p-6 text-center transition-opacity duration-300",
-              isEmpty ? "opacity-100" : "opacity-0"
-            )}
-          >
-            <MascotIllustration
-              expression="friendly"
-              className="size-24 opacity-90"
-              priority
-            />
-            <Button
-              asChild
-              size="sm"
-              tabIndex={isEmpty ? undefined : -1}
-              className={cn(isEmpty && "pointer-events-auto")}
-            >
-              <Link href={routes.homeWithMessagePreset("about-you")}>
-                Learn my tastes
-              </Link>
-            </Button>
-          </div>
         </div>
-        <div className="flex h-5 shrink-0 items-center justify-between">
-          {value.length >= MAX_USER_PROFILE_LENGTH && (
+        <div className="flex h-9 shrink-0 items-center justify-between">
+          {isEditing && value.length >= MAX_USER_PROFILE_LENGTH && (
             <p className="text-xs text-destructive">
               {value.length}/{MAX_USER_PROFILE_LENGTH} characters
             </p>
           )}
-          <div className="ml-auto flex items-center gap-2">
-            {isPending && (
-              <>
-                <LoadingSpinner size="sm" />
-                <span className="text-xs text-muted-foreground">Saving...</span>
-              </>
-            )}
-            {saveError && (
-              <span className="text-xs text-destructive">Failed to save</span>
-            )}
-            {isSaved && (
-              <>
-                <Check className="h-3 w-3 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">Saved</span>
-              </>
-            )}
-          </div>
+          {isEditing && (
+            <div className="ml-auto flex items-center gap-2">
+              {saveError && (
+                <span className="text-xs text-destructive">Failed to save</span>
+              )}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setDraft(null)}
+                disabled={isPending}
+              >
+                Cancel
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => mutate(value)}
+                disabled={!hasChanges || isPending}
+              >
+                {isPending && <LoadingSpinner size="sm" />}
+                {isPending ? "Saving..." : "Save"}
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -50,11 +50,20 @@ model CookSession {
   @@index([recipeId, cookedAt])
 }
 
-model UserDietaryPreferences {
-  userId      String   @id
-  preferences String   @db.VarChar(10000)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model UserProfileRevision {
+  id         String        @id @default(cuid())
+  userId     String
+  revision   Int
+  content    String        @db.VarChar(10000)
+  authoredBy ProfileAuthor
+  createdAt  DateTime      @default(now())
+
+  @@unique([userId, revision])
+}
+
+enum ProfileAuthor {
+  USER
+  ASSISTANT
 }
 
 model RateLimit {

@@ -26,13 +26,3 @@ export function handleApiError(error: unknown, context: string): never {
     }`
   )
 }
-
-// TODO: clean this up
-export function handleError(error: unknown, context: string): never {
-  console.error(`[OTHER] ${context}`, { error })
-  throw new Error(
-    `Failed to ${context.toLowerCase()}: ${
-      error instanceof Error ? error.message : `${error}`
-    }`
-  )
-}

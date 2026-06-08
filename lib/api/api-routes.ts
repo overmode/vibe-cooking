@@ -4,7 +4,7 @@ export const apiRoutes = {
     byId: (id: string) => `/api/recipe/${id}`,
   },
   assistant: "/api/assistant",
-  preferences: {
-    all: "/api/preferences",
+  userProfile: {
+    all: "/api/user-profile",
   },
 } as const;

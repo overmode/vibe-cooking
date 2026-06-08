@@ -19,6 +19,10 @@ export type RecipeMetadata = Pick<
   cookCount: number
 }
 
+export type UserProfile = {
+  content: string
+}
+
 export const asTypedSchema = <T>() => ({} as unknown as z.ZodType<T>)
 
 export type ChatSuggestion = {

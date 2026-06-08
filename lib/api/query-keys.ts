@@ -3,7 +3,7 @@ export const queryKeys = {
     all: ["recipes"] as const,
     byId: (id: string) => ["recipes", id] as const,
   },
-  preferences: {
-    all: ["preferences"] as const,
+  userProfile: {
+    all: ["user-profile"] as const,
   },
 };

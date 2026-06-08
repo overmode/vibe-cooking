@@ -36,7 +36,7 @@ export const toolEffects: Record<string, ToolEffect> = {
   },
 
   updateUserProfileTool: (qc) => {
-    qc.invalidateQueries({ queryKey: queryKeys.preferences.all })
+    qc.invalidateQueries({ queryKey: queryKeys.userProfile.all })
   },
 }
 

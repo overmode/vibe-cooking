@@ -21,7 +21,7 @@ import {
   getRecipesMetadataAction,
   updateRecipeAction,
 } from "@/lib/actions/recipe";
-import { updateUserDietaryPreferencesAction } from "@/lib/actions/preferences";
+import { updateUserProfileAction } from "@/lib/actions/user-profile";
 
 type GetRecipesMetadataResult = ToolRawResult<
   typeof getRecipesMetadataDefinition
@@ -123,7 +123,7 @@ export const updateUserProfileExecute = async (
   parameters: UpdateUserProfileParams
 ): Promise<ToolResult<UpdateUserProfileResult>> => {
   try {
-    const profile = await updateUserDietaryPreferencesAction(parameters.profile);
+    const profile = await updateUserProfileAction(parameters.profile, "ASSISTANT");
     return { success: true, data: profile };
   } catch (error) {
     return {
