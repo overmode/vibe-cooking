@@ -102,7 +102,7 @@ export default function PreferencesPage() {
               {value.length}/{MAX_USER_PROFILE_LENGTH} characters
             </p>
           )}
-          {isEditing && (
+          {(hasChanges || isPending) && (
             <div className="ml-auto flex items-center gap-2">
               {saveError && (
                 <span className="text-xs text-destructive">Failed to save</span>
@@ -118,7 +118,7 @@ export default function PreferencesPage() {
               <Button
                 size="sm"
                 onClick={() => mutate(value)}
-                disabled={!hasChanges || isPending}
+                disabled={isPending}
               >
                 {isPending && <LoadingSpinner size="sm" />}
                 {isPending ? "Saving..." : "Save"}
