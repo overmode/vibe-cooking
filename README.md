@@ -1,111 +1,95 @@
-# Vibe Cooking App
+<p align="center">
+  <img src="public/logo.svg" alt="Vibe Cooking logo" width="110" height="110" />
+</p>
 
-Welcome to **Vibe Cooking**, an AI-powered cooking assistant designed to make your kitchen experience seamless.
+<h1 align="center">Vibe Cooking</h1>
 
----
-
-## Project Overview
-
-**Vibe Cooking** combines AI-driven meal suggestions, recipe management, and live cooking guidance to help users prepare meals in a relaxed and intuitive way.
-
-### Key Concepts (see schema.prisma)
-
-#### Recipes
-
-**Recipes** serve as the foundation of this app. They consist of:
-- Name, ingredients, and instructions
-- Servings, difficulty, and duration
-
-Planning to cook a recipe leads to the creation of a **Planned Meal**, derived from the recipe, but with possible variations and overrides based on available ingredients or preferences.
-
-#### Planned Meals
-
-A **Planned Meal** is a **personalized version** of a recipe. It allows users to:
-- Modify ingredients (e.g., substitute, remove, or adjust)
-- Change the cooking instructions
-- Adjust servings, difficulty, or duration
-
-Planned Meals are **temporary variants** of recipes, intended for real-time adaptations when cooking. These modifications don't affect the original recipe, ensuring flexibility without breaking the consistency of core recipe data.
+<p align="center">An AI-powered cooking assistant — plan, tweak, and cook recipes through a relaxed chat interface.</p>
 
 ---
+
+## Overview
+
+**Vibe Cooking** pairs a recipe library with a chat assistant. You build and refine recipes by talking to the assistant; it can suggest recipes, save them, and edit them on your behalf. Every change — yours or the assistant's — is versioned, so the assistant can adapt a recipe freely without ever losing the original.
+
+## Core Concepts (see `prisma/schema.prisma`)
+
+### Recipes
+
+A **Recipe** is a stable identity plus lifecycle state (`archivedAt`). Its content — name, ingredients, instructions, servings, duration, difficulty — lives in append-only **`RecipeRevision`** snapshots.
+
+- The current recipe is always the **latest revision** (`max(revision)`).
+- Editing **appends a new immutable snapshot** rather than mutating the previous one, so full history is preserved.
+- Each revision records its **`Author`** (`USER` or `ASSISTANT`), so assistant edits can be distinguished from yours — and reverted by copying an earlier revision forward.
+- Deletes are **soft** (`archivedAt`); history is never destroyed.
+
+### User Profile
+
+A free-text profile (dietary needs, tastes, context) that informs the assistant's suggestions. Like recipes, it's stored as append-only **`UserProfileRevision`** snapshots (latest = current), attributed via `Author`.
+
+### Assistant
+
+A single chat endpoint parameterized by an **app context**:
+
+- **`mainAssistant`** — the recipe library: browse, get suggestions, save recipes, edit your profile.
+- **`recipeView`** — a specific recipe: ask questions or request edits in place.
+
+The assistant works through structured tools (recipe CRUD, profile updates, web search, recipe-suggestion rendering). Versioning is invisible to the model — it just creates/updates recipes, and the system records authorship and revisions underneath.
 
 ## Architecture
 
-The project follows a **Layered Architecture** to maintain a clear separation of concerns and facilitate scalability. Key layers include:
+A layered architecture keeps concerns separate:
 
-1. **Data Access**: Low-level interaction with the database (Prisma).
-2. **Actions**: Contains business logic, authentication, and user-specific context.
-3. **API Routes**: Simple transport routes, validating inputs with Zod.
-4. **Client**: Encapsulates API calls and fetches data.
-5. **Hooks**: Manages data fetching and caching with React Query/SWR.
-6. **Components**: The UI layer — React components that handle the presentation.
+1. **Data Access** (`lib/data-access/`) — direct database operations via Prisma.
+2. **Actions** (`lib/actions/`) — business logic, authentication, user context.
+3. **API Routes** (`app/api/`) — transport, with Zod validation.
+4. **Client** (`lib/api/client.ts`) — typed API calls.
+5. **Hooks** (`lib/api/hooks/`) — data fetching and caching with React Query.
+6. **Components** — the chat-based UI.
 
----
+**AI tools** (`lib/ai/tools/`) are split across `definitions` (schemas), `execution` (server logic), `renderer` (client UI), `effects` (cache invalidation), and `tools` (wiring).
 
-## Features & Functionality
+**Domain vs persistence types**: the app speaks in clean domain types (e.g. `Recipe` in `lib/types.ts` = identity + current content), while the Prisma row is aliased (`RecipeRow`) where raw rows are handled. See `CLAUDE.md` for the convention.
 
-### Two Core Modes: **Planning** & **Cooking**
+## Tech Stack
 
-- **Planning Mode**:
-  - This is the mode you are in when landing in the app
-  - Browse recipes, create planned meals, and manage meal schedules.
-  - The AI assistant helps suggest recipes and personalize meal plans.
-
-- **Cooking Mode**:
-  - Provides step-by-step cooking guidance based on the user’s planned meal.
-  - Allows for real-time ingredient and instruction modifications.
-  - Helps the user adjust servings and other parameters as they cook.
-  - This mode is triggered by the AI directly.
-
-The assistant triggers **Cooking** mode based on user input, guiding them through meal preparation from start to finish.
-
----
-
-## Technologies Used
-
-- **React / Next.js**
-- **TypeScript**
-- **Prisma**
-- **React Query**
-- **Zod**
-- **Vercel AI SDK**
-
----
-
-## How It Works
-
-1. **Recipe Creation & Planning**: Users can create recipes and plan meals by customizing them based on their needs and preferences.
-2. **Cooking Assistance**: The assistant guides the user through cooking, allowing for adjustments along the way.
-3. **Chat-Based UX**: The user interacts with the assistant through a chat interface, asking questions or requesting adjustments.
-4. **Data Storage**: All data (recipes, planned meals, user history) is stored in a PostgreSQL database.
-5. **Querying & Caching**: React Query manages efficient data fetching, caching, and mutation.
-6. **API Routes**: API routes handle CRUD operations for recipes and planned meals, validating inputs via Zod.
-7. **Action Layer**: Centralized business logic ensures a clean separation of concerns between data access, user context, and UI rendering.
-
----
-
-## To-Do / Future Features
-
-The project is still in active development, and several key features are in progress or planned for future releases:
-
-- **Shopping List Integration**: Generate detailed, shelf-organized shopping lists based on planned meals.
-- **Detailed Recipe Tracking**: Track calories, nutrition, and other metrics for meals.
-- **Dedicated Recipes View**: Offer a place where users can track their cooking history and saved recipes.
-
----
+- **Next.js** (App Router) + **TypeScript**
+- **PostgreSQL** with **Prisma ORM**
+- **WorkOS AuthKit** for authentication
+- **React Query** for state management
+- **Vercel AI SDK** for the assistant
+- **Radix UI** + **Tailwind CSS**
 
 ## Getting Started
 
-To get started with the Vibe Cooking app, follow these steps:
+```bash
+# 1. Install
+npm install
 
-1. Clone the repository: `git clone https://github.com/your-repo-url`
-2. Install dependencies: `npm install`
-3. Set up the database with Prisma: `npx prisma migrate dev`
-4. Start the development server: `npm run dev`
-5. Open the app in your browser at `http://localhost:3000`
+# 2. Configure environment (.env)
+#    DATABASE_URL  — pooled connection used at runtime
+#    DIRECT_URL    — direct connection used by the Prisma CLI / migrations
+#    plus WorkOS AuthKit + AI provider keys
 
----
+# 3. Apply migrations
+npx prisma migrate deploy
+
+# 4. Run
+npm run dev          # http://localhost:3000
+```
+
+### Local database
+
+For a throwaway local Postgres (migrations read `DIRECT_URL`, runtime reads `DATABASE_URL`):
+
+```bash
+createdb vibe_cooking_dev
+DIRECT_URL="postgresql://<user>@localhost:5432/vibe_cooking_dev" npx prisma migrate deploy
+# point the dev server at it via .env.local: DATABASE_URL="postgresql://<user>@localhost:5432/vibe_cooking_dev"
+```
+
+> Run `npx prisma generate` after any `schema.prisma` change (including `git stash`/`checkout`) so the client matches.
 
 ## Project Status
 
-The project is **under active development**. The core functionality is stable-ish, and I'm continuously refining the user experience and adding new features.
+Under active development. Core functionality is stable; UX and features are evolving.
