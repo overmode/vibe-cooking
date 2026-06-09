@@ -1,5 +1,5 @@
 import prisma from "@/prisma/client";
-import { ProfileAuthor } from "@/generated/prisma/client";
+import { Author } from "@/generated/prisma/client";
 import { handleDbError } from "../utils/error";
 
 export async function getLatestUserProfileRevision({
@@ -24,7 +24,7 @@ export async function appendUserProfileRevision({
 }: {
   userId: string;
   content: string;
-  authoredBy: ProfileAuthor;
+  authoredBy: Author;
 }) {
   try {
     return await prisma.$transaction(async (tx) => {

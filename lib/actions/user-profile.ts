@@ -1,6 +1,6 @@
 import { getCurrentUserId } from "@/lib/auth/get-current-user-id";
 import { handleActionError } from "../utils/error";
-import { ProfileAuthor } from "@/generated/prisma/client";
+import { Author } from "@/generated/prisma/client";
 import { UserProfile } from "@/lib/types";
 import {
   appendUserProfileRevision,
@@ -23,7 +23,7 @@ export const getUserProfileAction =
 
 export const updateUserProfileAction = async (
   content: string,
-  authoredBy: ProfileAuthor = "USER"
+  authoredBy: Author = "USER"
 ): Promise<UserProfile> => {
   const userId = await getCurrentUserId();
   if (!userId) {

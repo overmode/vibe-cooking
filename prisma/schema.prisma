@@ -31,13 +31,13 @@ model UserProfileRevision {
   userId     String
   revision   Int
   content    String        @db.VarChar(10000)
-  authoredBy ProfileAuthor
+  authoredBy Author
   createdAt  DateTime      @default(now())
 
   @@unique([userId, revision])
 }
 
-enum ProfileAuthor {
+enum Author {
   USER
   ASSISTANT
 }
