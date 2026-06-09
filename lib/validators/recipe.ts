@@ -92,10 +92,6 @@ export const createRecipeInputSchema = z
         message: `Difficulty must be less than ${MAX_DIFFICULTY}`,
       })
       .optional(),
-    isFavorite: z
-      .boolean()
-      .describe('Whether the recipe is a favorite')
-      .optional(),
   })
   .strict()
 

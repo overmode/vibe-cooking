@@ -14,7 +14,6 @@ export type RecipeMetadata = Pick<
   | 'servings'
   | 'duration'
   | 'difficulty'
-  | 'isFavorite'
 >
 
 

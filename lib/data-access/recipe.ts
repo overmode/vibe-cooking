@@ -71,7 +71,6 @@ export async function getRecipesMetadata({
         servings: true,
         duration: true,
         difficulty: true,
-        isFavorite: true,
       },
       orderBy: {
         createdAt: "desc",
@@ -99,29 +98,6 @@ export async function updateRecipe({
     return recipe;
   } catch (error) {
     handleDbError(error, "update recipe");
-  }
-}
-
-export async function setRecipeFavorite({
-  transaction,
-  id,
-  userId,
-  isFavorite,
-}: {
-  transaction?: Prisma.TransactionClient;
-  id: string;
-  userId: string;
-  isFavorite: boolean;
-}) {
-  try {
-    const recipe = await updateRecipe({
-      transaction,
-      userId,
-      data: { isFavorite, id },
-    });
-    return recipe;
-  } catch (error) {
-    handleDbError(error, "set recipe favorite");
   }
 }
 
