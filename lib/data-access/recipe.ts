@@ -59,7 +59,7 @@ export async function getRecipesMetadata({
 }): Promise<RecipeMetadata[]> {
   // TODO: Add pagination
   try {
-    const templates = await (transaction ?? prisma).recipe.findMany({
+    return await (transaction ?? prisma).recipe.findMany({
       where: {
         userId,
         archivedAt: null,
@@ -72,20 +72,11 @@ export async function getRecipesMetadata({
         duration: true,
         difficulty: true,
         isFavorite: true,
-        sessions: {
-          where: { cookedAt: { not: null } },
-          select: { id: true },
-        },
       },
       orderBy: {
         createdAt: "desc",
       },
     });
-
-    return templates.map(({ sessions, ...template }) => ({
-      ...template,
-      cookCount: sessions.length,
-    }));
   } catch (error) {
     handleDbError(error, "list recipes");
   }
@@ -144,8 +135,7 @@ export async function deleteRecipe({
   userId: string;
 }) {
   try {
-    // Soft delete: cook sessions keep a valid recipe reference and history,
-    // so we archive the recipe instead of removing it.
+    // Soft delete: archive instead of removing so historical references stay valid.
     await (transaction ?? prisma).recipe.update({
       where: { id, userId },
       data: { archivedAt: new Date() },

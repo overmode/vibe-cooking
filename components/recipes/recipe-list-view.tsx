@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Clock, ChevronUp, ChevronDown, Users, ChefHat } from 'lucide-react'
+import { Clock, ChevronUp, ChevronDown, Users } from 'lucide-react'
 import { SortField, SortDirection } from '@/components/recipes/types'
 import { useRouter } from 'next/navigation'
 import { routes } from '@/lib/routes'
@@ -50,7 +50,6 @@ export function RecipeListView({
                 { label: 'Name', field: 'name', width: 'w-[40%]' },
                 { label: 'Duration', field: 'duration', width: '' },
                 { label: 'Difficulty', field: 'difficulty', width: '' },
-                { label: 'Cook Count', field: 'cookCount', width: '' },
                 { label: 'Servings', field: 'servings', width: '' },
               ].map((column) => (
                 <TableHead
@@ -107,18 +106,6 @@ export function RecipeListView({
                   ) : (
                     <span className="text-muted-foreground/60">
                       {UNDEFINED_VALUE_PLACEHOLDER}
-                    </span>
-                  )}
-                </TableCell>
-                <TableCell>
-                  {recipe.cookCount > 0 ? (
-                    <div className="flex items-center gap-1.5">
-                      <ChefHat className="h-3.5 w-3.5 text-primary/70" />
-                      <span>{recipe.cookCount}x</span>
-                    </div>
-                  ) : (
-                    <span className="text-muted-foreground/60 italic text-sm">
-                      Not yet
                     </span>
                   )}
                 </TableCell>

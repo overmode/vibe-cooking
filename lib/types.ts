@@ -15,9 +15,8 @@ export type RecipeMetadata = Pick<
   | 'duration'
   | 'difficulty'
   | 'isFavorite'
-> & {
-  cookCount: number
-}
+>
+
 
 export type UserProfile = {
   content: string

@@ -3,7 +3,6 @@ export type SortField =
   | 'createdAt'
   | 'duration'
   | 'difficulty'
-  | 'cookCount'
   | 'servings'
 export type SortDirection = 'asc' | 'desc'
 export type ViewMode = 'grid' | 'list'

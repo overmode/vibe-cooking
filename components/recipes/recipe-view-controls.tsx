@@ -30,8 +30,6 @@ export function RecipeViewControls({
   // Format the sort field name for display
   const formatSortFieldName = (field: SortField): string => {
     switch (field) {
-      case 'cookCount':
-        return 'Cook Count'
       case 'createdAt':
         return 'Created Date'
       default:
@@ -123,25 +121,9 @@ export function RecipeViewControls({
 
           <DropdownMenuSeparator />
           <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
-            Usage & Dates
+            Dates
           </DropdownMenuLabel>
 
-          <DropdownMenuItem
-            onClick={() => {
-              setSortField('cookCount')
-              setSortDirection('desc')
-            }}
-          >
-            Most Cooked
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => {
-              setSortField('cookCount')
-              setSortDirection('asc')
-            }}
-          >
-            Least Cooked
-          </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => {
               setSortField('createdAt')

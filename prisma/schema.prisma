@@ -24,30 +24,7 @@ model Recipe {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
-  sessions CookSession[]
-
   @@index([userId, archivedAt, createdAt])
-}
-
-model CookSession {
-  id       String @id @default(cuid())
-  userId   String
-  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Restrict)
-  recipeId String
-
-  name         String   @db.VarChar(100)
-  servings     Int
-  ingredients  String[]
-  instructions String   @db.VarChar(10000)
-  duration     Int?
-  difficulty   Int?
-
-  cookedAt  DateTime?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-
-  @@index([userId, cookedAt, createdAt])
-  @@index([recipeId, cookedAt])
 }
 
 model UserProfileRevision {

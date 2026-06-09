@@ -68,8 +68,6 @@ export function RecipeView({
         comparison = (a.duration || 0) - (b.duration || 0)
       } else if (sortField === 'difficulty') {
         comparison = (a.difficulty || 0) - (b.difficulty || 0)
-      } else if (sortField === 'cookCount') {
-        comparison = a.cookCount - b.cookCount
       } else if (sortField === 'servings') {
         comparison = (a.servings || 0) - (b.servings || 0)
       }
