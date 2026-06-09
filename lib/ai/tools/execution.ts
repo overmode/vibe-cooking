@@ -49,7 +49,7 @@ export const createRecipeExecute = async (
   parameters: CreateRecipeParams
 ): Promise<ToolResult<CreateRecipeResult>> => {
   try {
-    const recipe = await createRecipeAction(parameters);
+    const recipe = await createRecipeAction(parameters, "ASSISTANT");
     return { success: true, data: recipe };
   } catch (error) {
     return {
@@ -98,7 +98,7 @@ export const updateRecipeExecute = async (
   parameters: UpdateRecipeParams
 ): Promise<ToolResult<UpdateRecipeResult>> => {
   try {
-    const recipe = await updateRecipeAction(parameters);
+    const recipe = await updateRecipeAction(parameters, "ASSISTANT");
     return { success: true, data: recipe };
   } catch (error) {
     return {

@@ -5,8 +5,7 @@ import {
   ToolSpinner,
   ToolError,
 } from "@/components/chat/tool-feedback";
-import { RecipeMetadata, UserProfile } from "@/lib/types";
-import { Recipe } from "@/generated/prisma/browser";
+import { Recipe, RecipeMetadata, UserProfile } from "@/lib/types";
 import { ToolResult } from "@/lib/ai/tools/types";
 import { CreateRecipeInput } from "@/lib/validators/recipe";
 

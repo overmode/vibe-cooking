@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { Recipe } from '@/generated/prisma/browser'
+import { Recipe } from '@/lib/types'
 import { MemoizedMarkdown } from '@/components/chat/memoized-markdown'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'

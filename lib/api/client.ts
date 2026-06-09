@@ -1,7 +1,6 @@
 import { apiRoutes } from "@/lib/api/api-routes";
 import { del, get, post } from "@/lib/api/fetchers";
-import { RecipeMetadata, UserProfile } from "@/lib/types";
-import { Recipe } from "@/generated/prisma/browser";
+import { Recipe, RecipeMetadata, UserProfile } from "@/lib/types";
 
 export const getRecipesMetadata = async () => {
   return get<RecipeMetadata[]>(apiRoutes.recipe.all);

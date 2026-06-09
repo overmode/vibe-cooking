@@ -7,14 +7,13 @@ import {
   UseQueryOptions,
   useQueryClient,
 } from '@tanstack/react-query'
-import { RecipeMetadata } from '@/lib/types'
+import { Recipe, RecipeMetadata } from '@/lib/types'
 import {
   deleteRecipeById,
   getRecipeById,
   getRecipesMetadata,
 } from '@/lib/api/client'
 import { queryKeys } from '../query-keys'
-import { Recipe } from '@/generated/prisma/browser'
 
 export const useRecipesMetadata = ({
   options = {},

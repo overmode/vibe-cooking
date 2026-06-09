@@ -1,4 +1,5 @@
 import {
+  createRecipe,
   deleteRecipe,
   getRecipeById,
   getRecipesMetadata,
@@ -7,7 +8,8 @@ import {
 import { getCurrentUserId } from '@/lib/auth/get-current-user-id'
 import { CreateRecipeInput, UpdateRecipeInput } from '@/lib/validators/recipe'
 import { handleActionError } from '@/lib/utils/error'
-import { RecipeMetadata } from '@/lib/types'
+import { Recipe, RecipeMetadata } from '@/lib/types'
+import { Author } from '@/generated/prisma/client'
 import prisma from '@/prisma/client'
 import { MAX_NUM_RECIPES_PER_USER } from '@/lib/constants/app_validation'
 
@@ -19,7 +21,11 @@ export const getRecipesMetadataAction = async (): Promise<RecipeMetadata[]> => {
   const recipes = await getRecipesMetadata({ userId })
   return recipes
 }
-export const createRecipeAction = async (recipeData: CreateRecipeInput) => {
+
+export const createRecipeAction = async (
+  recipeData: CreateRecipeInput,
+  authoredBy: Author = 'USER'
+): Promise<Recipe> => {
   const userId = await getCurrentUserId()
   if (!userId) {
     return handleActionError('Unauthorized', 'create recipe')
@@ -27,7 +33,7 @@ export const createRecipeAction = async (recipeData: CreateRecipeInput) => {
 
   try {
     // Optimistic approach: try to create directly, handle limit violations
-    const recipe = await prisma.$transaction(
+    return await prisma.$transaction(
       async (tx) => {
         // Check count first to give user immediate feedback for obvious violations
         const count = await tx.recipe.count({
@@ -35,16 +41,14 @@ export const createRecipeAction = async (recipeData: CreateRecipeInput) => {
         })
 
         if (count >= MAX_NUM_RECIPES_PER_USER) {
-          throw new Error(
-            `Recipe limit of ${MAX_NUM_RECIPES_PER_USER} reached.`
-          )
+          throw new Error(`Recipe limit of ${MAX_NUM_RECIPES_PER_USER} reached.`)
         }
 
-        return tx.recipe.create({
-          data: {
-            ...recipeData,
-            userId,
-          },
+        return createRecipe({
+          transaction: tx,
+          userId,
+          data: recipeData,
+          authoredBy,
         })
       },
       {
@@ -52,8 +56,6 @@ export const createRecipeAction = async (recipeData: CreateRecipeInput) => {
         isolationLevel: 'ReadCommitted',
       }
     )
-
-    return recipe
   } catch (error) {
     return handleActionError(error, 'create recipe')
   }
@@ -72,7 +74,10 @@ export const deleteRecipeAction = async ({
   return recipe
 }
 
-export const updateRecipeAction = async (recipeData: UpdateRecipeInput) => {
+export const updateRecipeAction = async (
+  recipeData: UpdateRecipeInput,
+  authoredBy: Author = 'USER'
+): Promise<Recipe> => {
   const userId = await getCurrentUserId()
   if (!userId) {
     handleActionError('Unauthorized', 'update recipe')
@@ -80,11 +85,12 @@ export const updateRecipeAction = async (recipeData: UpdateRecipeInput) => {
   const recipe = await updateRecipe({
     userId,
     data: recipeData,
+    authoredBy,
   })
   return recipe
 }
 
-export const getRecipeByIdAction = async (recipeId: string) => {
+export const getRecipeByIdAction = async (recipeId: string): Promise<Recipe> => {
   const userId = await getCurrentUserId()
   if (!userId) {
     handleActionError('Unauthorized', 'get recipe')

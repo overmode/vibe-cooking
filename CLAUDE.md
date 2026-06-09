@@ -19,9 +19,9 @@ This is a Next.js app with a layered architecture for an AI-powered cooking assi
 
 ### Core Domain Models
 
-- **Recipes**: Base templates with name, ingredients, instructions, servings, duration, difficulty
-- **Planned Meals**: Personalized versions of recipes with overrides (ingredients, instructions, servings, etc.)
-- **User Dietary Preferences**: Stored preferences that influence AI suggestions
+- **Recipes**: A `Recipe` is a stable identity plus lifecycle state (`archivedAt`). Its content (name, ingredients, instructions, servings, duration, difficulty) lives in append-only `RecipeRevision` snapshots; the current recipe is the latest revision (`max(revision)`). Each revision records its `Author` (USER or ASSISTANT), so assistant edits can be told apart from the user's.
+- **User Profile**: Free-text profile that influences AI suggestions, stored as append-only `UserProfileRevision` snapshots (latest = current), also attributed via `Author`.
+- **Rate limiting**: `RateLimit` model, per user per day.
 
 ### Key Architecture Layers
 
@@ -34,15 +34,9 @@ This is a Next.js app with a layered architecture for an AI-powered cooking assi
 
 ### AI Assistant System
 
-- **AI Tools** (`lib/ai/tools/`): Structured tools for recipe and planned meal operations
-- **Multiple Assistant Endpoints**: Different assistants for planning vs cooking modes
-- **Tool Execution**: Split between definitions, execution, and client-side rendering
-- **Cooking Mode**: Special mode triggered by AI for step-by-step cooking guidance
-
-### Two Core Modes
-
-- **Planning Mode**: Browse recipes, create planned meals, get AI suggestions
-- **Cooking Mode**: Real-time cooking guidance with ability to modify planned meals
+- **AI Tools** (`lib/ai/tools/`): Structured tools for recipe and user-profile operations, plus web search and recipe-suggestion rendering. Each tool is split across `definitions` (schemas), `execution` (server logic), `renderer` (client UI), `effects` (React Query cache invalidation), and `tools` (wiring).
+- **Single assistant endpoint** (`app/api/assistant/route.ts`) parameterized by an **app context** (`lib/ai/app-context.ts`): `mainAssistant` (the recipe library) or `recipeView` (a specific recipe).
+- **Authorship**: tool writes set `authoredBy = ASSISTANT`; user-initiated actions default to `USER`. Versioning is invisible to the model — tool input/output schemas expose no revision concept.
 
 ### Technology Stack
 
@@ -56,10 +50,29 @@ This is a Next.js app with a layered architecture for an AI-powered cooking assi
 ### Key Patterns
 
 - Chat-based UX for all interactions
-- Planned meals are temporary variants of base recipes
+- Append-only revisions: recipe and profile content are versioned; current = latest revision
 - AI tools handle CRUD operations through structured definitions
 - Rate limiting with Postgres (`RateLimit` model)
 - Client-side tool rendering for UI updates
+
+### Naming: domain types vs persistence rows
+
+The domain owns the clean name; persistence is qualified. When an app-layer
+shape differs from its Prisma row (e.g. a model assembled from a normalized
+identity + its current versioned content), the domain type keeps the plain
+name and the Prisma row is aliased.
+
+- The domain type (defined in `lib/types.ts`) gets the canonical name, e.g.
+  `Recipe`. App layers (client, hooks, components, AI tool result types,
+  app-context) import it from `@/lib/types`.
+- The Prisma row is imported aliased only where raw rows are handled (mostly
+  `lib/data-access/`): `import { Recipe as RecipeRow } from "@/generated/prisma/client"`.
+- Projection shapes are purpose-qualified off the domain type:
+  `RecipeMetadata` (list view), `RecipeContent` (the versioned fields).
+- Do not use a `Dto` suffix. Suffix-free domain names are the house style
+  (`UserProfile`, `Recipe`).
+- Prefer this only when the shapes genuinely differ. If the domain and row are
+  identical, use the single Prisma type rather than inventing a second name.
 
 ## Claude rules
 

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Recipe } from "@/generated/prisma/client";
+import { Recipe } from "@/lib/types";
 
 export const appContextSchema = z.discriminatedUnion("kind", [
   z.object({ kind: z.literal("mainAssistant") }),

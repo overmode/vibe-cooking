@@ -1,5 +1,13 @@
-import { Recipe } from '@/generated/prisma/browser'
+import { Recipe as RecipeRow, RecipeRevision } from '@/generated/prisma/browser'
 import { z } from 'zod'
+
+export type RecipeContent = Pick<
+  RecipeRevision,
+  'name' | 'servings' | 'ingredients' | 'instructions' | 'duration' | 'difficulty'
+>
+
+// Domain recipe: stable identity merged with its current revision's content.
+export type Recipe = Pick<RecipeRow, 'id' | 'createdAt'> & RecipeContent
 
 export type CardDisplayMetadata = Pick<
   Recipe,
@@ -8,12 +16,7 @@ export type CardDisplayMetadata = Pick<
 
 export type RecipeMetadata = Pick<
   Recipe,
-  | 'id'
-  | 'name'
-  | 'createdAt'
-  | 'servings'
-  | 'duration'
-  | 'difficulty'
+  'id' | 'name' | 'createdAt' | 'servings' | 'duration' | 'difficulty'
 >
 
 

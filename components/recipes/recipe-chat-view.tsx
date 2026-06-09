@@ -5,7 +5,7 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, UIMessage } from "ai";
 import { RecipeViewer } from "@/components/recipes/recipe-viewer";
 import { useRouter } from "next/navigation";
-import { Recipe } from "@/generated/prisma/browser";
+import { Recipe } from "@/lib/types";
 import { triggerToolEffects } from "@/lib/ai/tools/effects";
 import { useQueryClient } from "@tanstack/react-query";
 import { useDeleteRecipeById } from "@/lib/api/hooks/recipes";
