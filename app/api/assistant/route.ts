@@ -2,12 +2,12 @@ import { after } from "next/server";
 import { openai } from "@ai-sdk/openai";
 import {
   convertToModelMessages,
-  createIdGenerator,
   isTextUIPart,
   stepCountIs,
   streamText,
   type UIMessage,
 } from "ai";
+import { v7 as uuidv7 } from "uuid";
 import {
   createRecipeTool,
   deleteRecipeTool,
@@ -129,7 +129,7 @@ export async function POST(req: Request) {
   let assistantMessage: UIMessage | undefined;
   const response = result.toUIMessageStreamResponse({
     originalMessages: messages,
-    generateMessageId: createIdGenerator({ prefix: "msg", size: 16 }),
+    generateMessageId: uuidv7,
     onFinish: ({ responseMessage }) => {
       assistantMessage = responseMessage;
     },

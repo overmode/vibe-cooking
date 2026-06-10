@@ -11,21 +11,22 @@ datasource db {
 }
 
 model Recipe {
-  id         String    @id @default(cuid())
+  id         String    @id @default(uuid(7)) @db.Uuid
   userId     String
   archivedAt DateTime?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
 
-  revisions RecipeRevision[]
+  revisions   RecipeRevision[]
+  chatThreads ChatThread[]
 
   @@index([userId, archivedAt, createdAt])
 }
 
 model RecipeRevision {
-  id         String   @id @default(cuid())
+  id         String   @id @default(uuid(7)) @db.Uuid
   recipe     Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
-  recipeId   String
+  recipeId   String   @db.Uuid
   revision   Int
   authoredBy Author
   createdAt  DateTime @default(now())
@@ -41,12 +42,12 @@ model RecipeRevision {
 }
 
 model UserProfileRevision {
-  id         String        @id @default(cuid())
+  id         String   @id @default(uuid(7)) @db.Uuid
   userId     String
   revision   Int
-  content    String        @db.VarChar(10000)
+  content    String   @db.VarChar(10000)
   authoredBy Author
-  createdAt  DateTime      @default(now())
+  createdAt  DateTime @default(now())
 
   @@unique([userId, revision])
 }
@@ -65,9 +66,10 @@ model RateLimit {
 }
 
 model ChatThread {
-  id        String        @id @default(cuid())
+  id        String        @id @default(uuid(7)) @db.Uuid
   userId    String
-  recipeId  String? // null = main-assistant thread; set = recipe-anchored
+  recipeId  String?       @db.Uuid // null = main-assistant thread; set = recipe-anchored
+  recipe    Recipe?       @relation(fields: [recipeId], references: [id], onDelete: Cascade)
   title     String? // assistant-generated label; null falls back in the UI
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
@@ -78,9 +80,9 @@ model ChatThread {
 }
 
 model ChatMessage {
-  id        String      @id // preserves the AI SDK message id
+  id        String      @id @db.Uuid // AI SDK message id (uuidv7-minted client/server)
   thread    ChatThread  @relation(fields: [threadId], references: [id], onDelete: Cascade)
-  threadId  String
+  threadId  String      @db.Uuid
   role      MessageRole
   parts     Json
   createdAt DateTime    @default(now())

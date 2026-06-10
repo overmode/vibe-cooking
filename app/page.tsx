@@ -9,7 +9,8 @@ import {
   useState,
 } from "react";
 import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport, generateId, type UIMessage } from "ai";
+import { DefaultChatTransport, type UIMessage } from "ai";
+import { v7 as uuidv7 } from "uuid";
 import { useRouter, useSearchParams } from "next/navigation";
 import { chatSuggestions } from "@/lib/constants/chat-suggestions";
 import { triggerToolEffects } from "@/lib/ai/tools/effects";
@@ -42,7 +43,7 @@ function HomeContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const hasTriggeredPreset = useRef(false);
-  const [threadId] = useState(generateId);
+  const [threadId] = useState(() => uuidv7());
 
   const transport = useMemo(
     () => new DefaultChatTransport({ api: apiRoutes.assistant }),
@@ -52,6 +53,7 @@ function HomeContent() {
   const { messages, sendMessage, error, status } = useChat({
     transport,
     messages: initialMessages,
+    generateId: uuidv7,
     onFinish: ({ message }) => {
       triggerToolEffects(message, queryClient);
     },

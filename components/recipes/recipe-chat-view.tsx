@@ -2,7 +2,8 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport, generateId, type UIMessage } from "ai";
+import { DefaultChatTransport, type UIMessage } from "ai";
+import { v7 as uuidv7 } from "uuid";
 import { RecipeViewer } from "@/components/recipes/recipe-viewer";
 import { useRouter } from "next/navigation";
 import { type Recipe } from "@/lib/types";
@@ -58,11 +59,12 @@ export function RecipeChatView({ recipe }: RecipeChatViewProps) {
   );
 
   // One thread per mount; resume-latest-per-recipe is deferred to PR3.
-  const [threadId] = useState(generateId);
+  const [threadId] = useState(() => uuidv7());
 
   const { messages, sendMessage, error, status } = useChat({
     transport,
     messages: initialMessages,
+    generateId: uuidv7,
     onToolCall: ({ toolCall }) => {
       if (toolCall.toolName === "deleteRecipeTool") {
         deleteRecipeMutation.mutate();
