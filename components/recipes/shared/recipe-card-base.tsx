@@ -8,7 +8,7 @@ import {
 import { cn } from '@/lib/utils'
 import { Clock, Flame, Users } from 'lucide-react'
 import Link from 'next/link'
-import { CardDisplayMetadata } from '@/lib/types'
+import { type CardDisplayMetadata } from '@/lib/types'
 
 export const RecipeMetadataDescription = ({
   duration,

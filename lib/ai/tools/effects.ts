@@ -1,6 +1,6 @@
-import { QueryClient } from '@tanstack/react-query'
-import { UIMessage } from 'ai'
-import { ToolResult, ToolResultSuccess } from '@/lib/ai/tools/types'
+import { type QueryClient } from '@tanstack/react-query'
+import { type UIMessage } from 'ai'
+import { type ToolResult, type ToolResultSuccess } from '@/lib/ai/tools/types'
 import { queryKeys } from '@/lib/api/query-keys'
 
 type ToolEffect = (
@@ -21,22 +21,24 @@ function hasId(
 
 export const toolEffects: Record<string, ToolEffect> = {
   updateRecipeTool: (qc, result) => {
-    qc.invalidateQueries({ queryKey: queryKeys.recipes.all })
+    void qc.invalidateQueries({ queryKey: queryKeys.recipes.all })
     if (hasId(result)) {
-      qc.invalidateQueries({ queryKey: queryKeys.recipes.byId(result.data.id) })
+      void qc.invalidateQueries({
+        queryKey: queryKeys.recipes.byId(result.data.id),
+      })
     }
   },
 
   createRecipeTool: (qc) => {
-    qc.invalidateQueries({ queryKey: queryKeys.recipes.all })
+    void qc.invalidateQueries({ queryKey: queryKeys.recipes.all })
   },
 
   deleteRecipeTool: (qc) => {
-    qc.invalidateQueries({ queryKey: queryKeys.recipes.all })
+    void qc.invalidateQueries({ queryKey: queryKeys.recipes.all })
   },
 
   updateUserProfileTool: (qc) => {
-    qc.invalidateQueries({ queryKey: queryKeys.userProfile.all })
+    void qc.invalidateQueries({ queryKey: queryKeys.userProfile.all })
   },
 }
 

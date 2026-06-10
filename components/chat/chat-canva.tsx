@@ -1,7 +1,7 @@
 'use client'
 
-import { ReactNode, useState } from 'react'
-import { UIMessage } from 'ai'
+import { type ReactNode, useState } from 'react'
+import { type UIMessage } from 'ai'
 import { Chat } from './chat'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'

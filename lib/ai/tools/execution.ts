@@ -1,17 +1,17 @@
 import {
-  ToolParameters,
-  ToolRawResult,
-  ToolResult,
+  type ToolParameters,
+  type ToolRawResult,
+  type ToolResult,
 } from "@/lib/ai/tools/types";
 
 import {
-  getRecipesMetadataDefinition,
-  createRecipeDefinition,
-  deleteRecipeDefinition,
-  getRecipeByIdDefinition,
-  updateRecipeDefinition,
-  updateUserProfileDefinition,
-  renderRecipeSuggestionDefinition,
+  type getRecipesMetadataDefinition,
+  type createRecipeDefinition,
+  type deleteRecipeDefinition,
+  type getRecipeByIdDefinition,
+  type updateRecipeDefinition,
+  type updateUserProfileDefinition,
+  type renderRecipeSuggestionDefinition,
 } from "@/lib/ai/tools/definitions";
 
 import {

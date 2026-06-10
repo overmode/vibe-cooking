@@ -1,8 +1,8 @@
 import prisma from "@/prisma/client";
-import { Prisma, Author } from "@/generated/prisma/client";
-import { CreateRecipeInput, UpdateRecipeInput } from "@/lib/validators/recipe";
+import { Prisma, type Author } from "@/generated/prisma/client";
+import { type CreateRecipeInput, type UpdateRecipeInput } from "@/lib/validators/recipe";
 import { handleDbError } from "@/lib/utils/error";
-import { Recipe, RecipeContent, RecipeMetadata } from "@/lib/types";
+import { type Recipe, type RecipeContent, type RecipeMetadata } from "@/lib/types";
 
 export async function createRecipe({
   transaction,

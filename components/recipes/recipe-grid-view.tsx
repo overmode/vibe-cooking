@@ -1,4 +1,4 @@
-import { RecipeMetadata } from "@/lib/types";
+import { type RecipeMetadata } from "@/lib/types";
 import { RecipeMetadataCard } from "./recipe-metadata-card";
 
 interface RecipeGridViewProps {

@@ -1,15 +1,22 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useMemo, useRef } from "react";
+import {
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport, UIMessage } from "ai";
+import { DefaultChatTransport, generateId, type UIMessage } from "ai";
 import { useRouter, useSearchParams } from "next/navigation";
 import { chatSuggestions } from "@/lib/constants/chat-suggestions";
 import { triggerToolEffects } from "@/lib/ai/tools/effects";
 import { useQueryClient } from "@tanstack/react-query";
 import { apiRoutes } from "@/lib/api/api-routes";
 import { Chat } from "@/components/chat/chat";
-import { AppContext } from "@/lib/ai/app-context";
+import { type AppContext } from "@/lib/ai/app-context";
 import { routes } from "@/lib/routes";
 import {
   MESSAGE_PRESET_PARAM,
@@ -35,6 +42,7 @@ function HomeContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const hasTriggeredPreset = useRef(false);
+  const [threadId] = useState(generateId);
 
   const transport = useMemo(
     () => new DefaultChatTransport({ api: apiRoutes.assistant }),
@@ -52,9 +60,9 @@ function HomeContent() {
   const send = useCallback(
     (text: string) => {
       const appContext: AppContext = { kind: "mainAssistant" };
-      sendMessage({ text }, { body: { appContext } });
+      void sendMessage({ text }, { body: { appContext, threadId } });
     },
-    [sendMessage]
+    [sendMessage, threadId]
   );
 
   useEffect(() => {

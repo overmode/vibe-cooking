@@ -1,6 +1,6 @@
 'use client'
 
-import { UseMutationResult } from '@tanstack/react-query'
+import { type UseMutationResult } from '@tanstack/react-query'
 import { Loader2, AlertTriangle } from 'lucide-react'
 import {
   AlertDialog,
@@ -37,7 +37,6 @@ export function DeleteConfirmationDialog({
     if (deleteMutation.isPending && open) {
       const handleBeforeUnload = (e: BeforeUnloadEvent) => {
         e.preventDefault()
-        e.returnValue = ''
       }
 
       window.addEventListener('beforeunload', handleBeforeUnload)

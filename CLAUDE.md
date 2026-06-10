@@ -32,6 +32,24 @@ This is a Next.js app with a layered architecture for an AI-powered cooking assi
 5. **Hooks** (`lib/api/hooks/`): React Query for data fetching and caching
 6. **Components**: UI layer with chat-based interface
 
+### Authorization & error handling
+
+Responsibilities are split by layer; do not blur them.
+
+- **Authorization lives at the route boundary**, checked up front, surfaced as
+  HTTP status codes (`401` unauthenticated, `403` not the caller's resource,
+  `404` absent). Never defer an auth check into a post-response hook (e.g. an
+  `onFinish` save) — by then the work is already done.
+- **Data-access trusts the authorized caller.** It does not re-check ownership;
+  the route is the single source of truth for authorization. Keep these
+  functions focused on persistence.
+- **Side-effect persistence is best-effort.** Work that runs after the response
+  has started streaming (saving messages in `onFinish`, etc.) is wrapped at the
+  call site, logged on failure, and must never break the user-facing stream —
+  but must never be silently swallowed in the data layer either.
+- **No silent failures.** Expected errors surface via status codes; unexpected
+  ones are logged (`console.error` today; pino/Sentry is a pending sweep).
+
 ### AI Assistant System
 
 - **AI Tools** (`lib/ai/tools/`): Structured tools for recipe and user-profile operations, plus web search and recipe-suggestion rendering. Each tool is split across `definitions` (schemas), `execution` (server logic), `renderer` (client UI), `effects` (React Query cache invalidation), and `tools` (wiring).

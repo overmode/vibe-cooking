@@ -1,4 +1,4 @@
-import { ResolvedAppContext } from "@/lib/ai/app-context";
+import { type ResolvedAppContext } from "@/lib/ai/app-context";
 import { messagePresets } from "@/lib/constants/message-presets";
 
 function getContextSpecificSnippet(appContext: ResolvedAppContext): string {

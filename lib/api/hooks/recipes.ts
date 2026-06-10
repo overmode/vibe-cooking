@@ -2,12 +2,12 @@
 
 import {
   useMutation,
-  UseMutationOptions,
+  type UseMutationOptions,
   useQuery,
-  UseQueryOptions,
+  type UseQueryOptions,
   useQueryClient,
 } from '@tanstack/react-query'
-import { Recipe, RecipeMetadata } from '@/lib/types'
+import { type Recipe, type RecipeMetadata } from '@/lib/types'
 import {
   deleteRecipeById,
   getRecipeById,
@@ -65,7 +65,7 @@ export const useDeleteRecipeById = ({
       queryClient.removeQueries({
         queryKey: queryKeys.recipes.byId(id),
       })
-      queryClient.invalidateQueries({
+      void queryClient.invalidateQueries({
         queryKey: queryKeys.recipes.all,
       })
     },

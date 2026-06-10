@@ -1,8 +1,8 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { cn } from '@/lib/utils'
-import { UIMessage } from 'ai'
+import { type UIMessage } from 'ai'
 import { MemoizedMarkdown } from '@/components/chat/memoized-markdown'
-import { renderToolInvocation, ToolUIPart } from '@/lib/ai/tools/renderer'
+import { renderToolInvocation, type ToolUIPart } from '@/lib/ai/tools/renderer'
 
 interface ChatMessageProps {
   message: UIMessage

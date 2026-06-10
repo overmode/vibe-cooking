@@ -1,4 +1,4 @@
-import { RecipeMetadata } from '@/lib/types'
+import { type RecipeMetadata } from '@/lib/types'
 import { routes } from '@/lib/routes'
 import { RecipeCardBase } from '@/components/recipes/shared/recipe-card-base'
 

@@ -1,4 +1,4 @@
-import { ChatSuggestion } from '@/lib/types'
+import { type ChatSuggestion } from '@/lib/types'
 import { messagePresets } from '@/lib/constants/message-presets'
 
 export const chatSuggestions: ChatSuggestion[] = [

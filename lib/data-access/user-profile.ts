@@ -1,5 +1,5 @@
 import prisma from "@/prisma/client";
-import { Author } from "@/generated/prisma/client";
+import { type Author } from "@/generated/prisma/client";
 import { handleDbError } from "../utils/error";
 
 export async function getLatestUserProfileRevision({

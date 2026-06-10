@@ -1,5 +1,5 @@
-import { ReactNode } from 'react'
-import { Recipe } from '@/lib/types'
+import { type ReactNode } from 'react'
+import { type Recipe } from '@/lib/types'
 import { MemoizedMarkdown } from '@/components/chat/memoized-markdown'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'

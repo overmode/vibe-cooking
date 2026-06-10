@@ -6,10 +6,10 @@ import {
   updateRecipe,
 } from '@/lib/data-access/recipe'
 import { getCurrentUserId } from '@/lib/auth/get-current-user-id'
-import { CreateRecipeInput, UpdateRecipeInput } from '@/lib/validators/recipe'
+import { type CreateRecipeInput, type UpdateRecipeInput } from '@/lib/validators/recipe'
 import { handleActionError } from '@/lib/utils/error'
-import { Recipe, RecipeMetadata } from '@/lib/types'
-import { Author } from '@/generated/prisma/client'
+import { type Recipe, type RecipeMetadata } from '@/lib/types'
+import { type Author } from '@/generated/prisma/client'
 import prisma from '@/prisma/client'
 import { MAX_NUM_RECIPES_PER_USER } from '@/lib/constants/app_validation'
 

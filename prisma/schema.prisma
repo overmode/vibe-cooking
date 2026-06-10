@@ -63,3 +63,34 @@ model RateLimit {
 
   @@id([userId, day])
 }
+
+model ChatThread {
+  id        String        @id @default(cuid())
+  userId    String
+  recipeId  String? // null = main-assistant thread; set = recipe-anchored
+  title     String? // assistant-generated label; null falls back in the UI
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  messages  ChatMessage[]
+
+  @@index([userId, updatedAt])
+  @@index([userId, recipeId, updatedAt])
+}
+
+model ChatMessage {
+  id        String      @id // preserves the AI SDK message id
+  thread    ChatThread  @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  threadId  String
+  role      MessageRole
+  parts     Json
+  createdAt DateTime    @default(now())
+
+  @@index([threadId, createdAt])
+}
+
+// Chat-transport role, distinct from Author (recipe/profile authorship).
+// SYSTEM/TOOL can be added when something actually persists them.
+enum MessageRole {
+  USER
+  ASSISTANT
+}

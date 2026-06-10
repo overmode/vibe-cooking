@@ -1,11 +1,11 @@
 import { getUserProfile, updateUserProfile } from "@/lib/api/client";
-import { UserProfile } from "@/lib/types";
+import { type UserProfile } from "@/lib/types";
 import {
   useMutation,
-  UseMutationOptions,
+  type UseMutationOptions,
   useQuery,
   useQueryClient,
-  UseQueryOptions,
+  type UseQueryOptions,
 } from "@tanstack/react-query";
 import { queryKeys } from "@/lib/api/query-keys";
 

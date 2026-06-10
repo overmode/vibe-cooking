@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { UIMessage } from "ai";
+import { type UIMessage } from "ai";
 import { ChatInput } from "./chat-input";
 import { ChatMessagesDisplay } from "./chat-messages-display";
 import { ChatSendProvider } from "./chat-send-context";
 import { ChatSuggestions } from "./chat-suggestions";
-import { ChatSuggestion } from "@/lib/types";
+import { type ChatSuggestion } from "@/lib/types";
 
 interface ChatProps {
   messages: UIMessage[];

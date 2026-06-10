@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { ChatSuggestion } from '@/lib/types'
+import { type ChatSuggestion } from '@/lib/types'
 
 interface ChatSuggestionsProps {
   suggestions: ChatSuggestion[]

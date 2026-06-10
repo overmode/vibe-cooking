@@ -11,7 +11,7 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CreateRecipeInput } from "@/lib/validators/recipe";
+import { type CreateRecipeInput } from "@/lib/validators/recipe";
 import { MemoizedMarkdown } from "@/components/chat/memoized-markdown";
 import { useChatSend } from "@/components/chat/chat-send-context";
 import { cn } from "@/lib/utils";

@@ -1,0 +1,94 @@
+import prisma from "@/prisma/client";
+import { type Prisma, MessageRole } from "@/generated/prisma/client";
+import { handleDbError } from "@/lib/utils/error";
+import { type UIMessage } from "ai";
+
+export async function saveThreadMessages({
+  userId,
+  threadId,
+  recipeId,
+  messages,
+}: {
+  userId: string;
+  threadId: string;
+  recipeId: string | null;
+  messages: UIMessage[];
+}): Promise<void> {
+  try {
+    await prisma.$transaction(async (tx) => {
+      // Scope the touch by userId so a thread id owned by someone else is a
+      // no-op rather than a cross-user write — a structural backstop to the
+      // route's ownership check. A genuinely new id falls through to create;
+      // an id taken by another user hits the PK constraint and fails loud.
+      const touched = await tx.chatThread.updateMany({
+        where: { id: threadId, userId },
+        data: { updatedAt: new Date() },
+      });
+      if (touched.count === 0) {
+        await tx.chatThread.create({
+          data: { id: threadId, userId, recipeId },
+        });
+      }
+
+      for (const message of messages) {
+        const role = toMessageRole(message.role);
+        if (!role) continue;
+        // Parts are JSON-serializable but the AI SDK union isn't structurally
+        // InputJsonValue (optional undefineds), so assert at this one boundary.
+        const parts = message.parts as Prisma.InputJsonValue;
+        await tx.chatMessage.upsert({
+          where: { id: message.id },
+          create: { id: message.id, threadId, role, parts },
+          update: { parts },
+        });
+      }
+    });
+  } catch (error) {
+    handleDbError(error, "save thread messages");
+  }
+}
+
+// Reads the fields the route needs up front: userId for the ownership check,
+// title to decide whether a label still needs generating. Returns null when the
+// thread does not exist yet (first turn).
+export async function getThreadById({
+  threadId,
+}: {
+  threadId: string;
+}): Promise<{ userId: string; title: string | null } | null> {
+  try {
+    return await prisma.chatThread.findUnique({
+      where: { id: threadId },
+      select: { userId: true, title: true },
+    });
+  } catch (error) {
+    handleDbError(error, "get thread");
+  }
+}
+
+export async function updateThreadTitle({
+  threadId,
+  userId,
+  title,
+}: {
+  threadId: string;
+  userId: string;
+  title: string;
+}): Promise<void> {
+  try {
+    // Scoped by userId as a structural backstop to the route's ownership check.
+    await prisma.chatThread.updateMany({
+      where: { id: threadId, userId },
+      data: { title },
+    });
+  } catch (error) {
+    handleDbError(error, "update thread title");
+  }
+}
+
+// UIMessage roles include "system"; only user/assistant turns are persisted.
+function toMessageRole(role: UIMessage["role"]): MessageRole | null {
+  if (role === "user") return MessageRole.USER;
+  if (role === "assistant") return MessageRole.ASSISTANT;
+  return null;
+}

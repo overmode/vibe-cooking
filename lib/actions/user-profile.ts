@@ -1,7 +1,7 @@
 import { getCurrentUserId } from "@/lib/auth/get-current-user-id";
 import { handleActionError } from "../utils/error";
-import { Author } from "@/generated/prisma/client";
-import { UserProfile } from "@/lib/types";
+import { type Author } from "@/generated/prisma/client";
+import { type UserProfile } from "@/lib/types";
 import {
   appendUserProfileRevision,
   getLatestUserProfileRevision,

@@ -1,6 +1,6 @@
 import {
   MESSAGE_PRESET_PARAM,
-  MessagePresetId,
+  type MessagePresetId,
 } from "@/lib/constants/message-presets";
 
 export const routes = {

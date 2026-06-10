@@ -5,9 +5,9 @@ import {
   ToolSpinner,
   ToolError,
 } from "@/components/chat/tool-feedback";
-import { Recipe, RecipeMetadata, UserProfile } from "@/lib/types";
-import { ToolResult } from "@/lib/ai/tools/types";
-import { CreateRecipeInput } from "@/lib/validators/recipe";
+import { type Recipe, type RecipeMetadata, type UserProfile } from "@/lib/types";
+import { type ToolResult } from "@/lib/ai/tools/types";
+import { type CreateRecipeInput } from "@/lib/validators/recipe";
 
 export type ToolUIPart = {
   type: `tool-${string}`;

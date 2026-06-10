@@ -1,6 +1,6 @@
 import { apiRoutes } from "@/lib/api/api-routes";
 import { del, get, post } from "@/lib/api/fetchers";
-import { Recipe, RecipeMetadata, UserProfile } from "@/lib/types";
+import { type Recipe, type RecipeMetadata, type UserProfile } from "@/lib/types";
 
 export const getRecipesMetadata = async () => {
   return get<RecipeMetadata[]>(apiRoutes.recipe.all);

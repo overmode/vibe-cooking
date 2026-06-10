@@ -4,7 +4,7 @@ import {
   updateRecipeInputSchema,
 } from "@/lib/validators/recipe";
 import { defineTool } from "@/lib/ai/tools/types";
-import { Recipe, RecipeMetadata, UserProfile, asTypedSchema } from "@/lib/types";
+import { type Recipe, type RecipeMetadata, type UserProfile, asTypedSchema } from "@/lib/types";
 import { MAX_USER_PROFILE_LENGTH } from "@/lib/constants/app_validation";
 
 export const getRecipesMetadataDefinition = defineTool({

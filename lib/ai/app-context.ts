@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Recipe } from "@/lib/types";
+import { type Recipe } from "@/lib/types";
 
 export const appContextSchema = z.discriminatedUnion("kind", [
   z.object({ kind: z.literal("mainAssistant") }),

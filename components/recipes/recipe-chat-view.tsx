@@ -2,10 +2,10 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport, UIMessage } from "ai";
+import { DefaultChatTransport, generateId, type UIMessage } from "ai";
 import { RecipeViewer } from "@/components/recipes/recipe-viewer";
 import { useRouter } from "next/navigation";
-import { Recipe } from "@/lib/types";
+import { type Recipe } from "@/lib/types";
 import { triggerToolEffects } from "@/lib/ai/tools/effects";
 import { useQueryClient } from "@tanstack/react-query";
 import { useDeleteRecipeById } from "@/lib/api/hooks/recipes";
@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { MoreHorizontal, Trash2 } from "lucide-react";
 import { DeleteConfirmationDialog } from "@/components/ui/delete-confirmation-dialog";
 import { routes } from "@/lib/routes";
-import { AppContext } from "@/lib/ai/app-context";
+import { type AppContext } from "@/lib/ai/app-context";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -57,6 +57,9 @@ export function RecipeChatView({ recipe }: RecipeChatViewProps) {
     []
   );
 
+  // One thread per mount; resume-latest-per-recipe is deferred to PR3.
+  const [threadId] = useState(generateId);
+
   const { messages, sendMessage, error, status } = useChat({
     transport,
     messages: initialMessages,
@@ -88,9 +91,9 @@ export function RecipeChatView({ recipe }: RecipeChatViewProps) {
         kind: "recipeView",
         recipeId: recipe.id,
       };
-      sendMessage({ text }, { body: { appContext } });
+      void sendMessage({ text }, { body: { appContext, threadId } });
     },
-    [sendMessage, recipe.id]
+    [sendMessage, recipe.id, threadId]
   );
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);

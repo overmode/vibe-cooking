@@ -1,5 +1,5 @@
-import { Recipe as RecipeRow, RecipeRevision } from '@/generated/prisma/browser'
-import { z } from 'zod'
+import { type Recipe as RecipeRow, type RecipeRevision } from '@/generated/prisma/browser'
+import { type z } from 'zod'
 
 export type RecipeContent = Pick<
   RecipeRevision,

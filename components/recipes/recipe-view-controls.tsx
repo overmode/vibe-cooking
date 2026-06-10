@@ -8,7 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { SortField, SortDirection, ViewMode } from './types'
+import { type SortField, type SortDirection, type ViewMode } from './types'
 
 interface RecipeViewControlsProps {
   viewMode: ViewMode

@@ -1,4 +1,4 @@
-import { RecipeMetadata } from '@/lib/types'
+import { type RecipeMetadata } from '@/lib/types'
 import {
   Table,
   TableBody,
@@ -8,7 +8,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Clock, ChevronUp, ChevronDown, Users } from 'lucide-react'
-import { SortField, SortDirection } from '@/components/recipes/types'
+import { type SortField, type SortDirection } from '@/components/recipes/types'
 import { useRouter } from 'next/navigation'
 import { routes } from '@/lib/routes'
 import { ScrollArea } from '@/components/ui/scroll-area'
