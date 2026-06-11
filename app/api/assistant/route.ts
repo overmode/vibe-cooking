@@ -1,8 +1,8 @@
-import { after } from "next/server";
 import { openai } from "@ai-sdk/openai";
 import {
   convertToModelMessages,
   isTextUIPart,
+  safeValidateUIMessages,
   stepCountIs,
   streamText,
   type UIMessage,
@@ -26,7 +26,7 @@ import { MAX_USER_MESSAGE_LENGTH } from "@/lib/constants/app_validation";
 import { getLatestUserProfileRevision } from "@/lib/data-access/user-profile";
 import { getRecipeById } from "@/lib/data-access/recipe";
 import {
-  getThreadById,
+  getThreadWithMessages,
   saveThreadMessages,
   updateThreadTitle,
 } from "@/lib/data-access/chat-thread";
@@ -36,7 +36,7 @@ export const maxDuration = 30;
 
 export async function POST(req: Request) {
   const body = (await req.json()) as {
-    messages: UIMessage[];
+    message: UIMessage;
     appContext: unknown;
     threadId: string;
   };
@@ -46,14 +46,23 @@ export async function POST(req: Request) {
     return new Response("Invalid appContext", { status: 400 });
   }
   const appContext = appContextParsed.data;
-  const { messages, threadId } = body;
+  const { threadId } = body;
   if (!threadId) return new Response("Missing threadId", { status: 400 });
+
+  // Validate the inbound turn (SDK schema) and require a user role.
+  const validation = await safeValidateUIMessages({ messages: [body.message] });
+  if (!validation.success || validation.data[0].role !== "user") {
+    return new Response("Invalid message", { status: 400 });
+  }
+  const [message] = validation.data;
+
   const recipeId =
     appContext.kind === "recipeView" ? appContext.recipeId : null;
 
-  const lastMessageText =
-    messages.at(-1)?.parts.filter(isTextUIPart).map((p) => p.text).join("") ??
-    "";
+  const lastMessageText = message.parts
+    .filter(isTextUIPart)
+    .map((p) => p.text)
+    .join("");
   if (lastMessageText.length > MAX_USER_MESSAGE_LENGTH) {
     return new Response(
       `Message too long: max ${MAX_USER_MESSAGE_LENGTH} characters, got ${lastMessageText.length}.`,
@@ -70,7 +79,7 @@ export async function POST(req: Request) {
     appContext.kind === "recipeView"
       ? getRecipeById({ id: appContext.recipeId, userId }).catch(() => null)
       : Promise.resolve(null),
-    getThreadById({ threadId }),
+    getThreadWithMessages({ threadId }),
   ]);
 
   if (thread && thread.userId !== userId) {
@@ -78,6 +87,10 @@ export async function POST(req: Request) {
   }
 
   if (!success) return new Response("Rate Limit Exceeded", { status: 429 });
+
+  // Server-authoritative: client posts only the new turn; prior history comes
+  // from the DB.
+  const messages = [...(thread?.messages ?? []), message];
 
   let resolvedAppContext: ResolvedAppContext;
   if (appContext.kind === "recipeView") {
@@ -92,6 +105,16 @@ export async function POST(req: Request) {
   const modelMessages = truncateMessagesToTokenLimit(messages, 100_000);
   if (messages.length > 0 && modelMessages.length === 0) {
     return new Response("Conversation exceeds token limit.", { status: 400 });
+  }
+
+  // Save the user turn before answering: history is server-authoritative, so a
+  // turn we can't store must fail loudly (500) rather than diverge. Retries
+  // upsert on the stable id.
+  try {
+    await saveThreadMessages({ userId, threadId, recipeId, messages: [message] });
+  } catch (error) {
+    console.error("[assistant] failed to persist user message", error);
+    return new Response("Failed to save message", { status: 500 });
   }
 
   const result = streamText({
@@ -126,58 +149,28 @@ export async function POST(req: Request) {
     },
   });
 
-  let assistantMessage: UIMessage | undefined;
-  const response = result.toUIMessageStreamResponse({
+  return result.toUIMessageStreamResponse({
     originalMessages: messages,
     generateMessageId: uuidv7,
-    onFinish: ({ responseMessage }) => {
-      assistantMessage = responseMessage;
+    // Assistant save is best-effort but loud: it's post-stream so it can't 500,
+    // and a reload reconciles from the DB. Title is cosmetic, self-heals.
+    onFinish: async ({ responseMessage }) => {
+      try {
+        await saveThreadMessages({
+          userId,
+          threadId,
+          recipeId,
+          messages: [responseMessage],
+        });
+        if (!thread?.title && lastMessageText) {
+          const title = await generateThreadTitle({
+            messages: [...messages, responseMessage],
+          });
+          if (title) await updateThreadTitle({ threadId, userId, title });
+        }
+      } catch (error) {
+        console.error("[assistant] failed to persist assistant turn", error);
+      }
     },
   });
-
-  // Persist after the response so the DB round trips never delay streaming.
-  // Best-effort: failures are logged in the data layer, never surfaced. Two
-  // sequential saves keep user.createdAt < assistant.createdAt (CURRENT_TIMESTAMP
-  // is constant within a transaction, so a single tx would tie them).
-  after(async () => {
-    const userMessage = messages.at(-1);
-    if (userMessage?.role === "user") {
-      await saveThreadMessages({
-        userId,
-        threadId,
-        recipeId,
-        messages: [userMessage],
-      }).catch((error) => {
-        console.error("[assistant] failed to persist user message", error);
-      });
-    }
-    if (assistantMessage) {
-      await saveThreadMessages({
-        userId,
-        threadId,
-        recipeId,
-        messages: [assistantMessage],
-      }).catch((error) => {
-        console.error(
-          "[assistant] failed to persist assistant message",
-          error
-        );
-      });
-    }
-
-    // Label the thread once, from the full conversation. Null title covers both
-    // a brand-new thread and a prior generation that failed, so it self-heals.
-    if (!thread?.title && lastMessageText) {
-      const title = await generateThreadTitle({
-        messages: assistantMessage ? [...messages, assistantMessage] : messages,
-      });
-      if (title) {
-        await updateThreadTitle({ threadId, userId, title }).catch((error) => {
-          console.error("[assistant] failed to persist thread title", error);
-        });
-      }
-    }
-  });
-
-  return response;
 }

@@ -1,3 +1,4 @@
+import { type UIMessage } from "ai";
 import { apiRoutes } from "@/lib/api/api-routes";
 import { del, get, post } from "@/lib/api/fetchers";
 import { type Recipe, type RecipeMetadata, type UserProfile } from "@/lib/types";
@@ -14,6 +15,10 @@ export const deleteRecipeById = async (
   id: string
 ): Promise<{ success: boolean }> => {
   return del<{ success: boolean }>(apiRoutes.recipe.byId(id));
+};
+
+export const getThreadMessages = async (threadId: string) => {
+  return get<UIMessage[]>(apiRoutes.chatThread.byId(threadId));
 };
 
 export const getUserProfile = async () => {

@@ -5,6 +5,7 @@ import {
 
 export const routes = {
   home: "/",
+  chat: (threadId: string) => `/c/${threadId}`,
   homeWithMessagePreset: (presetId: MessagePresetId) =>
     `/?${MESSAGE_PRESET_PARAM}=${presetId}`,
   recipes: {

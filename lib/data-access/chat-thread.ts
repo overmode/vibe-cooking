@@ -1,7 +1,7 @@
 import prisma from "@/prisma/client";
 import { type Prisma, MessageRole } from "@/generated/prisma/client";
 import { handleDbError } from "@/lib/utils/error";
-import { type UIMessage } from "ai";
+import { validateUIMessages, type UIMessage } from "ai";
 
 export async function saveThreadMessages({
   userId,
@@ -48,21 +48,44 @@ export async function saveThreadMessages({
   }
 }
 
-// Reads the fields the route needs up front: userId for the ownership check,
-// title to decide whether a label still needs generating. Returns null when the
-// thread does not exist yet (first turn).
-export async function getThreadById({
+export async function getThreadWithMessages({
   threadId,
 }: {
   threadId: string;
-}): Promise<{ userId: string; title: string | null } | null> {
+}): Promise<{
+  userId: string;
+  title: string | null;
+  messages: UIMessage[];
+} | null> {
   try {
-    return await prisma.chatThread.findUnique({
+    const thread = await prisma.chatThread.findUnique({
       where: { id: threadId },
-      select: { userId: true, title: true },
+      select: {
+        userId: true,
+        title: true,
+        messages: {
+          orderBy: { createdAt: "asc" },
+          select: { id: true, role: true, parts: true },
+        },
+      },
     });
+    if (!thread) return null;
+    // Validate the envelope instead of blind-casting. Throws on a malformed row
+    // (all-or-nothing), caught below and surfaced as a 500.
+    const messages = await validateUIMessages({
+      messages: thread.messages.map((row) => ({
+        id: row.id,
+        role: row.role === MessageRole.ASSISTANT ? "assistant" : "user",
+        parts: row.parts,
+      })),
+    });
+    return {
+      userId: thread.userId,
+      title: thread.title,
+      messages,
+    };
   } catch (error) {
-    handleDbError(error, "get thread");
+    handleDbError(error, "get thread with messages");
   }
 }
 

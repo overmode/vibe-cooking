@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport, type UIMessage } from "ai";
+import { type UIMessage } from "ai";
 import { v7 as uuidv7 } from "uuid";
 import { RecipeViewer } from "@/components/recipes/recipe-viewer";
 import { useRouter } from "next/navigation";
@@ -11,7 +11,7 @@ import { triggerToolEffects } from "@/lib/ai/tools/effects";
 import { useQueryClient } from "@tanstack/react-query";
 import { useDeleteRecipeById } from "@/lib/api/hooks/recipes";
 import { ChatCanva } from "@/components/chat/chat-canva";
-import { apiRoutes } from "@/lib/api/api-routes";
+import { createAssistantTransport } from "@/components/chat/assistant-transport";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal, Trash2 } from "lucide-react";
 import { DeleteConfirmationDialog } from "@/components/ui/delete-confirmation-dialog";
@@ -53,12 +53,9 @@ export function RecipeChatView({ recipe }: RecipeChatViewProps) {
     },
   });
 
-  const transport = useMemo(
-    () => new DefaultChatTransport({ api: apiRoutes.assistant }),
-    []
-  );
+  const transport = useMemo(() => createAssistantTransport(), []);
 
-  // One thread per mount; resume-latest-per-recipe is deferred to PR3.
+  // Fresh chat each mount; this view doesn't resume a prior conversation.
   const [threadId] = useState(() => uuidv7());
 
   const { messages, sendMessage, error, status } = useChat({
