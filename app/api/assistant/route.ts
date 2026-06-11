@@ -21,6 +21,7 @@ import { compileAssistantPrompt } from "@/lib/ai/prompts/assistant";
 import { truncateMessagesToTokenLimit } from "@/lib/ai/truncate-messages";
 import { appContextSchema, type ResolvedAppContext } from "@/lib/ai/app-context";
 import { getCurrentUserId } from "@/lib/auth/get-current-user-id";
+import { DENIAL_STATUS } from "@/lib/api/denial";
 import { chatLimiter } from "@/lib/rate-limiter";
 import { MAX_USER_MESSAGE_LENGTH } from "@/lib/constants/app_validation";
 import { getLatestUserProfileRevision } from "@/lib/data-access/user-profile";
@@ -71,7 +72,8 @@ export async function POST(req: Request) {
   }
 
   const userId = await getCurrentUserId();
-  if (!userId) return new Response("Unauthorized", { status: 401 });
+  if (!userId)
+    return new Response("Unauthorized", { status: DENIAL_STATUS.unauthorized });
 
   const [{ success }, profileRevision, recipe, thread] = await Promise.all([
     chatLimiter.limit(userId),
@@ -83,7 +85,7 @@ export async function POST(req: Request) {
   ]);
 
   if (thread && thread.userId !== userId) {
-    return new Response("Forbidden", { status: 403 });
+    return new Response("Forbidden", { status: DENIAL_STATUS.forbidden });
   }
 
   if (!success) return new Response("Rate Limit Exceeded", { status: 429 });

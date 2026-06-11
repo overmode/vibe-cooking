@@ -7,6 +7,7 @@ export const queryKeys = {
     all: ["user-profile"] as const,
   },
   chatThreads: {
+    all: ["chat-threads"] as const,
     byId: (threadId: string) => ["chat-threads", threadId] as const,
   },
 };

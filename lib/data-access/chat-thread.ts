@@ -1,6 +1,7 @@
 import prisma from "@/prisma/client";
 import { type Prisma, MessageRole } from "@/generated/prisma/client";
 import { handleDbError } from "@/lib/utils/error";
+import { type ThreadMetadata } from "@/lib/types";
 import { validateUIMessages, type UIMessage } from "ai";
 
 export async function saveThreadMessages({
@@ -33,6 +34,10 @@ export async function saveThreadMessages({
       for (const message of messages) {
         const role = toMessageRole(message.role);
         if (!role) continue;
+        // Assistant turns can finish empty (aborted/errored stream); they carry
+        // nothing and break the read-side validator. User parts are guaranteed
+        // upstream, so an empty one there would be a real bug — don't mask it.
+        if (role === MessageRole.ASSISTANT && message.parts.length === 0) continue;
         // Parts are JSON-serializable but the AI SDK union isn't structurally
         // InputJsonValue (optional undefineds), so assert at this one boundary.
         const parts = message.parts as Prisma.InputJsonValue;
@@ -45,6 +50,24 @@ export async function saveThreadMessages({
     });
   } catch (error) {
     handleDbError(error, "save thread messages");
+  }
+}
+
+export async function getThreadsByUserId({
+  userId,
+}: {
+  userId: string;
+}): Promise<ThreadMetadata[]> {
+  try {
+    // Main-assistant threads only (recipeId null); recipe threads live in their
+    // recipe view. Covered by @@index([userId, recipeId, updatedAt]).
+    return await prisma.chatThread.findMany({
+      where: { userId, recipeId: null },
+      orderBy: { updatedAt: "desc" },
+      select: { id: true, title: true, updatedAt: true },
+    });
+  } catch (error) {
+    handleDbError(error, "get threads by user id");
   }
 }
 

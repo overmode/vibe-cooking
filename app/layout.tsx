@@ -2,7 +2,6 @@ import { type Metadata, type Viewport } from 'next'
 import { AuthKitProvider } from '@workos-inc/authkit-nextjs/components'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
-import { AppShell } from '@/components/layout/app-shell'
 import { Header } from '@/components/layout/header'
 import { Toaster } from 'sonner'
 import { QueryProvider } from '@/components/providers/query-provider'
@@ -47,9 +46,7 @@ export default function RootLayout({
           <QueryProvider>
             <Header />
 
-            <div className="flex-1 overflow-hidden">
-              <AppShell>{children}</AppShell>
-            </div>
+            <div className="flex-1 overflow-hidden">{children}</div>
 
             <Toaster position="top-center" />
           </QueryProvider>

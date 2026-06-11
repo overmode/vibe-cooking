@@ -1,10 +1,26 @@
 import { type UIMessage } from "ai";
-import { getThreadWithMessages } from "@/lib/data-access/chat-thread";
+import {
+  getThreadsByUserId,
+  getThreadWithMessages,
+} from "@/lib/data-access/chat-thread";
 import { getCurrentUserId } from "@/lib/auth/get-current-user-id";
+import { type Denial } from "@/lib/api/denial";
+import { type ThreadMetadata } from "@/lib/types";
 
 export type ThreadMessagesResult =
   | { ok: true; messages: UIMessage[] }
-  | { ok: false; denial: "unauthorized" | "forbidden" };
+  | { ok: false; denial: Denial };
+
+export type ThreadsResult =
+  | { ok: true; threads: ThreadMetadata[] }
+  | { ok: false; denial: "unauthorized" };
+
+export const getThreadsAction = async (): Promise<ThreadsResult> => {
+  const userId = await getCurrentUserId();
+  if (!userId) return { ok: false, denial: "unauthorized" };
+  const threads = await getThreadsByUserId({ userId });
+  return { ok: true, threads };
+};
 
 export const getThreadMessagesAction = async (
   threadId: string

@@ -24,6 +24,13 @@ export type UserProfile = {
   content: string
 }
 
+// Sidebar list row: thread identity + label + recency, no message payload.
+export type ThreadMetadata = {
+  id: string
+  title: string | null
+  updatedAt: Date
+}
+
 export const asTypedSchema = <T>() => ({} as unknown as z.ZodType<T>)
 
 export type ChatSuggestion = {

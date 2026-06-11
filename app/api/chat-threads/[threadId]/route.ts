@@ -1,7 +1,6 @@
 import { getThreadMessagesAction } from "@/lib/actions/chat-thread";
+import { DENIAL_STATUS } from "@/lib/api/denial";
 import { type NextRequest, NextResponse } from "next/server";
-
-const DENIAL_STATUS = { unauthorized: 401, forbidden: 403 } as const;
 
 export async function GET(
   request: NextRequest,

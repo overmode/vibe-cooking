@@ -5,6 +5,7 @@ export const apiRoutes = {
   },
   assistant: "/api/assistant",
   chatThread: {
+    all: "/api/chat-threads",
     byId: (threadId: string) => `/api/chat-threads/${threadId}`,
   },
   userProfile: {

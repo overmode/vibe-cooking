@@ -8,6 +8,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Chat } from "@/components/chat/chat";
 import { createAssistantTransport } from "@/components/chat/assistant-transport";
 import { triggerToolEffects } from "@/lib/ai/tools/effects";
+import { queryKeys } from "@/lib/api/query-keys";
 import { routes } from "@/lib/routes";
 import { type AppContext } from "@/lib/ai/app-context";
 import { type ChatSuggestion } from "@/lib/types";
@@ -56,6 +57,9 @@ export function AssistantChat({
     generateId: uuidv7,
     onFinish: ({ message }) => {
       triggerToolEffects(message, queryClient);
+      // A finished turn may have created the thread or set its title; refresh
+      // the sidebar list.
+      void queryClient.invalidateQueries({ queryKey: queryKeys.chatThreads.all });
     },
   });
 
