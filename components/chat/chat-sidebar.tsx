@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { PanelLeft, PenSquare } from "lucide-react";
 import { ChatHistory } from "@/components/chat/chat-history";
 import { routes } from "@/lib/routes";
@@ -16,8 +15,15 @@ import {
 } from "@/components/ui/sidebar";
 
 export function ChatSidebar() {
-  const router = useRouter();
   const { setOpenMobile, toggleSidebar } = useSidebar();
+
+  const startNewChat = () => {
+    setOpenMobile(false);
+    // Home stays mounted across the replaceState URL stamp, so a client nav back
+    // to "/" only resets the URL and reuses the same instance (stale messages,
+    // same threadId). A full load is the reliable way to mint a fresh thread.
+    window.location.assign(routes.home);
+  };
 
   // Collapses to an icon rail (not offcanvas) so the toggle always has a home
   // and the chat is never obstructed. Offset below the 64px header.
@@ -32,13 +38,7 @@ export function ChatSidebar() {
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              tooltip="New chat"
-              onClick={() => {
-                setOpenMobile(false);
-                router.push(routes.home);
-              }}
-            >
+            <SidebarMenuButton tooltip="New chat" onClick={startNewChat}>
               <PenSquare className="size-4" />
               <span className="font-medium">New chat</span>
             </SidebarMenuButton>

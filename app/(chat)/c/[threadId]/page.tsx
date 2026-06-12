@@ -44,6 +44,7 @@ export default function ChatThreadPage() {
   // turn creates the thread under this id.
   return (
     <AssistantChat
+      key={threadId}
       threadId={threadId}
       initialMessages={query.data ?? []}
       suggestions={chatSuggestions}
