@@ -2,6 +2,7 @@
 
 import { type ReactNode, useState } from 'react'
 import { type UIMessage } from 'ai'
+import { type ChatSuggestion } from '@/lib/types'
 import { Chat } from './chat'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
@@ -18,6 +19,7 @@ interface ChatCanvaProps {
   contentActions?: ReactNode
   onGoBack?: () => void
   isWaiting: boolean
+  suggestions?: ChatSuggestion[]
 }
 
 export function ChatCanva({
@@ -30,6 +32,7 @@ export function ChatCanva({
   contentActions,
   onGoBack,
   isWaiting,
+  suggestions,
 }: ChatCanvaProps) {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState<string>('content')
@@ -54,6 +57,7 @@ export function ChatCanva({
             sendMessage={sendMessage}
             error={error}
             isWaiting={isWaiting}
+            suggestions={suggestions}
           />
         </div>
       </div>
@@ -101,6 +105,7 @@ export function ChatCanva({
                 sendMessage={sendMessage}
                 error={error}
                 isWaiting={isWaiting}
+                suggestions={suggestions}
               />
             </TabsContent>
           </div>

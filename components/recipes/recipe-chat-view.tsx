@@ -11,6 +11,7 @@ import { triggerToolEffects } from "@/lib/ai/tools/effects";
 import { useQueryClient } from "@tanstack/react-query";
 import { useDeleteRecipeById } from "@/lib/api/hooks/recipes";
 import { ChatCanva } from "@/components/chat/chat-canva";
+import { recipeChatSuggestions } from "@/lib/constants/chat-suggestions";
 import { createAssistantTransport } from "@/components/chat/assistant-transport";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal, Trash2 } from "lucide-react";
@@ -133,6 +134,7 @@ export function RecipeChatView({ recipe }: RecipeChatViewProps) {
         contentTabLabel="Recipe"
         chatTabLabel="Assistant"
         isWaiting={status === 'submitted'}
+        suggestions={recipeChatSuggestions}
       />
 
       <DeleteConfirmationDialog
