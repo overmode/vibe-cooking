@@ -56,9 +56,41 @@ Responsibilities are split by layer; do not blur them.
 - **Single assistant endpoint** (`app/api/assistant/route.ts`) parameterized by an **app context** (`lib/ai/app-context.ts`): `mainAssistant` (the recipe library) or `recipeView` (a specific recipe).
 - **Authorship**: tool writes set `authoredBy = ASSISTANT`; user-initiated actions default to `USER`. Versioning is invisible to the model — tool input/output schemas expose no revision concept.
 
+### Internationalization (i18n)
+
+`next-intl` with **no URL routing**. Locale is resolved from the `NEXT_LOCALE`
+cookie, then `Accept-Language`, falling back to `defaultLocale` (**English**).
+French is the primary audience, so it gets first-class translation/tone care,
+but English remains the default fallback.
+
+- **Locale resolution**: `getUserLocale()` (`i18n/user-locale.ts`, marked
+  `server-only`) is the single source of truth. `setUserLocale()` lives in its
+  own `"use server"` file (`i18n/set-user-locale.ts`) — keep the pure resolver
+  and the cookie-writing action separate.
+- **Catalogs**: `messages/{en,fr}.json`, kept at key parity. `global.ts`
+  augments next-intl from `en.json` so keys/params are type-checked at compile
+  time.
+- **Usage**: `useTranslations` in client components, `getTranslations` in
+  server components/`generateMetadata`. Use `t.rich` when interpolating React
+  nodes.
+- **Lint guard**: `eslint-plugin-i18next`'s `no-literal-string`
+  (`jsx-text-only`) runs over `app/**` and `components/**`, excluding
+  `components/ui/**`. Hardcoded JSX text fails lint; allow genuine exceptions
+  (brand name, etc.) with a scoped `eslint-disable-next-line`.
+- **AI language**: the resolved locale is threaded into the assistant prompt
+  (`compileAssistantPrompt`) so replies default to the UI language when the
+  user's message is too short to infer one.
+- **French tone**: friendly, informal **"tu"** register; the mascot speaks in
+  the first person singular ("Parle-moi de toi", not "Parle-nous").
+- **Layout robustness**: shadcn `Button`/`TabsTrigger`/`Badge` are
+  `whitespace-nowrap`, so long labels clip rather than wrap. Keep button labels
+  short (verb + icon); reserve `truncate` for variable/user data (emails,
+  recipe names, thread titles), not for static copy.
+
 ### Technology Stack
 
 - Next.js with App Router
+- next-intl for internationalization (cookie-based, no routing)
 - PostgreSQL with Prisma ORM
 - WorkOS AuthKit for authentication
 - React Query for state management

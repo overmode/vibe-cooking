@@ -2,6 +2,7 @@
 
 import { type UseMutationResult } from '@tanstack/react-query'
 import { Loader2, AlertTriangle } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import {
   AlertDialog,
   AlertDialogContent,
@@ -20,8 +21,6 @@ interface DeleteConfirmationDialogProps {
   deleteMutation: UseMutationResult<unknown, Error, void, unknown>
   open: boolean
   onOpenChange: (open: boolean) => void
-  deleteButtonText?: string
-  pendingText?: string
 }
 
 export function DeleteConfirmationDialog({
@@ -30,9 +29,9 @@ export function DeleteConfirmationDialog({
   deleteMutation,
   open,
   onOpenChange,
-  deleteButtonText = 'Delete',
-  pendingText = 'Deleting...',
 }: DeleteConfirmationDialogProps) {
+  const t = useTranslations('common')
+
   useEffect(() => {
     if (deleteMutation.isPending && open) {
       const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -67,15 +66,17 @@ export function DeleteConfirmationDialog({
             {title}
           </AlertDialogTitle>
           <AlertDialogDescription className="text-center">
-            Are you sure you want to delete{' '}
-            <span className="font-medium text-primary-text">{itemName}</span>
-            ?
+            {t.rich('deleteConfirm', {
+              name: () => (
+                <span className="font-medium text-primary-text">{itemName}</span>
+              ),
+            })}
             <br />
-            This action cannot be undone.
+            {t('deleteUndo')}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="sm:justify-center gap-3 mt-2">
-          <AlertDialogCancel className="border-2">Cancel</AlertDialogCancel>
+          <AlertDialogCancel className="border-2">{t('cancel')}</AlertDialogCancel>
           <AlertDialogAction
             onClick={() => deleteMutation.mutate()}
             disabled={deleteMutation.isPending}
@@ -83,10 +84,10 @@ export function DeleteConfirmationDialog({
             {deleteMutation.isPending ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                {pendingText}{' '}
+                {t('deleting')}{' '}
               </>
             ) : (
-              deleteButtonText
+              t('delete')
             )}
           </AlertDialogAction>
         </AlertDialogFooter>

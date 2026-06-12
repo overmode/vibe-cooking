@@ -11,10 +11,11 @@ import { triggerToolEffects } from "@/lib/ai/tools/effects";
 import { useQueryClient } from "@tanstack/react-query";
 import { useDeleteRecipeById } from "@/lib/api/hooks/recipes";
 import { ChatCanva } from "@/components/chat/chat-canva";
-import { recipeChatSuggestions } from "@/lib/constants/chat-suggestions";
+import { useRecipeChatSuggestions } from "@/lib/hooks/use-chat-suggestions";
 import { createAssistantTransport } from "@/components/chat/assistant-transport";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { DeleteConfirmationDialog } from "@/components/ui/delete-confirmation-dialog";
 import { routes } from "@/lib/routes";
 import { type AppContext } from "@/lib/ai/app-context";
@@ -29,22 +30,23 @@ interface RecipeChatViewProps {
   recipe: Recipe;
 }
 
-const initialMessages: UIMessage[] = [
-  {
-    id: "recipe-intro",
-    role: "assistant",
-    parts: [
-      {
-        type: "text",
-        text: `I'm here to help you with your recipe! I can answer questions about it or help you make edits. What would you like to do? 🌴`,
-      },
-    ],
-  },
-];
-
 export function RecipeChatView({ recipe }: RecipeChatViewProps) {
   const queryClient = useQueryClient();
   const router = useRouter();
+  const t = useTranslations("recipes");
+  const tChat = useTranslations("chat");
+  const suggestions = useRecipeChatSuggestions();
+
+  // Display-only intro; prepended at render so it tracks the active locale
+  // instead of being frozen into useChat's state at mount.
+  const introMessage: UIMessage = useMemo(
+    () => ({
+      id: "recipe-intro",
+      role: "assistant",
+      parts: [{ type: "text", text: tChat("recipeIntro") }],
+    }),
+    [tChat]
+  );
   const deleteRecipeMutation = useDeleteRecipeById({
     id: recipe.id,
     options: {
@@ -61,7 +63,6 @@ export function RecipeChatView({ recipe }: RecipeChatViewProps) {
 
   const { messages, sendMessage, error, status } = useChat({
     transport,
-    messages: initialMessages,
     generateId: uuidv7,
     onToolCall: ({ toolCall }) => {
       if (toolCall.toolName === "deleteRecipeTool") {
@@ -98,6 +99,11 @@ export function RecipeChatView({ recipe }: RecipeChatViewProps) {
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
+  const displayMessages = useMemo(
+    () => [introMessage, ...messages],
+    [introMessage, messages]
+  );
+
   const recipeMenu = (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -106,7 +112,7 @@ export function RecipeChatView({ recipe }: RecipeChatViewProps) {
           size="icon"
           className="h-8 w-8 text-muted-foreground"
           disabled={deleteRecipeMutation.isPending}
-          aria-label="Recipe options"
+          aria-label={t("options")}
         >
           <MoreHorizontal className="h-4 w-4" />
         </Button>
@@ -117,7 +123,7 @@ export function RecipeChatView({ recipe }: RecipeChatViewProps) {
           className="text-muted-foreground"
         >
           <Trash2 />
-          Delete
+          {t("delete")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -128,22 +134,21 @@ export function RecipeChatView({ recipe }: RecipeChatViewProps) {
       <ChatCanva
         contentNode={<RecipeViewer recipe={recipe} actions={recipeMenu} />}
         contentActions={recipeMenu}
-        messages={messages}
+        messages={displayMessages}
         sendMessage={send}
         error={error}
-        contentTabLabel="Recipe"
-        chatTabLabel="Assistant"
+        contentTabLabel={t("recipeTab")}
+        chatTabLabel={t("assistantTab")}
         isWaiting={status === 'submitted'}
-        suggestions={recipeChatSuggestions}
+        suggestions={suggestions}
       />
 
       <DeleteConfirmationDialog
-        title="Delete Recipe"
+        title={t("deleteRecipe")}
         itemName={recipe.name}
         deleteMutation={deleteRecipeMutation}
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}
-        deleteButtonText="Delete Recipe"
       />
     </>
   );

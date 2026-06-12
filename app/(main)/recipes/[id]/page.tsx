@@ -7,9 +7,12 @@ import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { useRecipeById } from '@/lib/api/hooks/recipes'
 import { RecipeChatView } from '@/components/recipes/recipe-chat-view'
+import { useTranslations } from 'next-intl'
 
 export default function RecipePage() {
   const { id } = useParams<{ id: string }>()
+  const t = useTranslations('recipes')
+  const tCommon = useTranslations('common')
 
   const recipeQuery = useRecipeById({
     id: id as string,
@@ -22,7 +25,7 @@ export default function RecipePage() {
     return (
       <div className="flex flex-col items-center justify-center h-full">
         <LoadingSpinner size="lg" />
-        <p className="mt-4 text-muted-foreground">Loading recipe...</p>
+        <p className="mt-4 text-muted-foreground">{t('loadingRecipe')}</p>
       </div>
     )
   }
@@ -30,11 +33,11 @@ export default function RecipePage() {
   if (recipeQuery.isError) {
     return (
       <div className="flex flex-col items-center justify-center h-full">
-        <p className="text-destructive">Failed to load recipe</p>
+        <p className="text-destructive">{t('failedToLoadRecipe')}</p>
         <Button asChild variant="outline" className="mt-4">
           <Link href="/">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Return Home
+            {tCommon('returnHome')}
           </Link>
         </Button>
       </div>
@@ -46,11 +49,11 @@ export default function RecipePage() {
   if (!recipe) {
     return (
       <div className="flex flex-col items-center justify-center h-full">
-        <p className="text-destructive">Recipe not found</p>
+        <p className="text-destructive">{t('notFound')}</p>
         <Button asChild variant="outline" className="mt-4">
           <Link href="/">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Return Home
+            {tCommon('returnHome')}
           </Link>
         </Button>
       </div>

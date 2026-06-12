@@ -1,5 +1,6 @@
 import { type UIMessage } from 'ai'
 import { AnimatedDots, ChatMessage } from './chat-message'
+import { useTranslations } from 'next-intl'
 import { useEffect, useRef } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { AlertCircle } from 'lucide-react'
@@ -56,16 +57,15 @@ export function ChatMessagesDisplay({
 }
 
 function ErrorMessage({ error }: { error: Error }) {
+  const t = useTranslations('chat')
   return (
     <Alert variant="destructive" className="my-4 animate-in fade-in">
       <AlertCircle className="h-5 w-5" />
-      <AlertTitle>Error</AlertTitle>
+      <AlertTitle>{t('errorTitle')}</AlertTitle>
       <AlertDescription>
         {error.message === 'Rate Limit Exceeded'
-          ? "You've reached the daily limit of " +
-            MAX_MESSAGES_PER_DAY +
-            ' messages. Please try again tomorrow.'
-          : error.message || 'An error occurred'}
+          ? t('rateLimit', { max: MAX_MESSAGES_PER_DAY })
+          : error.message || t('genericError')}
       </AlertDescription>
     </Alert>
   )

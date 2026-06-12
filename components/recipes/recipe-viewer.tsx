@@ -6,6 +6,7 @@ import { Separator } from '@/components/ui/separator'
 import { RecipeMetadataDescription } from './shared/recipe-card-base'
 import Link from 'next/link'
 import { ChevronLeft } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { routes } from '@/lib/routes'
 
 type ViewableRecipe = Pick<
@@ -14,6 +15,7 @@ type ViewableRecipe = Pick<
 >
 
 export function RecipeViewer({ recipe, actions }: { recipe: ViewableRecipe; actions?: ReactNode }) {
+  const t = useTranslations('recipes')
   return (
     <ScrollArea className="h-full">
       <div className="hidden md:flex items-center justify-between px-6 pt-4 pb-2">
@@ -22,7 +24,7 @@ export function RecipeViewer({ recipe, actions }: { recipe: ViewableRecipe; acti
           className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           <ChevronLeft className="h-4 w-4" />
-          Recipes
+          {t('back')}
         </Link>
         {actions}
       </div>
@@ -42,7 +44,7 @@ export function RecipeViewer({ recipe, actions }: { recipe: ViewableRecipe; acti
         <Separator className="bg-muted/60" />
 
         <section className="space-y-4">
-          <h2 className="text-xl font-semibold text-primary-text">Ingredients</h2>
+          <h2 className="text-xl font-semibold text-primary-text">{t('ingredients')}</h2>
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {recipe.ingredients.map((ingredient, i) => (
               <li
@@ -59,7 +61,7 @@ export function RecipeViewer({ recipe, actions }: { recipe: ViewableRecipe; acti
         <Separator className="bg-muted/60" />
 
         <section className="space-y-4">
-          <h2 className="text-xl font-semibold text-primary-text">Instructions</h2>
+          <h2 className="text-xl font-semibold text-primary-text">{t('instructions')}</h2>
           <div className="text-sm text-foreground/80 prose prose-headings:text-primary-text prose-a:text-primary max-w-none">
             <MemoizedMarkdown
               content={recipe.instructions}

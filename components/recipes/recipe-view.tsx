@@ -13,6 +13,7 @@ import { useIsMobile } from '@/lib/hooks/use-is-mobile'
 import { Input } from '@/components/ui/input'
 import { MascotIllustration } from '@/components/illustrations/mascot-illustration'
 import { Search } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 export function RecipeView({
   recipeMetadata,
@@ -21,6 +22,7 @@ export function RecipeView({
 }) {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const t = useTranslations('recipes')
 
   // Get initial state from URL parameters or use defaults
   const initialViewMode = (searchParams.get('view') as ViewMode) || 'grid'
@@ -99,13 +101,13 @@ export function RecipeView({
     <div className="container mx-auto py-4 sm:py-8 flex flex-col h-full">
       <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-8">
         <h2 className="text-2xl font-medium tracking-tight text-primary-text">
-          Your Recipes
+          {t('yourRecipes')}
         </h2>
         <div className="flex flex-wrap items-center gap-3 sm:gap-4">
           <div className="relative w-full sm:w-56">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
             <Input
-              placeholder="Search recipes..."
+              placeholder={t('search')}
               value={query}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
               className="pl-8"
@@ -127,8 +129,8 @@ export function RecipeView({
           <div className="flex min-h-[40vh] flex-col items-center justify-center gap-4 text-center">
             <MascotIllustration expression="x-eyes" className="size-20 opacity-90" />
             <div className="flex flex-col items-center gap-1">
-              <p className="text-sm font-semibold">No recipes found</p>
-              <p className="text-sm text-muted-foreground">Try adjusting your search.</p>
+              <p className="text-sm font-semibold">{t('noResults')}</p>
+              <p className="text-sm text-muted-foreground">{t('noResultsHint')}</p>
             </div>
           </div>
         ) : effectiveViewMode === 'grid' ? (

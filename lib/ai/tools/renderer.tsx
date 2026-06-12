@@ -1,4 +1,5 @@
 import React from "react";
+import type { useTranslations } from "next-intl";
 import { RecipeSuggestionCard } from "@/components/recipes/recipe-suggestion-card";
 import {
   ToolSuccess,
@@ -8,6 +9,8 @@ import {
 import { type Recipe, type RecipeMetadata, type UserProfile } from "@/lib/types";
 import { type ToolResult } from "@/lib/ai/tools/types";
 import { type CreateRecipeInput } from "@/lib/validators/recipe";
+
+export type ToolsTranslator = ReturnType<typeof useTranslations<"tools">>;
 
 export type ToolUIPart = {
   type: `tool-${string}`;
@@ -25,49 +28,54 @@ export type ToolUIPart = {
   errorText?: string;
 };
 
-type ToolRenderer = (part: ToolUIPart) => React.ReactNode;
+type ToolRenderer = (part: ToolUIPart, t: ToolsTranslator) => React.ReactNode;
 
 const toolRenderers: Record<string, ToolRenderer> = {};
 
-export function renderToolInvocation(part: ToolUIPart): React.ReactNode {
+export function renderToolInvocation(
+  part: ToolUIPart,
+  t: ToolsTranslator
+): React.ReactNode {
   const toolName = part.type.replace(/^tool-/, "");
   const renderer = toolRenderers[toolName];
   if (!renderer)
     return <ToolError message={`No renderer found for tool: ${toolName}`} />;
 
-  return renderer(part);
+  return renderer(part, t);
 }
 
 function toolMessageRenderer<T>({
-  loadingMessage,
-  successMessage,
-  errorMessage = (error: Extract<ToolResult<T>, { success: false }>["error"]) =>
-    error,
+  loading,
+  success,
+  // Errors carry server-generated text, surfaced verbatim.
+  error = (errorText: Extract<ToolResult<T>, { success: false }>["error"]) =>
+    errorText,
 }: {
-  loadingMessage: string;
-  successMessage: (
+  loading: (t: ToolsTranslator) => string;
+  success: (
+    t: ToolsTranslator,
     data: Extract<ToolResult<T>, { success: true }>["data"]
   ) => string;
-  errorMessage?: (
-    error: Extract<ToolResult<T>, { success: false }>["error"]
+  error?: (
+    errorText: Extract<ToolResult<T>, { success: false }>["error"]
   ) => string;
 }): ToolRenderer {
-  const renderer = (part: ToolUIPart) => {
+  const renderer = (part: ToolUIPart, t: ToolsTranslator) => {
     switch (part.state) {
       case "input-streaming":
       case "input-available":
-        return <ToolSpinner message={loadingMessage} />;
+        return <ToolSpinner message={loading(t)} />;
       case "output-available": {
         const result = part.output as ToolResult<T>;
         if (!result.success) {
-          return <ToolError message={errorMessage(result.error)} />;
+          return <ToolError message={error(result.error)} />;
         }
-        return <ToolSuccess message={successMessage(result.data)} />;
+        return <ToolSuccess message={success(t, result.data)} />;
       }
       case "output-error":
-        return <ToolError message={part.errorText ?? "Tool execution failed"} />;
+        return <ToolError message={part.errorText ?? t("executionFailed")} />;
       default:
-        return <ToolError message="Unknown tool state" />;
+        return <ToolError message={t("unknownState")} />;
     }
   };
 
@@ -76,11 +84,11 @@ function toolMessageRenderer<T>({
   return renderer;
 }
 
-const renderRecipeSuggestionTool: ToolRenderer = (part) => {
+const renderRecipeSuggestionTool: ToolRenderer = (part, t) => {
   switch (part.state) {
     case "input-streaming":
     case "input-available":
-      return <ToolSpinner message={`Generating recipe suggestion...`} />;
+      return <ToolSpinner message={t("generatingSuggestion")} />;
     case "output-available":
       return (
         <RecipeSuggestionCard
@@ -89,20 +97,24 @@ const renderRecipeSuggestionTool: ToolRenderer = (part) => {
         />
       );
     default:
-      return <ToolError message="Unknown tool state" />;
+      return <ToolError message={t("unknownState")} />;
   }
 };
 
-toolRenderers["webSearch"] = (part: ToolUIPart) => {
+toolRenderers["webSearch"] = (part, t) => {
   const query = (part.input as { query?: string } | undefined)?.query;
   switch (part.state) {
     case "input-streaming":
     case "input-available":
-      return <ToolSpinner message="Searching the web..." />;
+      return <ToolSpinner message={t("searchingWeb")} />;
     case "output-available":
-      return <ToolSuccess message={query ? `Searched: "${query}"` : "Web search complete"} />;
+      return (
+        <ToolSuccess
+          message={query ? t("searched", { query }) : t("webSearchComplete")}
+        />
+      );
     case "output-error":
-      return <ToolError message={part.errorText ?? "Web search failed"} />;
+      return <ToolError message={part.errorText ?? t("webSearchFailed")} />;
     default:
       return null;
   }
@@ -110,44 +122,41 @@ toolRenderers["webSearch"] = (part: ToolUIPart) => {
 
 toolRenderers["renderRecipeSuggestionTool"] = renderRecipeSuggestionTool;
 toolRenderers["createRecipeTool"] = toolMessageRenderer<Recipe>({
-  loadingMessage: "Creating recipe...",
-  successMessage: (data) => `Recipe "${data.name}" created successfully!`,
+  loading: (t) => t("creatingRecipe"),
+  success: (t, data) => t("recipeCreated", { name: data.name }),
 });
 toolRenderers["deleteRecipeTool"] = toolMessageRenderer<Recipe>({
-  loadingMessage: "Deleting recipe...",
-  successMessage: () => "Recipe deleted successfully!",
+  loading: (t) => t("deletingRecipe"),
+  success: (t) => t("recipeDeleted"),
 });
 toolRenderers["getRecipesMetadataTool"] = toolMessageRenderer<RecipeMetadata[]>({
-  loadingMessage: `Retrieving recipes metadata...`,
-  successMessage: (data) =>
-    `Retrieved ${data.length} recipe${data.length > 1 ? "s" : ""} metadata!`,
+  loading: (t) => t("retrievingRecipesMetadata"),
+  success: (t, data) => t("recipesMetadataRetrieved", { count: data.length }),
 });
 toolRenderers["updateRecipeTool"] = toolMessageRenderer<Recipe>({
-  loadingMessage: "Updating recipe...",
-  successMessage: () => "Recipe updated successfully!",
+  loading: (t) => t("updatingRecipe"),
+  success: (t) => t("recipeUpdated"),
 });
 toolRenderers["getRecipeByIdTool"] = toolMessageRenderer<Recipe>({
-  loadingMessage: "Retrieving recipe...",
-  successMessage: () => "Recipe retrieved successfully!",
+  loading: (t) => t("retrievingRecipe"),
+  success: (t) => t("recipeRetrieved"),
 });
-toolRenderers["updateUserProfileTool"] = (part) => {
+toolRenderers["updateUserProfileTool"] = (part, t) => {
   switch (part.state) {
     case "input-streaming":
     case "input-available":
       return (
-        <p className="text-muted-foreground py-2">Updating your profile...</p>
+        <p className="text-muted-foreground py-2">{t("updatingProfile")}</p>
       );
     case "output-available": {
       const result = part.output as ToolResult<UserProfile>;
       if (!result.success) {
         return <ToolError message={result.error} />;
       }
-      return (
-        <p className="text-muted-foreground py-2">Updated your profile</p>
-      );
+      return <p className="text-muted-foreground py-2">{t("profileUpdated")}</p>;
     }
     case "output-error":
-      return <ToolError message={"Couldn't update your profile"} />;
+      return <ToolError message={t("profileUpdateFailed")} />;
     default:
       return null;
   }

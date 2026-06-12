@@ -9,17 +9,14 @@ import {
 } from "@/lib/api/hooks/user-profile";
 import { routes } from "@/lib/routes";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { MAX_USER_PROFILE_LENGTH } from "@/lib/constants/app_validation";
 import { cn } from "@/lib/utils";
 
-const ABOUT_YOU_PLACEHOLDER = `• I'm vegetarian and allergic to nuts
-• I love spicy food and prefer quick 30-minute meals
-• I run 20 miles per week and sleep 7 hours nightly
-• I work from home with busy weekdays
-• I have intermediate cooking skills`;
-
 export default function PreferencesPage() {
+  const t = useTranslations("preferences");
+  const tCommon = useTranslations("common");
   const [draft, setDraft] = useState<string | null>(null);
 
   const {
@@ -46,7 +43,7 @@ export default function PreferencesPage() {
     return (
       <div className="flex flex-col items-center justify-center h-full">
         <LoadingSpinner size="lg" />
-        <p className="mt-4 text-muted-foreground">Loading...</p>
+        <p className="mt-4 text-muted-foreground">{tCommon("loading")}</p>
       </div>
     );
   }
@@ -54,7 +51,7 @@ export default function PreferencesPage() {
   if (isError) {
     return (
       <div className="flex flex-col items-center justify-center h-full">
-        <p className="text-destructive">Failed to load profile</p>
+        <p className="text-destructive">{t("failedToLoad")}</p>
       </div>
     );
   }
@@ -63,15 +60,14 @@ export default function PreferencesPage() {
     <div className="flex h-full min-h-0 flex-col">
       <div className="mx-auto w-full max-w-2xl shrink-0 px-4 pt-6">
         <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-semibold">About you</h1>
+          <h1 className="text-2xl font-semibold">{t("title")}</h1>
           <p className="text-sm text-muted-foreground">
-            Tell us about yourself to get personalized cooking recommendations,
-            or{" "}
+            {t("subtitlePrefix")}
             <Link
               href={routes.homeWithMessagePreset("about-you")}
               className="text-primary underline-offset-4 hover:underline"
             >
-              take the quiz
+              {t("takeQuiz")}
             </Link>
             .
           </p>
@@ -86,7 +82,7 @@ export default function PreferencesPage() {
             onChange={(e) => setDraft(e.target.value)}
             onFocus={() => !isEditing && setDraft(serverValue)}
             onBlur={() => !hasChanges && setDraft(null)}
-            placeholder={ABOUT_YOU_PLACEHOLDER}
+            placeholder={t("placeholder")}
             className={cn(
               "field-sizing-fixed h-full min-h-0 resize-none overflow-y-auto transition-colors",
               isEditing
@@ -99,13 +95,18 @@ export default function PreferencesPage() {
         <div className="flex h-9 shrink-0 items-center justify-between">
           {isEditing && value.length >= MAX_USER_PROFILE_LENGTH && (
             <p className="text-xs text-destructive">
-              {value.length}/{MAX_USER_PROFILE_LENGTH} characters
+              {t("charCount", {
+                count: value.length,
+                max: MAX_USER_PROFILE_LENGTH,
+              })}
             </p>
           )}
           {(hasChanges || isPending) && (
             <div className="ml-auto flex items-center gap-2">
               {saveError && (
-                <span className="text-xs text-destructive">Failed to save</span>
+                <span className="text-xs text-destructive">
+                  {t("failedToSave")}
+                </span>
               )}
               <Button
                 variant="ghost"
@@ -113,7 +114,7 @@ export default function PreferencesPage() {
                 onClick={() => setDraft(null)}
                 disabled={isPending}
               >
-                Cancel
+                {tCommon("cancel")}
               </Button>
               <Button
                 size="sm"
@@ -121,7 +122,7 @@ export default function PreferencesPage() {
                 disabled={isPending}
               >
                 {isPending && <LoadingSpinner size="sm" />}
-                {isPending ? "Saving..." : "Save"}
+                {isPending ? tCommon("saving") : tCommon("save")}
               </Button>
             </div>
           )}

@@ -1,0 +1,156 @@
+{
+  "metadata": {
+    "description": "Application de cuisine assistée par IA"
+  },
+  "nav": {
+    "assistant": "Assistant",
+    "recipes": "Recettes",
+    "aboutYou": "À propos de toi"
+  },
+  "auth": {
+    "signIn": "Se connecter",
+    "signOut": "Se déconnecter",
+    "toggleMenu": "Ouvrir le menu"
+  },
+  "language": {
+    "switch": "Changer de langue"
+  },
+  "sidebar": {
+    "collapse": "Réduire",
+    "toggle": "Afficher/masquer la barre latérale",
+    "newChat": "Nouvelle conversation"
+  },
+  "common": {
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "saving": "Enregistrement...",
+    "loading": "Chargement...",
+    "returnHome": "Retour à l'accueil",
+    "delete": "Supprimer",
+    "deleting": "Suppression...",
+    "deleteConfirm": "Veux-tu vraiment supprimer <name></name> ?",
+    "deleteUndo": "Cette action est irréversible."
+  },
+  "chat": {
+    "askAnything": "Pose ta question",
+    "welcome": "Bienvenue sur Vibe Cooking ! Comment puis-je t'aider aujourd'hui ? 🌴 ",
+    "recipeIntro": "Je suis là pour t'aider avec ta recette ! Je peux répondre à tes questions ou t'aider à la modifier. Que veux-tu faire ? 🌴",
+    "messageTooLong": "Ton message dépasse la limite de {max} caractères.",
+    "messageTooShort": "Ton message doit contenir au moins {min} caractères.",
+    "loadingConversation": "Chargement de la conversation...",
+    "failedToLoadConversation": "Échec du chargement de la conversation",
+    "errorTitle": "Erreur",
+    "rateLimit": "Tu as atteint la limite quotidienne de {max} messages. Réessaie demain.",
+    "genericError": "Une erreur s'est produite"
+  },
+  "chatHistory": {
+    "today": "Aujourd'hui",
+    "yesterday": "Hier",
+    "previous7": "7 derniers jours",
+    "older": "Plus ancien",
+    "newConversation": "Nouvelle conversation",
+    "empty": "Aucune conversation pour le moment.",
+    "error": "Impossible de charger les conversations."
+  },
+  "suggestions": {
+    "quickMeal": {
+      "label": "🎲 Repas rapide",
+      "message": "Propose-moi un repas rapide à préparer."
+    },
+    "brainstorm": {
+      "label": "🍳 Créer une recette",
+      "message": "Je veux créer une nouvelle recette avec toi — demande-moi ce dont j'ai envie."
+    },
+    "learnTastes": {
+      "label": "🎯 Apprends mes goûts",
+      "message": "Aide-moi à créer mon profil de goûts — pose-moi des questions sur mes préférences culinaires."
+    },
+    "suggestUpgrade": {
+      "label": "🧑‍🍳 Propose une amélioration",
+      "message": "Propose une amélioration de cette recette."
+    }
+  },
+  "presets": {
+    "about-you": "Aide-moi à créer mon profil de goûts — pose-moi des questions sur mes préférences culinaires.",
+    "first-recipe": "Créons ma première recette !"
+  },
+  "preferences": {
+    "title": "À propos de toi",
+    "subtitlePrefix": "Parle-moi de toi pour obtenir des recommandations de cuisine personnalisées, ou ",
+    "takeQuiz": "fais le quiz",
+    "placeholder": "• Je suis végétarien et allergique aux fruits à coque\n• J'adore les plats épicés et je préfère les repas rapides de 30 minutes\n• Je cours 30 km par semaine et je dors 7 heures par nuit\n• Je travaille à domicile avec des semaines chargées\n• J'ai un niveau de cuisine intermédiaire",
+    "charCount": "{count}/{max} caractères",
+    "failedToLoad": "Échec du chargement du profil",
+    "failedToSave": "Échec de l'enregistrement"
+  },
+  "recipes": {
+    "loadingRecipes": "Chargement des recettes...",
+    "failedToLoadRecipes": "Échec du chargement des recettes",
+    "loadingRecipe": "Chargement de la recette...",
+    "failedToLoadRecipe": "Échec du chargement de la recette",
+    "notFound": "Recette introuvable",
+    "yourRecipes": "Tes recettes",
+    "search": "Rechercher des recettes...",
+    "noResults": "Aucune recette trouvée",
+    "noResultsHint": "Essaie d'ajuster ta recherche.",
+    "firstRecipeTitle": "Créons ta première recette !",
+    "surpriseMe": "Surprends-moi",
+    "back": "Recettes",
+    "ingredients": "Ingrédients",
+    "instructions": "Instructions",
+    "minutes": "{count} min",
+    "servings": "{count, plural, one {# portion} other {# portions}}",
+    "level": "Niveau {level}/10",
+    "options": "Options de la recette",
+    "deleteRecipe": "Supprimer la recette",
+    "delete": "Supprimer",
+    "recipeTab": "Recette",
+    "assistantTab": "Assistant",
+    "add": "Ajouter",
+    "saveToLibraryMessage": "Enregistre « {name} » dans ma bibliothèque de recettes."
+  },
+  "recipeControls": {
+    "sort": "Tri : {field}",
+    "recipeProperties": "Propriétés de la recette",
+    "dates": "Dates",
+    "nameAsc": "Nom (A-Z)",
+    "nameDesc": "Nom (Z-A)",
+    "shortestDuration": "Durée la plus courte",
+    "longestDuration": "Durée la plus longue",
+    "easiestFirst": "Plus facile d'abord",
+    "hardestFirst": "Plus difficile d'abord",
+    "fewestServings": "Moins de portions",
+    "mostServings": "Plus de portions",
+    "newestFirst": "Plus récent d'abord",
+    "oldestFirst": "Plus ancien d'abord",
+    "field": {
+      "name": "Nom",
+      "duration": "Durée",
+      "difficulty": "Difficulté",
+      "servings": "Portions",
+      "createdAt": "Date de création"
+    }
+  },
+  "tools": {
+    "searchingWeb": "Recherche sur le web...",
+    "searched": "Recherche : « {query} »",
+    "webSearchComplete": "Recherche web terminée",
+    "webSearchFailed": "Échec de la recherche web",
+    "generatingSuggestion": "Génération d'une suggestion de recette...",
+    "creatingRecipe": "Création de la recette...",
+    "recipeCreated": "Recette « {name} » créée avec succès !",
+    "deletingRecipe": "Suppression de la recette...",
+    "recipeDeleted": "Recette supprimée avec succès !",
+    "retrievingRecipesMetadata": "Récupération des métadonnées des recettes...",
+    "recipesMetadataRetrieved": "Métadonnées de {count, plural, one {# recette} other {# recettes}} récupérées !",
+    "updatingRecipe": "Mise à jour de la recette...",
+    "recipeUpdated": "Recette mise à jour avec succès !",
+    "retrievingRecipe": "Récupération de la recette...",
+    "recipeRetrieved": "Recette récupérée avec succès !",
+    "updatingProfile": "Mise à jour de ton profil...",
+    "profileUpdated": "Profil mis à jour",
+    "profileUpdateFailed": "Impossible de mettre à jour ton profil",
+    "executionFailed": "Échec de l'exécution de l'outil",
+    "unknownState": "État d'outil inconnu"
+  }
+}

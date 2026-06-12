@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { SendHorizontal } from 'lucide-react'
 import { toast } from 'sonner'
+import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 import {
   MAX_USER_MESSAGE_LENGTH,
@@ -24,6 +25,7 @@ export function ChatInput({
 }: ChatInputProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [cooldown, setCooldown] = useState(false)
+  const t = useTranslations('chat')
 
   useEffect(() => {
     if (cooldown) {
@@ -37,14 +39,12 @@ export function ChatInput({
 
   const submit = () => {
     if (input.length > maxLength) {
-      toast.error(`Your message exceeds the ${maxLength} character limit.`)
+      toast.error(t('messageTooLong', { max: maxLength }))
       return
     }
 
     if (input.length < MIN_USER_MESSAGE_LENGTH) {
-      toast.error(
-        `Your message must be at least ${MIN_USER_MESSAGE_LENGTH} characters.`
-      )
+      toast.error(t('messageTooShort', { min: MIN_USER_MESSAGE_LENGTH }))
       return
     }
 
@@ -79,7 +79,7 @@ export function ChatInput({
     <form onSubmit={handleFormSubmit} className="px-4 pb-4">
       <div className="flex gap-2 sm:gap-3 items-end">
         <Textarea
-          placeholder="Ask anything"
+          placeholder={t('askAnything')}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}

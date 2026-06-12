@@ -1,0 +1,156 @@
+{
+  "metadata": {
+    "description": "Assistant-powered cooking app"
+  },
+  "nav": {
+    "assistant": "Assistant",
+    "recipes": "Recipes",
+    "aboutYou": "About you"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "toggleMenu": "Toggle menu"
+  },
+  "language": {
+    "switch": "Change language"
+  },
+  "sidebar": {
+    "collapse": "Collapse",
+    "toggle": "Toggle sidebar",
+    "newChat": "New chat"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving...",
+    "loading": "Loading...",
+    "returnHome": "Return Home",
+    "delete": "Delete",
+    "deleting": "Deleting...",
+    "deleteConfirm": "Are you sure you want to delete <name></name>?",
+    "deleteUndo": "This action cannot be undone."
+  },
+  "chat": {
+    "askAnything": "Ask anything",
+    "welcome": "Welcome to Vibe Cooking! How can I help you today? 🌴 ",
+    "recipeIntro": "I'm here to help you with your recipe! I can answer questions about it or help you make edits. What would you like to do? 🌴",
+    "messageTooLong": "Your message exceeds the {max} character limit.",
+    "messageTooShort": "Your message must be at least {min} characters.",
+    "loadingConversation": "Loading conversation...",
+    "failedToLoadConversation": "Failed to load conversation",
+    "errorTitle": "Error",
+    "rateLimit": "You've reached the daily limit of {max} messages. Please try again tomorrow.",
+    "genericError": "An error occurred"
+  },
+  "chatHistory": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "previous7": "Previous 7 days",
+    "older": "Older",
+    "newConversation": "New conversation",
+    "empty": "No conversations yet.",
+    "error": "Couldn't load conversations."
+  },
+  "suggestions": {
+    "quickMeal": {
+      "label": "🎲 Quick meal",
+      "message": "Suggest a quick meal I can make."
+    },
+    "brainstorm": {
+      "label": "🍳 Brainstorm a recipe",
+      "message": "I want to create a new recipe with you — ask me what I'm in the mood for."
+    },
+    "learnTastes": {
+      "label": "🎯 Learn my tastes",
+      "message": "Help me build my taste profile — ask me about my cooking preferences."
+    },
+    "suggestUpgrade": {
+      "label": "🧑‍🍳 Suggest an upgrade",
+      "message": "Suggest an upgrade to this recipe."
+    }
+  },
+  "presets": {
+    "about-you": "Help me build my taste profile — ask me about my cooking preferences.",
+    "first-recipe": "Let's create my first recipe!"
+  },
+  "preferences": {
+    "title": "About you",
+    "subtitlePrefix": "Tell us about yourself to get personalized cooking recommendations, or ",
+    "takeQuiz": "take the quiz",
+    "placeholder": "• I'm vegetarian and allergic to nuts\n• I love spicy food and prefer quick 30-minute meals\n• I run 20 miles per week and sleep 7 hours nightly\n• I work from home with busy weekdays\n• I have intermediate cooking skills",
+    "charCount": "{count}/{max} characters",
+    "failedToLoad": "Failed to load profile",
+    "failedToSave": "Failed to save"
+  },
+  "recipes": {
+    "loadingRecipes": "Loading recipes...",
+    "failedToLoadRecipes": "Failed to load recipes",
+    "loadingRecipe": "Loading recipe...",
+    "failedToLoadRecipe": "Failed to load recipe",
+    "notFound": "Recipe not found",
+    "yourRecipes": "Your Recipes",
+    "search": "Search recipes...",
+    "noResults": "No recipes found",
+    "noResultsHint": "Try adjusting your search.",
+    "firstRecipeTitle": "Let's create your first recipe!",
+    "surpriseMe": "Surprise me",
+    "back": "Recipes",
+    "ingredients": "Ingredients",
+    "instructions": "Instructions",
+    "minutes": "{count} min",
+    "servings": "{count, plural, one {# serving} other {# servings}}",
+    "level": "Level {level}/10",
+    "options": "Recipe options",
+    "deleteRecipe": "Delete Recipe",
+    "delete": "Delete",
+    "recipeTab": "Recipe",
+    "assistantTab": "Assistant",
+    "add": "Add",
+    "saveToLibraryMessage": "Save \"{name}\" to my recipe library."
+  },
+  "recipeControls": {
+    "sort": "Sort: {field}",
+    "recipeProperties": "Recipe Properties",
+    "dates": "Dates",
+    "nameAsc": "Name (A-Z)",
+    "nameDesc": "Name (Z-A)",
+    "shortestDuration": "Shortest Duration",
+    "longestDuration": "Longest Duration",
+    "easiestFirst": "Easiest First",
+    "hardestFirst": "Hardest First",
+    "fewestServings": "Fewest Servings",
+    "mostServings": "Most Servings",
+    "newestFirst": "Newest First",
+    "oldestFirst": "Oldest First",
+    "field": {
+      "name": "Name",
+      "duration": "Duration",
+      "difficulty": "Difficulty",
+      "servings": "Servings",
+      "createdAt": "Created Date"
+    }
+  },
+  "tools": {
+    "searchingWeb": "Searching the web...",
+    "searched": "Searched: \"{query}\"",
+    "webSearchComplete": "Web search complete",
+    "webSearchFailed": "Web search failed",
+    "generatingSuggestion": "Generating recipe suggestion...",
+    "creatingRecipe": "Creating recipe...",
+    "recipeCreated": "Recipe \"{name}\" created successfully!",
+    "deletingRecipe": "Deleting recipe...",
+    "recipeDeleted": "Recipe deleted successfully!",
+    "retrievingRecipesMetadata": "Retrieving recipes metadata...",
+    "recipesMetadataRetrieved": "Retrieved {count, plural, one {# recipe} other {# recipes}} metadata!",
+    "updatingRecipe": "Updating recipe...",
+    "recipeUpdated": "Recipe updated successfully!",
+    "retrievingRecipe": "Retrieving recipe...",
+    "recipeRetrieved": "Recipe retrieved successfully!",
+    "updatingProfile": "Updating your profile...",
+    "profileUpdated": "Updated your profile",
+    "profileUpdateFailed": "Couldn't update your profile",
+    "executionFailed": "Tool execution failed",
+    "unknownState": "Unknown tool state"
+  }
+}

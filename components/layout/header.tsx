@@ -1,11 +1,14 @@
 "use client";
 
 import { useAuth } from "@workos-inc/authkit-nextjs/components";
+import { useTranslations } from "next-intl";
 import { HeaderLogo } from "@/components/layout/header-logo";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { LanguageSwitcher } from "@/components/layout/language-switcher";
+import { AccountMenu } from "@/components/layout/account-menu";
 import { Menu } from "lucide-react";
 import { useState } from "react";
 import {
@@ -19,15 +22,17 @@ import {
 import { routes } from "@/lib/routes";
 
 const navItems = [
-  { href: routes.home, label: "Assistant" },
-  { href: routes.recipes.all, label: "Recipes" },
-  { href: routes.preferences, label: "About you" },
-];
+  { href: routes.home, labelKey: "assistant" },
+  { href: routes.recipes.all, labelKey: "recipes" },
+  { href: routes.preferences, labelKey: "aboutYou" },
+] as const;
 
 export function Header() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  const { user, loading, signOut } = useAuth();
+  const { user, loading } = useAuth();
+  const tNav = useTranslations("nav");
+  const tAuth = useTranslations("auth");
 
   return (
     <header
@@ -54,7 +59,7 @@ export function Header() {
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >
-                {item.label}
+                {tNav(item.labelKey)}
                 {isActive && (
                   <span className="absolute left-0 right-0 bottom-0 h-0.5 bg-primary rounded-full" />
                 )}
@@ -65,21 +70,20 @@ export function Header() {
       </div>
 
       <div className="flex items-center gap-2">
+        <div className="hidden md:block">
+          <LanguageSwitcher />
+        </div>
+
         {/* Desktop: sign out / auth buttons */}
         {!loading && !user && (
           <Button asChild size="sm" className="hidden md:flex">
-            <Link href="/login">Sign In</Link>
+            <Link href="/login">{tAuth("signIn")}</Link>
           </Button>
         )}
         {!loading && user && (
-          <>
-            <span className="hidden md:block max-w-48 truncate text-sm text-muted-foreground">
-              {user.email}
-            </span>
-            <Button variant="ghost" size="sm" className="hidden md:flex" onClick={() => void signOut()}>
-              Sign Out
-            </Button>
-          </>
+          <div className="hidden md:block">
+            <AccountMenu email={user.email} />
+          </div>
         )}
 
         {/* Hamburger: mobile nav + auth */}
@@ -91,7 +95,7 @@ export function Header() {
               className="h-9 w-9 hover:bg-accent/50 md:hidden"
             >
               <Menu className="h-5 w-5" />
-              <span className="sr-only">Toggle menu</span>
+              <span className="sr-only">{tAuth("toggleMenu")}</span>
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="w-[250px] sm:w-[300px]" aria-describedby={undefined}>
@@ -114,7 +118,7 @@ export function Header() {
                           : "text-muted-foreground hover:text-foreground hover:bg-accent/50 active:bg-accent/70"
                       )}
                     >
-                      {item.label}
+                      {tNav(item.labelKey)}
                     </Link>
                   </SheetClose>
                 );
@@ -122,22 +126,20 @@ export function Header() {
             </nav>
             {!loading && user && (
               <div className="mt-4 border-t pt-4">
-                <p className="px-4 pb-2 text-xs text-muted-foreground truncate">{user.email}</p>
-                <SheetClose asChild>
-                  <button
-                    onClick={() => void signOut()}
-                    className="flex items-center h-10 w-full px-4 py-2 text-sm font-medium rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors"
-                  >
-                    Sign Out
-                  </button>
-                </SheetClose>
+                <div className="flex items-center justify-between gap-2 px-4">
+                  <AccountMenu email={user.email} align="start" />
+                  <LanguageSwitcher />
+                </div>
               </div>
             )}
             {!loading && !user && (
               <div className="mt-4 border-t pt-4 flex flex-col gap-2 px-4">
+                <div className="flex justify-end">
+                  <LanguageSwitcher />
+                </div>
                 <SheetClose asChild>
                   <Link href="/login" className="flex items-center justify-center h-9 rounded-md border text-sm font-medium transition-colors hover:bg-accent">
-                    Sign In
+                    {tAuth("signIn")}
                   </Link>
                 </SheetClose>
               </div>

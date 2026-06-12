@@ -5,6 +5,7 @@ import { useChat } from "@ai-sdk/react";
 import { type UIMessage } from "ai";
 import { v7 as uuidv7 } from "uuid";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { Chat } from "@/components/chat/chat";
 import { createAssistantTransport } from "@/components/chat/assistant-transport";
 import { triggerToolEffects } from "@/lib/ai/tools/effects";
@@ -12,18 +13,6 @@ import { queryKeys } from "@/lib/api/query-keys";
 import { routes } from "@/lib/routes";
 import { type AppContext } from "@/lib/ai/app-context";
 import { type ChatSuggestion } from "@/lib/types";
-
-// Display-only greeting shown above every chat; never sent or persisted.
-const welcomeMessage: UIMessage = {
-  id: "welcome",
-  role: "assistant",
-  parts: [
-    {
-      type: "text",
-      text: "Welcome to Vibe Cooking! How can I help you today? 🌴 ",
-    },
-  ],
-};
 
 interface AssistantChatProps {
   threadId: string;
@@ -45,15 +34,26 @@ export function AssistantChat({
   initialPrompt,
 }: AssistantChatProps) {
   const queryClient = useQueryClient();
+  const t = useTranslations("chat");
   const hasStamped = useRef(false);
   const hasAutoSent = useRef(false);
+
+  // Display-only greeting shown above every chat; never sent or persisted.
+  const welcomeMessage: UIMessage = useMemo(
+    () => ({
+      id: "welcome",
+      role: "assistant",
+      parts: [{ type: "text", text: t("welcome") }],
+    }),
+    [t]
+  );
 
   const transport = useMemo(() => createAssistantTransport(), []);
 
   const { messages, sendMessage, error, status } = useChat({
     id: threadId,
     transport,
-    messages: [welcomeMessage, ...initialMessages],
+    messages: initialMessages,
     generateId: uuidv7,
     onFinish: ({ message }) => {
       triggerToolEffects(message, queryClient);
@@ -83,9 +83,16 @@ export function AssistantChat({
     send(initialPrompt);
   }, [initialPrompt, send]);
 
+  // Greeting is display-only; prepend at render so it tracks the active locale
+  // instead of being frozen into useChat's state at mount.
+  const displayMessages = useMemo(
+    () => [welcomeMessage, ...messages],
+    [welcomeMessage, messages]
+  );
+
   return (
     <Chat
-      messages={messages}
+      messages={displayMessages}
       sendMessage={send}
       error={error}
       suggestions={suggestions}

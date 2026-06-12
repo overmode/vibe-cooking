@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useThreads } from "@/lib/api/hooks/chat-thread";
 import { type ThreadMetadata } from "@/lib/types";
 import { routes } from "@/lib/routes";
@@ -24,6 +25,7 @@ const SKELETON_WIDTHS = ["85%", "70%", "90%", "60%", "78%"];
 export function ChatHistory() {
   const { setOpenMobile } = useSidebar();
   const pathname = usePathname();
+  const t = useTranslations("chatHistory");
   const activeId = pathname.startsWith("/c/") ? pathname.split("/")[2] : null;
 
   const { data: threads, isLoading, isError } = useThreads();
@@ -50,7 +52,7 @@ export function ChatHistory() {
     return (
       <SidebarGroup>
         <SidebarGroupContent className="px-2 text-sm text-muted-foreground">
-          Couldn&apos;t load conversations.
+          {t("error")}
         </SidebarGroupContent>
       </SidebarGroup>
     );
@@ -60,7 +62,7 @@ export function ChatHistory() {
     return (
       <SidebarGroup>
         <SidebarGroupContent className="px-2 text-sm text-muted-foreground">
-          No conversations yet.
+          {t("empty")}
         </SidebarGroupContent>
       </SidebarGroup>
     );
@@ -69,8 +71,8 @@ export function ChatHistory() {
   return (
     <>
       {groupThreads(threads).map((group) => (
-        <SidebarGroup key={group.label}>
-          <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
+        <SidebarGroup key={group.labelKey}>
+          <SidebarGroupLabel>{t(group.labelKey)}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {group.threads.map((thread) => (
@@ -82,7 +84,7 @@ export function ChatHistory() {
                       onClick={() => setOpenMobile(false)}
                     >
                       <span className="truncate">
-                        {thread.title ?? "New conversation"}
+                        {thread.title ?? t("newConversation")}
                       </span>
                     </Link>
                   </SidebarMenuButton>
@@ -96,7 +98,8 @@ export function ChatHistory() {
   );
 }
 
-type ThreadGroup = { label: string; threads: ThreadMetadata[] };
+type ThreadGroupKey = "today" | "yesterday" | "previous7" | "older";
+type ThreadGroup = { labelKey: ThreadGroupKey; threads: ThreadMetadata[] };
 
 // Threads arrive sorted by updatedAt desc, so each bucket stays ordered.
 function groupThreads(threads: ThreadMetadata[]): ThreadGroup[] {
@@ -122,10 +125,12 @@ function groupThreads(threads: ThreadMetadata[]): ThreadGroup[] {
     else buckets.older.push(thread);
   }
 
-  return [
-    { label: "Today", threads: buckets.today },
-    { label: "Yesterday", threads: buckets.yesterday },
-    { label: "Previous 7 days", threads: buckets.previous7 },
-    { label: "Older", threads: buckets.older },
-  ].filter((group) => group.threads.length > 0);
+  const groups: ThreadGroup[] = [
+    { labelKey: "today", threads: buckets.today },
+    { labelKey: "yesterday", threads: buckets.yesterday },
+    { labelKey: "previous7", threads: buckets.previous7 },
+    { labelKey: "older", threads: buckets.older },
+  ];
+
+  return groups.filter((group) => group.threads.length > 0);
 }

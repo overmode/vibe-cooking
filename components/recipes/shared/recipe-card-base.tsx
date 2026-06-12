@@ -7,6 +7,7 @@ import {
 } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { Clock, Flame, Users } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { type CardDisplayMetadata } from '@/lib/types'
 
@@ -19,20 +20,21 @@ export const RecipeMetadataDescription = ({
   difficulty: number | null | undefined
   servings: number | null | undefined
 }) => {
+  const t = useTranslations('recipes')
   const items = [
     duration && (
       <span key="duration" className="flex items-center gap-1.5">
         <Clock className="h-3.5 w-3.5 opacity-80" />
-        {duration} min
+        {t('minutes', { count: duration })}
       </span>
     ),
     difficulty && (
-      <span key="difficulty">Level {difficulty}/10</span>
+      <span key="difficulty">{t('level', { level: difficulty })}</span>
     ),
     servings && (
       <span key="servings" className="flex items-center gap-1.5">
         <Users className="h-3.5 w-3.5 opacity-80" />
-        {servings} servings
+        {t('servings', { count: servings })}
       </span>
     ),
   ].filter(Boolean)
@@ -64,6 +66,7 @@ export function RecipeCardBase({
   className,
 }: RecipeCardBaseProps) {
   const { name, duration, difficulty, servings } = metadata
+  const t = useTranslations('recipes')
 
   return (
     <Link
@@ -87,13 +90,13 @@ export function RecipeCardBase({
           {duration && (
             <Badge variant="secondary" className="gap-1">
               <Clock className="h-3 w-3" />
-              {duration} min
+              {t('minutes', { count: duration })}
             </Badge>
           )}
           {difficulty && (
             <Badge variant="secondary" className="gap-1">
               <Flame className="h-3 w-3" />
-              Level {difficulty}/10
+              {t('level', { level: difficulty })}
             </Badge>
           )}
           {servings && (

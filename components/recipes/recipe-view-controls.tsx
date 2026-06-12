@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Grid3X3, List, ChevronUp, ChevronDown } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,22 +28,15 @@ export function RecipeViewControls({
   sortDirection,
   setSortDirection,
 }: RecipeViewControlsProps) {
-  // Format the sort field name for display
-  const formatSortFieldName = (field: SortField): string => {
-    switch (field) {
-      case 'createdAt':
-        return 'Created Date'
-      default:
-        return field.charAt(0).toUpperCase() + field.slice(1)
-    }
-  }
+  const t = useTranslations('recipeControls')
+  const tField = useTranslations('recipeControls.field')
 
   return (
     <div className="flex items-center gap-2">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="sm">
-            Sort: {formatSortFieldName(sortField)}
+            {t('sort', { field: tField(sortField) })}
             {sortDirection === 'asc' ? (
               <ChevronUp className="ml-2 h-4 w-4" />
             ) : (
@@ -52,7 +46,7 @@ export function RecipeViewControls({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
-            Recipe Properties
+            {t('recipeProperties')}
           </DropdownMenuLabel>
           <DropdownMenuItem
             onClick={() => {
@@ -60,7 +54,7 @@ export function RecipeViewControls({
               setSortDirection('asc')
             }}
           >
-            Name (A-Z)
+            {t('nameAsc')}
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => {
@@ -68,7 +62,7 @@ export function RecipeViewControls({
               setSortDirection('desc')
             }}
           >
-            Name (Z-A)
+            {t('nameDesc')}
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => {
@@ -76,7 +70,7 @@ export function RecipeViewControls({
               setSortDirection('asc')
             }}
           >
-            Shortest Duration
+            {t('shortestDuration')}
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => {
@@ -84,7 +78,7 @@ export function RecipeViewControls({
               setSortDirection('desc')
             }}
           >
-            Longest Duration
+            {t('longestDuration')}
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => {
@@ -92,7 +86,7 @@ export function RecipeViewControls({
               setSortDirection('asc')
             }}
           >
-            Easiest First
+            {t('easiestFirst')}
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => {
@@ -100,7 +94,7 @@ export function RecipeViewControls({
               setSortDirection('desc')
             }}
           >
-            Hardest First
+            {t('hardestFirst')}
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => {
@@ -108,7 +102,7 @@ export function RecipeViewControls({
               setSortDirection('asc')
             }}
           >
-            Fewest Servings
+            {t('fewestServings')}
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => {
@@ -116,12 +110,12 @@ export function RecipeViewControls({
               setSortDirection('desc')
             }}
           >
-            Most Servings
+            {t('mostServings')}
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />
           <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
-            Dates
+            {t('dates')}
           </DropdownMenuLabel>
 
           <DropdownMenuItem
@@ -130,7 +124,7 @@ export function RecipeViewControls({
               setSortDirection('desc')
             }}
           >
-            Newest First
+            {t('newestFirst')}
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => {
@@ -138,7 +132,7 @@ export function RecipeViewControls({
               setSortDirection('asc')
             }}
           >
-            Oldest First
+            {t('oldestFirst')}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

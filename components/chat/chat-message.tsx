@@ -1,6 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { cn } from '@/lib/utils'
 import { type UIMessage } from 'ai'
+import { useTranslations } from 'next-intl'
 import { MemoizedMarkdown } from '@/components/chat/memoized-markdown'
 import { renderToolInvocation, type ToolUIPart } from '@/lib/ai/tools/renderer'
 
@@ -28,6 +29,7 @@ export const AnimatedDots = () => {
 }
 
 export function ChatMessage({ message }: ChatMessageProps) {
+  const t = useTranslations('tools')
   const isUser = message.role === 'user'
   const isToolPart = (type: string) => type.startsWith('tool-')
   const isLoading =
@@ -67,7 +69,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
             if (part.type === 'text') {
               content = <MemoizedMarkdown content={part.text} id={message.id} />
             } else if (isTool) {
-              content = renderToolInvocation(part as unknown as ToolUIPart)
+              content = renderToolInvocation(part as unknown as ToolUIPart, t)
             }
 
             return content && message.parts ? (

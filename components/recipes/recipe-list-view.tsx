@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/table'
 import { Clock, ChevronUp, ChevronDown, Users } from 'lucide-react'
 import { type SortField, type SortDirection } from '@/components/recipes/types'
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { routes } from '@/lib/routes'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -30,6 +31,8 @@ export function RecipeListView({
   sortDirection,
 }: RecipeListViewProps) {
   const router = useRouter()
+  const t = useTranslations('recipes')
+  const tField = useTranslations('recipeControls.field')
 
   const renderSortIcon = (field: SortField) => {
     if (sortField !== field) return null
@@ -47,10 +50,10 @@ export function RecipeListView({
           <TableHeader>
             <TableRow>
               {[
-                { label: 'Name', field: 'name', width: 'w-[40%]' },
-                { label: 'Duration', field: 'duration', width: '' },
-                { label: 'Difficulty', field: 'difficulty', width: '' },
-                { label: 'Servings', field: 'servings', width: '' },
+                { field: 'name', width: 'w-[40%]' },
+                { field: 'duration', width: '' },
+                { field: 'difficulty', width: '' },
+                { field: 'servings', width: '' },
               ].map((column) => (
                 <TableHead
                   key={column.field}
@@ -61,7 +64,7 @@ export function RecipeListView({
                   onClick={() => handleSort(column.field as SortField)}
                 >
                   <div className="flex items-center py-2">
-                    {column.label}
+                    {tField(column.field as SortField)}
                     {renderSortIcon(column.field as SortField)}
                   </div>
                 </TableHead>
@@ -82,7 +85,7 @@ export function RecipeListView({
                   {recipe.duration ? (
                     <div className="flex items-center gap-1.5">
                       <Clock className="h-3.5 w-3.5 text-primary/70" />
-                      <span>{recipe.duration} min</span>
+                      <span>{t('minutes', { count: recipe.duration })}</span>
                     </div>
                   ) : (
                     <span className="text-muted-foreground/60">

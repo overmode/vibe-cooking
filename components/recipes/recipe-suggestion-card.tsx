@@ -16,6 +16,7 @@ import { MemoizedMarkdown } from "@/components/chat/memoized-markdown";
 import { useChatSend } from "@/components/chat/chat-send-context";
 import { cn } from "@/lib/utils";
 import { Clock, Flame, Plus, Users } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 function RecipeCardScrollArea({
   children,
@@ -57,6 +58,7 @@ export const RecipeSuggestionCard = ({
   id: string;
 }) => {
   const sendMessage = useChatSend();
+  const t = useTranslations("recipes");
 
   return (
     <Card className="w-full overflow-hidden shadow-sm py-3 gap-3 sm:py-6 sm:gap-6">
@@ -68,13 +70,13 @@ export const RecipeSuggestionCard = ({
           {cardData.duration && (
             <Badge variant="secondary" className="gap-1">
               <Clock className="h-3 w-3" />
-              {cardData.duration} min
+              {t("minutes", { count: cardData.duration })}
             </Badge>
           )}
           {cardData.difficulty && (
             <Badge variant="secondary" className="gap-1">
               <Flame className="h-3 w-3" />
-              Level {cardData.difficulty}/10
+              {t("level", { level: cardData.difficulty })}
             </Badge>
           )}
           {cardData.servings && (
@@ -89,8 +91,8 @@ export const RecipeSuggestionCard = ({
       <CardContent className="px-3 sm:px-6">
         <Tabs defaultValue="ingredients" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-3">
-            <TabsTrigger value="ingredients">Ingredients</TabsTrigger>
-            <TabsTrigger value="instructions">Instructions</TabsTrigger>
+            <TabsTrigger value="ingredients">{t("ingredients")}</TabsTrigger>
+            <TabsTrigger value="instructions">{t("instructions")}</TabsTrigger>
           </TabsList>
           <TabsContent value="ingredients">
             <RecipeCardScrollArea>
@@ -123,11 +125,11 @@ export const RecipeSuggestionCard = ({
           <Button
             className="w-full sm:w-auto sm:max-w-48"
             onClick={() =>
-              sendMessage(`Save "${cardData.name}" to my recipe library.`)
+              sendMessage(t("saveToLibraryMessage", { name: cardData.name }))
             }
           >
             <Plus className="h-4 w-4" />
-            Save to library
+            {t("add")}
           </Button>
         </CardFooter>
       )}

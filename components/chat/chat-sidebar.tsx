@@ -1,6 +1,7 @@
 "use client";
 
 import { PanelLeft, PenSquare } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { ChatHistory } from "@/components/chat/chat-history";
 import { routes } from "@/lib/routes";
 import {
@@ -16,6 +17,7 @@ import {
 
 export function ChatSidebar() {
   const { setOpenMobile, toggleSidebar } = useSidebar();
+  const t = useTranslations("sidebar");
 
   const startNewChat = () => {
     setOpenMobile(false);
@@ -32,15 +34,15 @@ export function ChatSidebar() {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton onClick={toggleSidebar} tooltip="Toggle sidebar">
+            <SidebarMenuButton onClick={toggleSidebar} tooltip={t("toggle")}>
               <PanelLeft className="size-4" />
-              <span className="font-medium">Collapse</span>
+              <span className="font-medium">{t("collapse")}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton tooltip="New chat" onClick={startNewChat}>
+            <SidebarMenuButton tooltip={t("newChat")} onClick={startNewChat}>
               <PenSquare className="size-4" />
-              <span className="font-medium">New chat</span>
+              <span className="font-medium">{t("newChat")}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

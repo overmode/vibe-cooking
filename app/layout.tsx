@@ -1,6 +1,8 @@
 import { type Metadata, type Viewport } from 'next'
 import { AuthKitProvider } from '@workos-inc/authkit-nextjs/components'
 import { Geist, Geist_Mono } from 'next/font/google'
+import { NextIntlClientProvider } from 'next-intl'
+import { getLocale, getTranslations } from 'next-intl/server'
 import './globals.css'
 import { Header } from '@/components/layout/header'
 import { Toaster } from 'sonner'
@@ -23,34 +25,41 @@ export const viewport: Viewport = {
   userScalable: false,
 }
 
-export const metadata: Metadata = {
-  title: 'Vibe Cooking',
-  description: 'Assistant-powered cooking app',
-  icons: {
-    icon: '/logo.svg',
-    apple: '/logo.svg',
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('metadata')
+  return {
+    title: 'Vibe Cooking',
+    description: t('description'),
+    icons: {
+      icon: '/logo.svg',
+      apple: '/logo.svg',
+    },
+  }
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const locale = await getLocale()
+
   return (
-    <html lang="en" className="h-screen">
+    <html lang={locale} className="h-screen">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground flex flex-col h-full`}
       >
-        <AuthKitProvider>
-          <QueryProvider>
-            <Header />
+        <NextIntlClientProvider>
+          <AuthKitProvider>
+            <QueryProvider>
+              <Header />
 
-            <div className="flex-1 overflow-hidden">{children}</div>
+              <div className="flex-1 overflow-hidden">{children}</div>
 
-            <Toaster position="top-center" />
-          </QueryProvider>
-        </AuthKitProvider>
+              <Toaster position="top-center" />
+            </QueryProvider>
+          </AuthKitProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   )

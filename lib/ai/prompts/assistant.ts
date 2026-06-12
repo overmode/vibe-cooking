@@ -1,5 +1,9 @@
 import { type ResolvedAppContext } from "@/lib/ai/app-context";
-import { messagePresets } from "@/lib/constants/message-presets";
+import { type Locale } from "@/i18n/locale";
+const languageNames: Record<Locale, string> = {
+  en: "English",
+  fr: "French",
+};
 
 function getContextSpecificSnippet(appContext: ResolvedAppContext): string {
   switch (appContext.kind) {
@@ -16,9 +20,11 @@ ${JSON.stringify(appContext.recipe)}`;
 export function compileAssistantPrompt({
   appContext,
   userProfile,
+  locale,
 }: {
   appContext: ResolvedAppContext;
   userProfile: string | null;
+  locale: Locale;
 }): string {
 
   return `
@@ -31,6 +37,7 @@ ${getContextSpecificSnippet(appContext)}
 ## General guidelines
 - Today's date is ${new Date().toISOString()}. Use it for the seasonality of ingredients and recipes, by default.
 - Reply in the language the user writes to you, and write recipes in that language. Use units idiomatic to that language and location when known (e.g. French → g/ml, US English → cups, UK English → g/ml).
+- The user's app interface is set to ${languageNames[locale]}. When their message doesn't make the intended language clear — a short command, a tapped suggestion/preset action, or the get-to-know-you quiz — default to ${languageNames[locale]} for your replies and recipes.
 - Recipe names MUST start with a single relevant food emoji (e.g. "🍝 Spaghetti Carbonara", "🥗 Caesar Salad"). Only omit the emoji if the user explicitly asks for none.
 - You have a web search tool available. Use it sparingly — only when the query genuinely requires current or external information (e.g. sourcing a specific ingredient, looking up a restaurant, checking a recent food trend). Do not use it for recipe creation, cooking techniques, ingredient substitutions, or anything your training already covers well. Your culinary knowledge is broad and deep; default to it.
 - When a user wants a recipe, default to action — this applies to recipe creation only, not other requests. As soon as you have enough to make a reasonable choice, generate one concrete recipe immediately; never gate it behind clarifying questions. Fill gaps with the user profile and sensible defaults (e.g. just pick "ragù alla bolognese" instead of asking bolognese-vs-napoletano). Then always close with two follow-ups: (1) offer to save it to their library, and (2) at least one action-oriented modification that refines what you just produced — "Want it more traditional?", "Swap to beef + pork?", "Stretch it to a 2h simmer?". Don't ask the user to supply parameters before you generate.
@@ -52,7 +59,7 @@ This profile is then used whenever they interact with you (since it's in your co
 
 ### When to update it
 There are a few occasions when you should update the user profile:
-- The user sends "${messagePresets["about-you"]}" — this exact message is a code emitted when they want you to build their profile. Run a laid-back get-to-know-you: ask questions covering the content suggestions above. Give them space to express themselves. Before the end of the quiz, ask them for anything they'd like you to remember.
+- The user explicitly asks you to learn their tastes or build their profile (e.g. via the "Learn my tastes" action). Run a laid-back get-to-know-you: ask questions covering the content suggestions above. Give them space to express themselves. Before the end of the quiz, ask them for anything they'd like you to remember.
 - The user, while chatting with you, explicitly states something worth remembering.
 - You notice that the user profile is not up to date / empty, or is incomplete, gently ask the user whether they'd like to update it. Be careful, you should not appear annoying nor pushy.
 

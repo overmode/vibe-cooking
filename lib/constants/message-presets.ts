@@ -1,12 +1,9 @@
 export const MESSAGE_PRESET_PARAM = "preset";
 
-export const messagePresets = {
-  "about-you": "Learn my tastes.",
-  "first-recipe": "Let's create my first recipe!",
-} as const;
+export const messagePresetIds = ["about-you", "first-recipe"] as const;
 
-export type MessagePresetId = keyof typeof messagePresets;
+export type MessagePresetId = (typeof messagePresetIds)[number];
 
 export function isMessagePresetId(id: string): id is MessagePresetId {
-  return id in messagePresets;
+  return (messagePresetIds as readonly string[]).includes(id);
 }

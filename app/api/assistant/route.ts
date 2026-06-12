@@ -20,6 +20,7 @@ import {
 import { compileAssistantPrompt } from "@/lib/ai/prompts/assistant";
 import { truncateMessagesToTokenLimit } from "@/lib/ai/truncate-messages";
 import { appContextSchema, type ResolvedAppContext } from "@/lib/ai/app-context";
+import { getLocale } from "next-intl/server";
 import { getCurrentUserId } from "@/lib/auth/get-current-user-id";
 import { DENIAL_STATUS } from "@/lib/api/denial";
 import { chatLimiter } from "@/lib/rate-limiter";
@@ -125,6 +126,7 @@ export async function POST(req: Request) {
     system: compileAssistantPrompt({
       appContext: resolvedAppContext,
       userProfile: profileRevision?.content ?? null,
+      locale: await getLocale(),
     }),
     stopWhen: stepCountIs(10),
     messages: await convertToModelMessages(modelMessages),
