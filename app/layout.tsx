@@ -23,6 +23,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
+  themeColor: "#402A12",
 };
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -30,9 +31,14 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: "Vibe Cooking",
     description: t("description"),
+    appleWebApp: {
+      capable: true,
+      title: "Vibe Cooking",
+      statusBarStyle: "default",
+    },
     icons: {
       icon: "/logo.svg",
-      apple: "/logo.svg",
+      apple: "/icons/apple-touch-icon.png",
     },
   };
 }
