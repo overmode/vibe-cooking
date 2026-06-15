@@ -1,6 +1,7 @@
 import { Badge } from '@/components/ui/badge'
 import {
   Card,
+  CardAction,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -51,18 +52,17 @@ export const RecipeMetadataDescription = ({
   )
 }
 
-
 export interface RecipeCardBaseProps {
   metadata: CardDisplayMetadata
   linkHref: string
-  actionContent?: React.ReactNode
+  actions?: React.ReactNode
   className?: string
 }
 
 export function RecipeCardBase({
   metadata,
   linkHref,
-  actionContent,
+  actions,
   className,
 }: RecipeCardBaseProps) {
   const { name, duration, difficulty, servings } = metadata
@@ -71,7 +71,7 @@ export function RecipeCardBase({
   return (
     <Link
       href={linkHref}
-      className="block rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      className="group block rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
       <Card
         className={cn(
@@ -84,6 +84,17 @@ export function RecipeCardBase({
           <CardTitle className="text-base font-semibold text-primary-text leading-snug line-clamp-2">
             {name}
           </CardTitle>
+          {actions && (
+            <CardAction
+              className="-mr-2 -mt-1 transition-opacity focus-within:opacity-100 has-[[data-state=open]]:opacity-100 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100"
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+              }}
+            >
+              {actions}
+            </CardAction>
+          )}
         </CardHeader>
 
         <CardFooter className="mt-auto flex flex-wrap gap-1.5">
@@ -106,12 +117,6 @@ export function RecipeCardBase({
             </Badge>
           )}
         </CardFooter>
-
-        {actionContent && (
-          <CardFooter>
-            {actionContent}
-          </CardFooter>
-        )}
       </Card>
     </Link>
   )
