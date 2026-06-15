@@ -16,12 +16,17 @@ concurrency:
 jobs:
   quality:
     runs-on: ubuntu-latest
+    env:
+      # prisma generate / build only read the schema; a throwaway URL is enough
+      # to satisfy the strict env() in prisma.config.ts without a live database.
+      DATABASE_URL: postgresql://user:pass@localhost:5432/db
+      DIRECT_URL: postgresql://user:pass@localhost:5432/db
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Install dependencies
