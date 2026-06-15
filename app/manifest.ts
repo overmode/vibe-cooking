@@ -15,15 +15,26 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
     background_color: "#FCEAD0",
     theme_color: "#402A12",
     icons: [
+      // Scalable vector source: Chromium renders this crisply at any install
+      // surface size. PNGs below are fallbacks for engines that ignore SVG
+      // manifest icons (e.g. iOS uses the apple-touch-icon instead).
+      {
+        src: "/logo.svg",
+        sizes: "any",
+        type: "image/svg+xml",
+        purpose: "any",
+      },
       {
         src: "/icons/icon-192.png",
         sizes: "192x192",
         type: "image/png",
+        purpose: "any",
       },
       {
         src: "/icons/icon-512.png",
         sizes: "512x512",
         type: "image/png",
+        purpose: "any",
       },
       {
         src: "/icons/maskable-512.png",
