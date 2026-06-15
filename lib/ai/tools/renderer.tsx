@@ -6,13 +6,17 @@ import {
   ToolSpinner,
   ToolError,
 } from "@/components/chat/tool-feedback";
-import { type Recipe, type RecipeMetadata, type UserProfile } from "@/lib/types";
+import {
+  type Recipe,
+  type RecipeMetadata,
+  type UserProfile,
+} from "@/lib/types";
 import { type ToolResult } from "@/lib/ai/tools/types";
 import { type CreateRecipeInput } from "@/lib/validators/recipe";
 
 export type ToolsTranslator = ReturnType<typeof useTranslations<"tools">>;
 
-export type ToolUIPart = {
+export interface ToolUIPart {
   type: `tool-${string}`;
   toolCallId: string;
   state:
@@ -26,7 +30,7 @@ export type ToolUIPart = {
   input?: unknown;
   output?: unknown;
   errorText?: string;
-};
+}
 
 type ToolRenderer = (part: ToolUIPart, t: ToolsTranslator) => React.ReactNode;
 
@@ -101,7 +105,7 @@ const renderRecipeSuggestionTool: ToolRenderer = (part, t) => {
   }
 };
 
-toolRenderers["webSearch"] = (part, t) => {
+toolRenderers.webSearch = (part, t) => {
   const query = (part.input as { query?: string } | undefined)?.query;
   switch (part.state) {
     case "input-streaming":
@@ -120,28 +124,28 @@ toolRenderers["webSearch"] = (part, t) => {
   }
 };
 
-toolRenderers["renderRecipeSuggestionTool"] = renderRecipeSuggestionTool;
-toolRenderers["createRecipeTool"] = toolMessageRenderer<Recipe>({
+toolRenderers.renderRecipeSuggestionTool = renderRecipeSuggestionTool;
+toolRenderers.createRecipeTool = toolMessageRenderer<Recipe>({
   loading: (t) => t("creatingRecipe"),
   success: (t, data) => t("recipeCreated", { name: data.name }),
 });
-toolRenderers["deleteRecipeTool"] = toolMessageRenderer<Recipe>({
+toolRenderers.deleteRecipeTool = toolMessageRenderer<Recipe>({
   loading: (t) => t("deletingRecipe"),
   success: (t) => t("recipeDeleted"),
 });
-toolRenderers["getRecipesMetadataTool"] = toolMessageRenderer<RecipeMetadata[]>({
+toolRenderers.getRecipesMetadataTool = toolMessageRenderer<RecipeMetadata[]>({
   loading: (t) => t("retrievingRecipesMetadata"),
   success: (t, data) => t("recipesMetadataRetrieved", { count: data.length }),
 });
-toolRenderers["updateRecipeTool"] = toolMessageRenderer<Recipe>({
+toolRenderers.updateRecipeTool = toolMessageRenderer<Recipe>({
   loading: (t) => t("updatingRecipe"),
   success: (t) => t("recipeUpdated"),
 });
-toolRenderers["getRecipeByIdTool"] = toolMessageRenderer<Recipe>({
+toolRenderers.getRecipeByIdTool = toolMessageRenderer<Recipe>({
   loading: (t) => t("retrievingRecipe"),
   success: (t) => t("recipeRetrieved"),
 });
-toolRenderers["updateUserProfileTool"] = (part, t) => {
+toolRenderers.updateUserProfileTool = (part, t) => {
   switch (part.state) {
     case "input-streaming":
     case "input-available":
@@ -153,7 +157,9 @@ toolRenderers["updateUserProfileTool"] = (part, t) => {
       if (!result.success) {
         return <ToolError message={result.error} />;
       }
-      return <p className="text-muted-foreground py-2">{t("profileUpdated")}</p>;
+      return (
+        <p className="text-muted-foreground py-2">{t("profileUpdated")}</p>
+      );
     }
     case "output-error":
       return <ToolError message={t("profileUpdateFailed")} />;

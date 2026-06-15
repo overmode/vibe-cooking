@@ -1,12 +1,38 @@
 import coreWebVitals from "eslint-config-next/core-web-vitals";
 import typescript from "eslint-config-next/typescript";
 import i18next from "eslint-plugin-i18next";
+import prettier from "eslint-config-prettier/flat";
+import tseslint from "typescript-eslint";
 
 const eslintConfig = [
   ...coreWebVitals,
   ...typescript,
   {
     ignores: ["generated/**", ".next/**", "node_modules/**"],
+  },
+  // Strict, type-aware rules from typescript-eslint, scoped to our own TS so
+  // config files (.mjs) aren't dragged into the type-checked program.
+  ...tseslint.configs.strictTypeChecked.map((config) => ({
+    ...config,
+    files: ["**/*.ts", "**/*.tsx"],
+    ignores: ["components/ui/**"],
+  })),
+  ...tseslint.configs.stylisticTypeChecked.map((config) => ({
+    ...config,
+    files: ["**/*.ts", "**/*.tsx"],
+    ignores: ["components/ui/**"],
+  })),
+  {
+    // Numbers and booleans in template strings (CSS `${px}`, validation bounds,
+    // media queries) are safe and idiomatic; only objects/nullish are risky.
+    files: ["**/*.ts", "**/*.tsx"],
+    ignores: ["components/ui/**"],
+    rules: {
+      "@typescript-eslint/restrict-template-expressions": [
+        "error",
+        { allowNumber: true, allowBoolean: true },
+      ],
+    },
   },
   {
     // Guard against untranslated UI copy: flag hardcoded JSX text so it can't
@@ -50,6 +76,9 @@ const eslintConfig = [
       ],
     },
   },
+  // Must stay last: disables ESLint stylistic rules that would conflict with
+  // Prettier. Prettier owns formatting; ESLint owns correctness.
+  prettier,
 ];
 
 export default eslintConfig;

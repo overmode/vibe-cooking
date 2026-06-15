@@ -19,11 +19,7 @@ export default function PreferencesPage() {
   const tCommon = useTranslations("common");
   const [draft, setDraft] = useState<string | null>(null);
 
-  const {
-    data: serverProfile,
-    isLoading,
-    isError,
-  } = useUserProfile({});
+  const { data: serverProfile, isLoading, isError } = useUserProfile({});
 
   const serverValue = serverProfile?.content ?? "";
   const isEditing = draft !== null;
@@ -33,7 +29,11 @@ export default function PreferencesPage() {
     isPending,
     isError: saveError,
   } = useUpdateUserProfile({
-    options: { onSuccess: () => setDraft(null) },
+    options: {
+      onSuccess: () => {
+        setDraft(null);
+      },
+    },
   });
 
   const value = draft ?? serverValue;
@@ -79,9 +79,15 @@ export default function PreferencesPage() {
           <Textarea
             id="preferences"
             value={value}
-            onChange={(e) => setDraft(e.target.value)}
-            onFocus={() => !isEditing && setDraft(serverValue)}
-            onBlur={() => !hasChanges && setDraft(null)}
+            onChange={(e) => {
+              setDraft(e.target.value);
+            }}
+            onFocus={() => {
+              if (!isEditing) setDraft(serverValue);
+            }}
+            onBlur={() => {
+              if (!hasChanges) setDraft(null);
+            }}
             placeholder={t("placeholder")}
             className={cn(
               "field-sizing-fixed h-full min-h-0 resize-none overflow-y-auto transition-colors",
@@ -111,14 +117,18 @@ export default function PreferencesPage() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setDraft(null)}
+                onClick={() => {
+                  setDraft(null);
+                }}
                 disabled={isPending}
               >
                 {tCommon("cancel")}
               </Button>
               <Button
                 size="sm"
-                onClick={() => mutate(value)}
+                onClick={() => {
+                  mutate(value);
+                }}
                 disabled={isPending}
               >
                 {isPending && <LoadingSpinner size="sm" />}

@@ -7,19 +7,18 @@ import {
   getLatestUserProfileRevision,
 } from "@/lib/data-access/user-profile";
 
-export const getUserProfileAction =
-  async (): Promise<UserProfile | null> => {
-    const userId = await getCurrentUserId();
-    if (!userId) {
-      handleActionError("Unauthorized", "get user profile");
-    }
-    try {
-      const revision = await getLatestUserProfileRevision({ userId });
-      return revision ? { content: revision.content } : null;
-    } catch (error) {
-      handleActionError(error, "get user profile");
-    }
-  };
+export const getUserProfileAction = async (): Promise<UserProfile | null> => {
+  const userId = await getCurrentUserId();
+  if (!userId) {
+    handleActionError("Unauthorized", "get user profile");
+  }
+  try {
+    const revision = await getLatestUserProfileRevision({ userId });
+    return revision ? { content: revision.content } : null;
+  } catch (error) {
+    handleActionError(error, "get user profile");
+  }
+};
 
 export const updateUserProfileAction = async (
   content: string,

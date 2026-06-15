@@ -1,48 +1,48 @@
-import { type Metadata, type Viewport } from 'next'
-import { AuthKitProvider } from '@workos-inc/authkit-nextjs/components'
-import { Geist, Geist_Mono } from 'next/font/google'
-import { NextIntlClientProvider } from 'next-intl'
-import { getLocale, getTranslations } from 'next-intl/server'
-import './globals.css'
-import { Header } from '@/components/layout/header'
-import { Toaster } from 'sonner'
-import { QueryProvider } from '@/components/providers/query-provider'
+import { type Metadata, type Viewport } from "next";
+import { AuthKitProvider } from "@workos-inc/authkit-nextjs/components";
+import { Geist, Geist_Mono } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getTranslations } from "next-intl/server";
+import "./globals.css";
+import { Header } from "@/components/layout/header";
+import { Toaster } from "sonner";
+import { QueryProvider } from "@/components/providers/query-provider";
 
 const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-})
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
 
 const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-})
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 
 export const viewport: Viewport = {
-  width: 'device-width',
+  width: "device-width",
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-}
+};
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations('metadata')
+  const t = await getTranslations("metadata");
   return {
-    title: 'Vibe Cooking',
-    description: t('description'),
+    title: "Vibe Cooking",
+    description: t("description"),
     icons: {
-      icon: '/logo.svg',
-      apple: '/logo.svg',
+      icon: "/logo.svg",
+      apple: "/logo.svg",
     },
-  }
+  };
 }
 
 export default async function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
-  const locale = await getLocale()
+  const locale = await getLocale();
 
   return (
     <html lang={locale} className="h-screen">
@@ -62,5 +62,5 @@ export default async function RootLayout({
         </NextIntlClientProvider>
       </body>
     </html>
-  )
+  );
 }

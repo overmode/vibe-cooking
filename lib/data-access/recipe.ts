@@ -1,8 +1,15 @@
 import prisma from "@/prisma/client";
 import { Prisma, type Author } from "@/generated/prisma/client";
-import { type CreateRecipeInput, type UpdateRecipeInput } from "@/lib/validators/recipe";
+import {
+  type CreateRecipeInput,
+  type UpdateRecipeInput,
+} from "@/lib/validators/recipe";
 import { handleDbError } from "@/lib/utils/error";
-import { type Recipe, type RecipeContent, type RecipeMetadata } from "@/lib/types";
+import {
+  type Recipe,
+  type RecipeContent,
+  type RecipeMetadata,
+} from "@/lib/types";
 
 export async function createRecipe({
   transaction,
@@ -29,7 +36,9 @@ export async function createRecipe({
       });
       return toRecipe({ ...recipe, revisions: [revision] });
     };
-    return transaction ? await create(transaction) : await prisma.$transaction(create);
+    return transaction
+      ? await create(transaction)
+      : await prisma.$transaction(create);
   } catch (error) {
     handleDbError(error, "create recipe");
   }
@@ -156,9 +165,15 @@ export async function updateRecipe({
         content,
         authoredBy,
       });
-      return toRecipe({ id: recipe.id, createdAt: recipe.createdAt, revisions: [revision] });
+      return toRecipe({
+        id: recipe.id,
+        createdAt: recipe.createdAt,
+        revisions: [revision],
+      });
     };
-    return transaction ? await update(transaction) : await prisma.$transaction(update);
+    return transaction
+      ? await update(transaction)
+      : await prisma.$transaction(update);
   } catch (error) {
     handleDbError(error, "update recipe");
   }

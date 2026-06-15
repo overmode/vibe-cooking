@@ -59,7 +59,9 @@ export function AssistantChat({
       triggerToolEffects(message, queryClient);
       // A finished turn may have created the thread or set its title; refresh
       // the sidebar list.
-      void queryClient.invalidateQueries({ queryKey: queryKeys.chatThreads.all });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.chatThreads.all,
+      });
     },
   });
 

@@ -1,0 +1,6 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": ["components/ui/**", "global.ts", "prisma.config.ts"],
+  "ignoreDependencies": ["@prisma/client", "pg", "server-only"],
+  "prisma": { "config": [] }
+}

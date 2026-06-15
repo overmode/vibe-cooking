@@ -81,7 +81,9 @@ export function ChatHistory() {
                     <Link
                       href={routes.chat(thread.id)}
                       title={thread.title ?? undefined}
-                      onClick={() => setOpenMobile(false)}
+                      onClick={() => {
+                        setOpenMobile(false);
+                      }}
                     >
                       <span className="truncate">
                         {thread.title ?? t("newConversation")}
@@ -99,7 +101,10 @@ export function ChatHistory() {
 }
 
 type ThreadGroupKey = "today" | "yesterday" | "previous7" | "older";
-type ThreadGroup = { labelKey: ThreadGroupKey; threads: ThreadMetadata[] };
+interface ThreadGroup {
+  labelKey: ThreadGroupKey;
+  threads: ThreadMetadata[];
+}
 
 // Threads arrive sorted by updatedAt desc, so each bucket stays ordered.
 function groupThreads(threads: ThreadMetadata[]): ThreadGroup[] {
@@ -110,7 +115,7 @@ function groupThreads(threads: ThreadMetadata[]): ThreadGroup[] {
     now.getDate()
   ).getTime();
 
-  const buckets: Record<string, ThreadMetadata[]> = {
+  const buckets: Record<ThreadGroupKey, ThreadMetadata[]> = {
     today: [],
     yesterday: [],
     previous7: [],

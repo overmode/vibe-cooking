@@ -1,22 +1,22 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { cn } from '@/lib/utils'
-import { type UIMessage } from 'ai'
-import { useTranslations } from 'next-intl'
-import { MemoizedMarkdown } from '@/components/chat/memoized-markdown'
-import { renderToolInvocation, type ToolUIPart } from '@/lib/ai/tools/renderer'
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { cn } from "@/lib/utils";
+import { type UIMessage } from "ai";
+import { useTranslations } from "next-intl";
+import { MemoizedMarkdown } from "@/components/chat/memoized-markdown";
+import { renderToolInvocation, type ToolUIPart } from "@/lib/ai/tools/renderer";
 
 interface ChatMessageProps {
-  message: UIMessage
+  message: UIMessage;
 }
 
-export const AnimatedDot = ({ delay }: { delay: number }) => {
+const AnimatedDot = ({ delay }: { delay: number }) => {
   return (
     <span
       className="inline-block w-2 h-2 bg-primary rounded-full opacity-75 animate-pulse"
-      style={{ animationDuration: '1s', animationDelay: `${delay}ms` }}
+      style={{ animationDuration: "1s", animationDelay: `${delay}ms` }}
     ></span>
-  )
-}
+  );
+};
 
 export const AnimatedDots = () => {
   return (
@@ -25,26 +25,25 @@ export const AnimatedDots = () => {
       <AnimatedDot delay={300} />
       <AnimatedDot delay={600} />
     </div>
-  )
-}
+  );
+};
 
 export function ChatMessage({ message }: ChatMessageProps) {
-  const t = useTranslations('tools')
-  const isUser = message.role === 'user'
-  const isToolPart = (type: string) => type.startsWith('tool-')
+  const t = useTranslations("tools");
+  const isUser = message.role === "user";
+  const isToolPart = (type: string) => type.startsWith("tool-");
   const isLoading =
-    !message.parts ||
     message.parts.length === 0 ||
     message.parts.every(
-      (part) => part.type !== 'text' && !isToolPart(part.type)
-    )
+      (part) => part.type !== "text" && !isToolPart(part.type)
+    );
 
   return (
     <div className="flex w-full mt-4">
       <div
         className={cn(
-          'flex w-full items-start gap-3',
-          isUser ? 'ml-auto max-w-[80%]' : 'max-w-[95%]'
+          "flex w-full items-start gap-3",
+          isUser ? "ml-auto max-w-[80%]" : "max-w-[95%]"
         )}
       >
         {!isUser && (
@@ -62,34 +61,36 @@ export function ChatMessage({ message }: ChatMessageProps) {
               <AnimatedDots />
             </div>
           )}
-          {message.parts?.map((part, index) => {
-            let content = null
-            const isTool = isToolPart(part.type)
+          {message.parts.map((part, index) => {
+            let content = null;
+            const isTool = isToolPart(part.type);
 
-            if (part.type === 'text') {
-              content = <MemoizedMarkdown content={part.text} id={message.id} />
+            if (part.type === "text") {
+              content = (
+                <MemoizedMarkdown content={part.text} id={message.id} />
+              );
             } else if (isTool) {
-              content = renderToolInvocation(part as unknown as ToolUIPart, t)
+              content = renderToolInvocation(part as unknown as ToolUIPart, t);
             }
 
-            return content && message.parts ? (
+            return content ? (
               <div
                 key={index}
                 className={cn(
-                  'rounded-lg text-sm',
+                  "rounded-lg text-sm",
                   isUser
-                    ? 'bg-primary text-primary-foreground ml-auto w-fit px-4 py-2'
+                    ? "bg-primary text-primary-foreground ml-auto w-fit px-4 py-2"
                     : isTool
-                    ? 'w-full'
-                    : 'bg-muted w-fit px-4 py-2 prose prose-sm dark:prose-invert max-w-none'
+                      ? "w-full"
+                      : "bg-muted w-fit px-4 py-2 prose prose-sm dark:prose-invert max-w-none"
                 )}
               >
                 {content}
               </div>
-            ) : null
+            ) : null;
           })}
         </div>
       </div>
     </div>
-  )
+  );
 }

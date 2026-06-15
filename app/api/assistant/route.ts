@@ -19,7 +19,10 @@ import {
 } from "@/lib/ai/tools/tools";
 import { compileAssistantPrompt } from "@/lib/ai/prompts/assistant";
 import { truncateMessagesToTokenLimit } from "@/lib/ai/truncate-messages";
-import { appContextSchema, type ResolvedAppContext } from "@/lib/ai/app-context";
+import {
+  appContextSchema,
+  type ResolvedAppContext,
+} from "@/lib/ai/app-context";
 import { getLocale } from "next-intl/server";
 import { getCurrentUserId } from "@/lib/auth/get-current-user-id";
 import { DENIAL_STATUS } from "@/lib/api/denial";
@@ -53,10 +56,13 @@ export async function POST(req: Request) {
 
   // Validate the inbound turn (SDK schema) and require a user role.
   const validation = await safeValidateUIMessages({ messages: [body.message] });
-  if (!validation.success || validation.data[0].role !== "user") {
+  if (!validation.success) {
     return new Response("Invalid message", { status: 400 });
   }
   const [message] = validation.data;
+  if (message?.role !== "user") {
+    return new Response("Invalid message", { status: 400 });
+  }
 
   const recipeId =
     appContext.kind === "recipeView" ? appContext.recipeId : null;
@@ -114,7 +120,12 @@ export async function POST(req: Request) {
   // turn we can't store must fail loudly (500) rather than diverge. Retries
   // upsert on the stable id.
   try {
-    await saveThreadMessages({ userId, threadId, recipeId, messages: [message] });
+    await saveThreadMessages({
+      userId,
+      threadId,
+      recipeId,
+      messages: [message],
+    });
   } catch (error) {
     console.error("[assistant] failed to persist user message", error);
     return new Response("Failed to save message", { status: 500 });

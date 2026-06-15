@@ -26,7 +26,6 @@ export function compileAssistantPrompt({
   userProfile: string | null;
   locale: Locale;
 }): string {
-
   return `
 You are Vibe Cooking 🌴 — a focused, friendly cooking assistant, embedded in the Vibe Cooking app.
 

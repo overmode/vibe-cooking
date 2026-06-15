@@ -1,21 +1,21 @@
-import Image from 'next/image'
+import Image from "next/image";
 
 const illustrations = {
-  excitement: '/illustrations/excitement.svg',
-  'x-eyes': '/illustrations/x-eyes.svg',
-  friendly: '/illustrations/friendly.svg',
-} as const
+  excitement: "/illustrations/excitement.svg",
+  "x-eyes": "/illustrations/x-eyes.svg",
+  friendly: "/illustrations/friendly.svg",
+} as const;
 
-export type MascotExpression = keyof typeof illustrations
+export type MascotExpression = keyof typeof illustrations;
 
 export function MascotIllustration({
   expression,
   className,
   priority = false,
 }: {
-  expression: MascotExpression
-  className?: string
-  priority?: boolean
+  expression: MascotExpression;
+  className?: string;
+  priority?: boolean;
 }) {
   return (
     <Image
@@ -26,7 +26,7 @@ export function MascotIllustration({
       unoptimized
       priority={priority}
       aria-hidden
-      className={className ?? 'size-24 opacity-90'}
+      className={className ?? "size-24 opacity-90"}
     />
-  )
+  );
 }

@@ -2,7 +2,7 @@ import type { UIMessage } from "ai";
 
 export function truncateMessagesToTokenLimit(
   messages: UIMessage[],
-  maxTokens: number,
+  maxTokens: number
 ): UIMessage[] {
   if (messages.length === 0) {
     return messages;
@@ -13,6 +13,7 @@ export function truncateMessagesToTokenLimit(
 
   for (let i = messages.length - 1; i >= 0; i--) {
     const message = messages[i];
+    if (!message) continue;
     const messageTokens = estimateUIMessageTokens(message);
     if (totalTokens + messageTokens > maxTokens) {
       if (kept.length === 0) {
@@ -29,7 +30,7 @@ export function truncateMessagesToTokenLimit(
 
 function estimateUIMessageTokens(message: UIMessage): number {
   let total = roughTokenCount(message.role);
-  for (const part of message.parts ?? []) {
+  for (const part of message.parts) {
     if (part.type === "text") {
       total += roughTokenCount(part.text);
     } else {

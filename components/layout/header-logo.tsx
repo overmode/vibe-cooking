@@ -15,7 +15,9 @@ export function HeaderLogo() {
           className="size-9"
         />
         {/* eslint-disable-next-line i18next/no-literal-string -- brand name, never translated */}
-        <span className="font-medium text-xl text-foreground">Vibe Cooking</span>
+        <span className="font-medium text-xl text-foreground">
+          Vibe Cooking
+        </span>
       </div>
     </Link>
   );

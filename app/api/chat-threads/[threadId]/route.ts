@@ -3,7 +3,7 @@ import { DENIAL_STATUS } from "@/lib/api/denial";
 import { type NextRequest, NextResponse } from "next/server";
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ threadId: string }> }
 ) {
   const { threadId } = await params;

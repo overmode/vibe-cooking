@@ -1,28 +1,28 @@
 // TODO: Add pino logging, sentry monitoring and error tracking
 
 export function handleDbError(error: unknown, context: string): never {
-  console.error(`[DB] ${context}`, { error })
+  console.error(`[DB] ${context}`, { error });
   throw new Error(
     `Failed to ${context.toLowerCase()}: ${
-      error instanceof Error ? error.message : `${error}`
+      error instanceof Error ? error.message : String(error)
     }`
-  )
+  );
 }
 
 export function handleActionError(error: unknown, context: string): never {
-  console.error(`[ACTION] ${context}`, { error })
+  console.error(`[ACTION] ${context}`, { error });
   throw new Error(
     `Failed to ${context.toLowerCase()}: ${
-      error instanceof Error ? error.message : `${error}`
+      error instanceof Error ? error.message : String(error)
     }`
-  )
+  );
 }
 
 export function handleApiError(error: unknown, context: string): never {
-  console.error(`[API] ${context}`, { error })
+  console.error(`[API] ${context}`, { error });
   throw new Error(
     `Failed to ${context.toLowerCase()}: ${
-      error instanceof Error ? error.message : `${error}`
+      error instanceof Error ? error.message : String(error)
     }`
-  )
+  );
 }

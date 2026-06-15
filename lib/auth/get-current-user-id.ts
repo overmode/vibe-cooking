@@ -1,7 +1,7 @@
-import { withAuth } from '@workos-inc/authkit-nextjs'
+import { withAuth } from "@workos-inc/authkit-nextjs";
 
 export async function getCurrentUserId() {
-  const { user } = await withAuth()
+  const { user } = await withAuth();
 
-  return user?.id ?? null
+  return user?.id ?? null;
 }

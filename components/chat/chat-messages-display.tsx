@@ -1,17 +1,17 @@
-import { type UIMessage } from 'ai'
-import { AnimatedDots, ChatMessage } from './chat-message'
-import { useTranslations } from 'next-intl'
-import { useEffect, useRef } from 'react'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { AlertCircle } from 'lucide-react'
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert'
-import { MAX_MESSAGES_PER_DAY } from '@/lib/constants/app_validation'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { type UIMessage } from "ai";
+import { AnimatedDots, ChatMessage } from "./chat-message";
+import { useTranslations } from "next-intl";
+import { useEffect, useRef } from "react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { AlertCircle } from "lucide-react";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { MAX_MESSAGES_PER_DAY } from "@/lib/constants/app_validation";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface ChatMessagesDisplayProps {
-  messages: UIMessage[]
-  error?: Error
-  isWaiting: boolean
+  messages: UIMessage[];
+  error?: Error;
+  isWaiting: boolean;
 }
 
 export function ChatMessagesDisplay({
@@ -19,11 +19,11 @@ export function ChatMessagesDisplay({
   error,
   isWaiting,
 }: ChatMessagesDisplayProps) {
-  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView()
-  }, [messages, isWaiting])
+    messagesEndRef.current?.scrollIntoView();
+  }, [messages, isWaiting]);
 
   return (
     <ScrollArea className="h-full">
@@ -53,20 +53,20 @@ export function ChatMessagesDisplay({
         <div ref={messagesEndRef} />
       </div>
     </ScrollArea>
-  )
+  );
 }
 
 function ErrorMessage({ error }: { error: Error }) {
-  const t = useTranslations('chat')
+  const t = useTranslations("chat");
   return (
     <Alert variant="destructive" className="my-4 animate-in fade-in">
       <AlertCircle className="h-5 w-5" />
-      <AlertTitle>{t('errorTitle')}</AlertTitle>
+      <AlertTitle>{t("errorTitle")}</AlertTitle>
       <AlertDescription>
-        {error.message === 'Rate Limit Exceeded'
-          ? t('rateLimit', { max: MAX_MESSAGES_PER_DAY })
-          : error.message || t('genericError')}
+        {error.message === "Rate Limit Exceeded"
+          ? t("rateLimit", { max: MAX_MESSAGES_PER_DAY })
+          : error.message || t("genericError")}
       </AlertDescription>
     </Alert>
-  )
+  );
 }
