@@ -4,8 +4,11 @@ import {
 } from "@/lib/actions/user-profile";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { MAX_USER_PROFILE_LENGTH } from "@/lib/constants/app_validation";
 
-const updateProfileSchema = z.object({ content: z.string() });
+const updateProfileSchema = z.object({
+  content: z.string().max(MAX_USER_PROFILE_LENGTH),
+});
 
 export async function GET() {
   const profile = await getUserProfileAction();
