@@ -37,7 +37,8 @@ export async function saveThreadMessages({
         // Assistant turns can finish empty (aborted/errored stream); they carry
         // nothing and break the read-side validator. User parts are guaranteed
         // upstream, so an empty one there would be a real bug — don't mask it.
-        if (role === MessageRole.ASSISTANT && message.parts.length === 0) continue;
+        if (role === MessageRole.ASSISTANT && message.parts.length === 0)
+          continue;
         // Parts are JSON-serializable but the AI SDK union isn't structurally
         // InputJsonValue (optional undefineds), so assert at this one boundary.
         const parts = message.parts as Prisma.InputJsonValue;

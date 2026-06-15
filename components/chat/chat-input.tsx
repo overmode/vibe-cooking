@@ -1,20 +1,20 @@
-import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
-import { SendHorizontal } from 'lucide-react'
-import { toast } from 'sonner'
-import { useTranslations } from 'next-intl'
-import { useEffect, useState } from 'react'
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { SendHorizontal } from "lucide-react";
+import { toast } from "sonner";
+import { useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
 import {
   MAX_USER_MESSAGE_LENGTH,
   MESSAGE_COOLDOWN_DURATION,
   MIN_USER_MESSAGE_LENGTH,
-} from '@/lib/constants/app_validation'
+} from "@/lib/constants/app_validation";
 
 interface ChatInputProps {
-  input: string
-  setInput: (input: string) => void
-  onSend: (text: string) => void
-  maxLength?: number
+  input: string;
+  setInput: (input: string) => void;
+  onSend: (text: string) => void;
+  maxLength?: number;
 }
 
 export function ChatInput({
@@ -23,65 +23,67 @@ export function ChatInput({
   onSend,
   maxLength = MAX_USER_MESSAGE_LENGTH,
 }: ChatInputProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [cooldown, setCooldown] = useState(false)
-  const t = useTranslations('chat')
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [cooldown, setCooldown] = useState(false);
+  const t = useTranslations("chat");
 
   useEffect(() => {
-    if (cooldown) {
-      const timer = setTimeout(
-        () => setCooldown(false),
-        MESSAGE_COOLDOWN_DURATION
-      )
-      return () => clearTimeout(timer)
-    }
-  }, [cooldown])
+    if (!cooldown) return;
+    const timer = setTimeout(() => {
+      setCooldown(false);
+    }, MESSAGE_COOLDOWN_DURATION);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [cooldown]);
 
   const submit = () => {
     if (input.length > maxLength) {
-      toast.error(t('messageTooLong', { max: maxLength }))
-      return
+      toast.error(t("messageTooLong", { max: maxLength }));
+      return;
     }
 
     if (input.length < MIN_USER_MESSAGE_LENGTH) {
-      toast.error(t('messageTooShort', { min: MIN_USER_MESSAGE_LENGTH }))
-      return
+      toast.error(t("messageTooShort", { min: MIN_USER_MESSAGE_LENGTH }));
+      return;
     }
 
     if (cooldown || isSubmitting || input.trim().length === 0) {
-      return
+      return;
     }
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
 
     try {
-      onSend(input)
-      setInput('')
-      setCooldown(true)
+      onSend(input);
+      setInput("");
+      setCooldown(true);
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      submit()
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      submit();
     }
-  }
+  };
 
   const handleFormSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    submit()
-  }
+    e.preventDefault();
+    submit();
+  };
 
   return (
     <form onSubmit={handleFormSubmit} className="px-4 pb-4">
       <div className="flex gap-2 sm:gap-3 items-end">
         <Textarea
-          placeholder={t('askAnything')}
+          placeholder={t("askAnything")}
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={(e) => {
+            setInput(e.target.value);
+          }}
           onKeyDown={handleKeyDown}
           className="min-h-10 sm:min-h-14 w-full max-h-48 resize-none"
           rows={1}
@@ -95,11 +97,11 @@ export function ChatInput({
         >
           <SendHorizontal
             className={`h-4 w-4 sm:h-5 sm:w-5 ${
-              isSubmitting || cooldown ? 'opacity-50' : ''
+              isSubmitting || cooldown ? "opacity-50" : ""
             }`}
           />
         </Button>
       </div>
     </form>
-  )
+  );
 }

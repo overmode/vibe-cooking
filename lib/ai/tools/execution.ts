@@ -111,27 +111,35 @@ export const updateRecipeExecute = async (
 type RenderRecipeSuggestionResult = ToolRawResult<
   typeof renderRecipeSuggestionDefinition
 >;
-export const renderRecipeSuggestionExecute = async (): Promise<
+export const renderRecipeSuggestionExecute = (): Promise<
   ToolResult<RenderRecipeSuggestionResult>
 > => {
-  return { success: true, data: "Recipe suggestion rendered successfully." };
+  return Promise.resolve({
+    success: true,
+    data: "Recipe suggestion rendered successfully.",
+  });
 };
 
-type UpdateUserProfileParams = ToolParameters<typeof updateUserProfileDefinition>;
-type UpdateUserProfileResult = ToolRawResult<typeof updateUserProfileDefinition>;
+type UpdateUserProfileParams = ToolParameters<
+  typeof updateUserProfileDefinition
+>;
+type UpdateUserProfileResult = ToolRawResult<
+  typeof updateUserProfileDefinition
+>;
 export const updateUserProfileExecute = async (
   parameters: UpdateUserProfileParams
 ): Promise<ToolResult<UpdateUserProfileResult>> => {
   try {
-    const profile = await updateUserProfileAction(parameters.profile, "ASSISTANT");
+    const profile = await updateUserProfileAction(
+      parameters.profile,
+      "ASSISTANT"
+    );
     return { success: true, data: profile };
   } catch (error) {
     return {
       success: false,
       error:
-        error instanceof Error
-          ? error.message
-          : "Error updating user profile",
+        error instanceof Error ? error.message : "Error updating user profile",
     };
   }
 };

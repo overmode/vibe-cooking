@@ -1,5 +1,5 @@
 // lib/validators/recipe.ts
-import { z } from 'zod'
+import { z } from "zod";
 import {
   MAX_NAME_LENGTH,
   MIN_NAME_LENGTH,
@@ -15,13 +15,15 @@ import {
   MIN_INSTRUCTIONS_LENGTH,
   MAX_INSTRUCTIONS_LENGTH,
   MAX_INGREDIENTS,
-} from '@/lib/constants/models_validation'
+} from "@/lib/constants/models_validation";
 
 export const createRecipeInputSchema = z
   .object({
     name: z
       .string()
-      .describe('The name of the recipe. MUST start with a single relevant food emoji (e.g. "🍝 Spaghetti Carbonara"), unless the user explicitly asks for no emoji.')
+      .describe(
+        'The name of the recipe. MUST start with a single relevant food emoji (e.g. "🍝 Spaghetti Carbonara"), unless the user explicitly asks for no emoji.'
+      )
       .min(MIN_NAME_LENGTH, {
         message: `Name must be at least ${MIN_NAME_LENGTH} characters`,
       })
@@ -30,7 +32,7 @@ export const createRecipeInputSchema = z
       }),
     servings: z
       .number()
-      .describe('The number of servings the recipe makes')
+      .describe("The number of servings the recipe makes")
       .min(MIN_SERVINGS, {
         message: `Servings must be at least ${MIN_SERVINGS}`,
       })
@@ -93,14 +95,14 @@ export const createRecipeInputSchema = z
       })
       .optional(),
   })
-  .strict()
+  .strict();
 
 export const updateRecipeInputSchema = createRecipeInputSchema
   .partial()
   .extend({
-    id: z.string().describe('The ID of the recipe to update'),
+    id: z.string().describe("The ID of the recipe to update"),
   })
-  .strict()
+  .strict();
 
-export type CreateRecipeInput = z.infer<typeof createRecipeInputSchema>
-export type UpdateRecipeInput = z.infer<typeof updateRecipeInputSchema>
+export type CreateRecipeInput = z.infer<typeof createRecipeInputSchema>;
+export type UpdateRecipeInput = z.infer<typeof updateRecipeInputSchema>;

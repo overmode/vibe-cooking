@@ -98,7 +98,11 @@ export function Header() {
               <span className="sr-only">{tAuth("toggleMenu")}</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-[250px] sm:w-[300px]" aria-describedby={undefined}>
+          <SheetContent
+            side="left"
+            className="w-[250px] sm:w-[300px]"
+            aria-describedby={undefined}
+          >
             <SheetHeader className="pb-4">
               <SheetTitle>
                 <HeaderLogo />
@@ -138,7 +142,10 @@ export function Header() {
                   <LanguageSwitcher />
                 </div>
                 <SheetClose asChild>
-                  <Link href="/login" className="flex items-center justify-center h-9 rounded-md border text-sm font-medium transition-colors hover:bg-accent">
+                  <Link
+                    href="/login"
+                    className="flex items-center justify-center h-9 rounded-md border text-sm font-medium transition-colors hover:bg-accent"
+                  >
                     {tAuth("signIn")}
                   </Link>
                 </SheetClose>

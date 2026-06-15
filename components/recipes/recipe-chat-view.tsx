@@ -74,7 +74,7 @@ export function RecipeChatView({ recipe }: RecipeChatViewProps) {
 
       // Detect recipe deletion and navigate back
       if (
-        message.parts?.some(
+        message.parts.some(
           (part) =>
             part.type === "tool-deleteRecipeTool" &&
             "state" in part &&
@@ -119,7 +119,9 @@ export function RecipeChatView({ recipe }: RecipeChatViewProps) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-32">
         <DropdownMenuItem
-          onClick={() => setShowDeleteDialog(true)}
+          onClick={() => {
+            setShowDeleteDialog(true);
+          }}
           className="text-muted-foreground"
         >
           <Trash2 />
@@ -139,7 +141,7 @@ export function RecipeChatView({ recipe }: RecipeChatViewProps) {
         error={error}
         contentTabLabel={t("recipeTab")}
         chatTabLabel={t("assistantTab")}
-        isWaiting={status === 'submitted'}
+        isWaiting={status === "submitted"}
         suggestions={suggestions}
       />
 

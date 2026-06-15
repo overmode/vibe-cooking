@@ -1,8 +1,8 @@
-'use client'
+"use client";
 
-import { type UseMutationResult } from '@tanstack/react-query'
-import { Loader2, AlertTriangle } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { type UseMutationResult } from "@tanstack/react-query";
+import { Loader2, AlertTriangle } from "lucide-react";
+import { useTranslations } from "next-intl";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -12,15 +12,15 @@ import {
   AlertDialogFooter,
   AlertDialogCancel,
   AlertDialogAction,
-} from '@/components/ui/alert-dialog'
-import { useEffect } from 'react'
+} from "@/components/ui/alert-dialog";
+import { useEffect } from "react";
 
 interface DeleteConfirmationDialogProps {
-  title: string
-  itemName: string
-  deleteMutation: UseMutationResult<unknown, Error, void, unknown>
-  open: boolean
-  onOpenChange: (open: boolean) => void
+  title: string;
+  itemName: string;
+  deleteMutation: UseMutationResult<unknown, Error, void>;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
 export function DeleteConfirmationDialog({
@@ -30,30 +30,30 @@ export function DeleteConfirmationDialog({
   open,
   onOpenChange,
 }: DeleteConfirmationDialogProps) {
-  const t = useTranslations('common')
+  const t = useTranslations("common");
 
   useEffect(() => {
-    if (deleteMutation.isPending && open) {
-      const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-        e.preventDefault()
-      }
+    if (!deleteMutation.isPending || !open) return;
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+    };
 
-      window.addEventListener('beforeunload', handleBeforeUnload)
-      return () =>
-        window.removeEventListener('beforeunload', handleBeforeUnload)
-    }
-  }, [deleteMutation.isPending, open])
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [deleteMutation.isPending, open]);
 
   // Handle dialog close attempts
   const handleOpenChange = (newOpenState: boolean) => {
     // Prevent closing the dialog if deletion is in progress
     if (deleteMutation.isPending && !newOpenState) {
-      return
+      return;
     }
 
     // Otherwise allow normal open/close behavior
-    onOpenChange(newOpenState)
-  }
+    onOpenChange(newOpenState);
+  };
 
   return (
     <AlertDialog open={open} onOpenChange={handleOpenChange}>
@@ -66,32 +66,38 @@ export function DeleteConfirmationDialog({
             {title}
           </AlertDialogTitle>
           <AlertDialogDescription className="text-center">
-            {t.rich('deleteConfirm', {
+            {t.rich("deleteConfirm", {
               name: () => (
-                <span className="font-medium text-primary-text">{itemName}</span>
+                <span className="font-medium text-primary-text">
+                  {itemName}
+                </span>
               ),
             })}
             <br />
-            {t('deleteUndo')}
+            {t("deleteUndo")}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="sm:justify-center gap-3 mt-2">
-          <AlertDialogCancel className="border-2">{t('cancel')}</AlertDialogCancel>
+          <AlertDialogCancel className="border-2">
+            {t("cancel")}
+          </AlertDialogCancel>
           <AlertDialogAction
-            onClick={() => deleteMutation.mutate()}
+            onClick={() => {
+              deleteMutation.mutate();
+            }}
             disabled={deleteMutation.isPending}
           >
             {deleteMutation.isPending ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                {t('deleting')}{' '}
+                {t("deleting")}{" "}
               </>
             ) : (
-              t('delete')
+              t("delete")
             )}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  )
+  );
 }

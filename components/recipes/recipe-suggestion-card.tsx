@@ -33,7 +33,9 @@ function RecipeCardScrollArea({
     if (scrollTimeoutRef.current) {
       clearTimeout(scrollTimeoutRef.current);
     }
-    scrollTimeoutRef.current = setTimeout(() => setIsScrolling(false), 600);
+    scrollTimeoutRef.current = setTimeout(() => {
+      setIsScrolling(false);
+    }, 600);
   };
 
   return (
@@ -42,7 +44,7 @@ function RecipeCardScrollArea({
       className={cn(
         "overflow-y-auto pr-1 scrollbar-fade max-h-52 sm:max-h-64",
         isScrolling && "is-scrolling",
-        className,
+        className
       )}
     >
       {children}
@@ -124,9 +126,9 @@ export const RecipeSuggestionCard = ({
         <CardFooter className="px-3 sm:px-6 pt-0 sm:justify-end">
           <Button
             className="w-full sm:w-auto sm:max-w-48"
-            onClick={() =>
-              sendMessage(t("saveToLibraryMessage", { name: cardData.name }))
-            }
+            onClick={() => {
+              sendMessage(t("saveToLibraryMessage", { name: cardData.name }));
+            }}
           >
             <Plus className="h-4 w-4" />
             {t("add")}

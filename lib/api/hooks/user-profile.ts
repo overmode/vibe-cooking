@@ -12,10 +12,7 @@ import { queryKeys } from "@/lib/api/query-keys";
 export const useUserProfile = ({
   options,
 }: {
-  options?: Omit<
-    UseQueryOptions<UserProfile | null, Error>,
-    "queryKey" | "queryFn"
-  >;
+  options?: Omit<UseQueryOptions<UserProfile | null>, "queryKey" | "queryFn">;
 }) => {
   return useQuery({
     ...options,

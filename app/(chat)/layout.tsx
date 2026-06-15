@@ -1,6 +1,10 @@
 import { type ReactNode } from "react";
 import { ChatSidebar } from "@/components/chat/chat-sidebar";
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 
 export default function ChatLayout({ children }: { children: ReactNode }) {
   // Override the provider's min-h-svh: it lives below the 64px header, inside a

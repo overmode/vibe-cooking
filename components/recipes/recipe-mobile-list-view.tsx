@@ -1,9 +1,9 @@
-import { type RecipeMetadata } from '@/lib/types'
-import { routes } from '@/lib/routes'
-import Link from 'next/link'
+import { type RecipeMetadata } from "@/lib/types";
+import { routes } from "@/lib/routes";
+import Link from "next/link";
 
 interface RecipeMobileListViewProps {
-  recipes: RecipeMetadata[]
+  recipes: RecipeMetadata[];
 }
 
 export function RecipeMobileListView({ recipes }: RecipeMobileListViewProps) {
@@ -21,5 +21,5 @@ export function RecipeMobileListView({ recipes }: RecipeMobileListViewProps) {
         </Link>
       ))}
     </div>
-  )
+  );
 }

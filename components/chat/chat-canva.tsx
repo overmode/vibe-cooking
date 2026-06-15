@@ -1,25 +1,25 @@
-'use client'
+"use client";
 
-import { type ReactNode, useState } from 'react'
-import { type UIMessage } from 'ai'
-import { type ChatSuggestion } from '@/lib/types'
-import { Chat } from './chat'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Button } from '@/components/ui/button'
-import { ChevronLeft } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { type ReactNode, useState } from "react";
+import { type UIMessage } from "ai";
+import { type ChatSuggestion } from "@/lib/types";
+import { Chat } from "./chat";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface ChatCanvaProps {
-  contentNode: ReactNode
-  messages: UIMessage[]
-  sendMessage: (text: string) => void
-  error?: Error | undefined
-  contentTabLabel: string
-  chatTabLabel?: string
-  contentActions?: ReactNode
-  onGoBack?: () => void
-  isWaiting: boolean
-  suggestions?: ChatSuggestion[]
+  contentNode: ReactNode;
+  messages: UIMessage[];
+  sendMessage: (text: string) => void;
+  error?: Error | undefined;
+  contentTabLabel: string;
+  chatTabLabel?: string;
+  contentActions?: ReactNode;
+  onGoBack?: () => void;
+  isWaiting: boolean;
+  suggestions?: ChatSuggestion[];
 }
 
 export function ChatCanva({
@@ -28,22 +28,22 @@ export function ChatCanva({
   sendMessage,
   error,
   contentTabLabel,
-  chatTabLabel = 'Assistant',
+  chatTabLabel = "Assistant",
   contentActions,
   onGoBack,
   isWaiting,
   suggestions,
 }: ChatCanvaProps) {
-  const router = useRouter()
-  const [activeTab, setActiveTab] = useState<string>('content')
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState<string>("content");
 
   const handleGoBack = () => {
     if (onGoBack) {
-      onGoBack()
+      onGoBack();
     } else {
-      router.back()
+      router.back();
     }
-  }
+  };
 
   return (
     <div className="flex flex-col h-full">
@@ -112,5 +112,5 @@ export function ChatCanva({
         </Tabs>
       </div>
     </div>
-  )
+  );
 }

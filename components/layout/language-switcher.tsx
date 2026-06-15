@@ -46,7 +46,9 @@ export function LanguageSwitcher() {
         {locales.map((cur) => (
           <DropdownMenuItem
             key={cur}
-            onClick={() => onSelect(cur)}
+            onClick={() => {
+              onSelect(cur);
+            }}
             className={cn(
               "justify-center",
               cur === locale && "font-medium text-foreground"

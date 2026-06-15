@@ -2,7 +2,11 @@ import { describe, expect, it } from "vitest";
 import type { UIMessage } from "ai";
 import { truncateMessagesToTokenLimit } from "./truncate-messages";
 
-function textMessage(id: string, role: UIMessage["role"], text: string): UIMessage {
+function textMessage(
+  id: string,
+  role: UIMessage["role"],
+  text: string
+): UIMessage {
   return { id, role, parts: [{ type: "text", text }] };
 }
 
@@ -60,7 +64,7 @@ describe("truncateMessagesToTokenLimit", () => {
       messages[1],
     ]);
     expect(
-      truncateMessagesToTokenLimit(messages, toolTokens + thanksTokens),
+      truncateMessagesToTokenLimit(messages, toolTokens + thanksTokens)
     ).toEqual(messages);
   });
 });

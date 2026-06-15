@@ -4,7 +4,12 @@ import {
   updateRecipeInputSchema,
 } from "@/lib/validators/recipe";
 import { defineTool } from "@/lib/ai/tools/types";
-import { type Recipe, type RecipeMetadata, type UserProfile, asTypedSchema } from "@/lib/types";
+import {
+  type Recipe,
+  type RecipeMetadata,
+  type UserProfile,
+  asTypedSchema,
+} from "@/lib/types";
 import { MAX_USER_PROFILE_LENGTH } from "@/lib/constants/app_validation";
 
 export const getRecipesMetadataDefinition = defineTool({
@@ -49,7 +54,9 @@ export const updateUserProfileDefinition = defineTool({
     profile: z
       .string()
       .max(MAX_USER_PROFILE_LENGTH)
-      .describe("The full user profile text, written in first person as if the user were writing naturally (e.g. \"I live in Paris and I'm vegetarian...\")"),
+      .describe(
+        'The full user profile text, written in first person as if the user were writing naturally (e.g. "I live in Paris and I\'m vegetarian...")'
+      ),
   }),
   result: asTypedSchema<UserProfile>(),
 });

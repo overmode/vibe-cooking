@@ -1,8 +1,8 @@
-import { Check, X } from 'lucide-react'
+import { Check, X } from "lucide-react";
 
-type ToolShellProps = {
-  icon: React.ReactNode
-  message: string
+interface ToolShellProps {
+  icon: React.ReactNode;
+  message: string;
 }
 
 const ToolShell = ({ icon, message }: ToolShellProps) => (
@@ -10,7 +10,7 @@ const ToolShell = ({ icon, message }: ToolShellProps) => (
     {icon}
     {message}
   </p>
-)
+);
 
 export const ToolSpinner = ({ message }: { message: string }) => (
   <ToolShell
@@ -19,18 +19,18 @@ export const ToolSpinner = ({ message }: { message: string }) => (
     }
     message={message}
   />
-)
+);
 
 export const ToolSuccess = ({ message }: { message: string }) => (
   <ToolShell
     icon={<Check className="w-4 h-4 text-success" />}
     message={message}
   />
-)
+);
 
 export const ToolError = ({ message }: { message: string }) => (
   <ToolShell
     icon={<X className="w-4 h-4 text-destructive" />}
     message={message}
   />
-)
+);

@@ -7,7 +7,9 @@ function parseMarkdownIntoBlocks(markdown: string): string[] {
   return tokens.map((token) => token.raw);
 }
 
-const markdownComponents: React.ComponentProps<typeof ReactMarkdown>["components"] = {
+const markdownComponents: React.ComponentProps<
+  typeof ReactMarkdown
+>["components"] = {
   a: ({ href, children }) => (
     <a
       href={href}
@@ -22,7 +24,9 @@ const markdownComponents: React.ComponentProps<typeof ReactMarkdown>["components
 
 const MemoizedMarkdownBlock = memo(
   ({ content }: { content: string }) => {
-    return <ReactMarkdown components={markdownComponents}>{content}</ReactMarkdown>;
+    return (
+      <ReactMarkdown components={markdownComponents}>{content}</ReactMarkdown>
+    );
   },
   (prevProps, nextProps) => {
     if (prevProps.content !== nextProps.content) return false;

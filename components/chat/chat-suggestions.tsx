@@ -1,9 +1,9 @@
-import { Button } from '@/components/ui/button'
-import { type ChatSuggestion } from '@/lib/types'
+import { Button } from "@/components/ui/button";
+import { type ChatSuggestion } from "@/lib/types";
 
 interface ChatSuggestionsProps {
-  suggestions: ChatSuggestion[]
-  onSuggestionClick: (suggestion: ChatSuggestion) => void
+  suggestions: ChatSuggestion[];
+  onSuggestionClick: (suggestion: ChatSuggestion) => void;
 }
 
 export function ChatSuggestions({
@@ -16,11 +16,13 @@ export function ChatSuggestions({
         <Button
           key={index}
           variant="outline"
-          onClick={() => onSuggestionClick(suggestion)}
+          onClick={() => {
+            onSuggestionClick(suggestion);
+          }}
         >
           {suggestion.label}
         </Button>
       ))}
     </div>
-  )
+  );
 }

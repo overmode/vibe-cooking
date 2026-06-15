@@ -7,10 +7,7 @@ import { type ThreadMetadata } from "@/lib/types";
 import { queryKeys } from "../query-keys";
 
 export const useThreads = (
-  options: Omit<
-    UseQueryOptions<ThreadMetadata[], Error>,
-    "queryKey" | "queryFn"
-  > = {}
+  options: Omit<UseQueryOptions<ThreadMetadata[]>, "queryKey" | "queryFn"> = {}
 ) => {
   return useQuery({
     ...options,
@@ -24,7 +21,7 @@ export const useThreadMessages = ({
   options = {},
 }: {
   threadId: string;
-  options?: Omit<UseQueryOptions<UIMessage[], Error>, "queryKey" | "queryFn">;
+  options?: Omit<UseQueryOptions<UIMessage[]>, "queryKey" | "queryFn">;
 }) => {
   return useQuery({
     ...options,
