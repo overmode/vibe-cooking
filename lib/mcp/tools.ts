@@ -60,7 +60,12 @@ export function registerMCPTools(server: McpServer): void {
       title: "List recipes",
       description:
         "List metadata (id, name, servings, duration, difficulty) for every recipe in the user's library. Call this to discover a recipe's id before reading or updating it.",
-      annotations: { readOnlyHint: true, openWorldHint: false },
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: false,
+      },
     },
     (extra) => run(() => getRecipesMetadataAction(userIdFrom(extra)))
   );
@@ -72,7 +77,12 @@ export function registerMCPTools(server: McpServer): void {
       description:
         "Get a single recipe's full content (ingredients, instructions, servings, duration, difficulty) by its id. Use list_recipes first if you don't already have the id.",
       inputSchema: { id: z.string().describe("The id of the recipe to get") },
-      annotations: { readOnlyHint: true, openWorldHint: false },
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: false,
+      },
     },
     ({ id }, extra) => run(() => getRecipeByIdAction(userIdFrom(extra), id))
   );
@@ -119,7 +129,12 @@ export function registerMCPTools(server: McpServer): void {
       title: "Get user profile",
       description:
         "Get the user's free-text cooking profile (diet, allergies, equipment, household, tastes). Read it to personalize recipes, and always before update_user_profile so you can merge instead of overwrite.",
-      annotations: { readOnlyHint: true, openWorldHint: false },
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: false,
+      },
     },
     (extra) => run(() => getUserProfileAction(userIdFrom(extra)))
   );

@@ -41,6 +41,7 @@ export default async function generateThreadTitle({
   try {
     const { output } = await generateText({
       model: openai("gpt-5.4-nano"),
+      providerOptions: { openai: { store: false } },
       output: Output.object({ schema: titleSchema }),
       system: SYSTEM_PROMPT,
       prompt: transcript,

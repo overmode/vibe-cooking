@@ -7,6 +7,10 @@ export default authkitProxy({
       "/callback",
       "/login",
       "/signup",
+      // Public legal pages — must be reachable without a session (e.g. for
+      // marketplace reviewers and signed-out visitors).
+      "/privacy",
+      "/terms",
       // MCP uses OAuth bearer tokens (verified in the route), not the AuthKit
       // session cookie, so it must bypass the session-redirect guard. Same for
       // the public OAuth discovery metadata endpoints.
@@ -14,6 +18,8 @@ export default authkitProxy({
       "/.well-known/oauth-protected-resource",
       "/.well-known/oauth-protected-resource/api/mcp",
       "/.well-known/oauth-authorization-server",
+      // OpenAI domain-verification challenge for app submission.
+      "/.well-known/openai-apps-challenge",
     ],
   },
 });
