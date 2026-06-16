@@ -139,8 +139,6 @@
     "generatingSuggestion": "Génération d'une suggestion de recette...",
     "creatingRecipe": "Création de la recette...",
     "recipeCreated": "Recette « {name} » créée avec succès !",
-    "deletingRecipe": "Suppression de la recette...",
-    "recipeDeleted": "Recette supprimée avec succès !",
     "retrievingRecipesMetadata": "Récupération des métadonnées des recettes...",
     "recipesMetadataRetrieved": "Métadonnées de {count, plural, one {# recette} other {# recettes}} récupérées !",
     "updatingRecipe": "Mise à jour de la recette...",
@@ -149,7 +147,6 @@
     "recipeRetrieved": "Recette récupérée avec succès !",
     "updatingProfile": "Mise à jour de ton profil...",
     "profileUpdated": "Profil mis à jour",
-    "profileUpdateFailed": "Impossible de mettre à jour ton profil",
     "executionFailed": "Échec de l'exécution de l'outil",
     "unknownState": "État d'outil inconnu"
   }

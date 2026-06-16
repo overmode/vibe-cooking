@@ -64,25 +64,8 @@ export function RecipeChatView({ recipe }: RecipeChatViewProps) {
   const { messages, sendMessage, error, status } = useChat({
     transport,
     generateId: uuidv7,
-    onToolCall: ({ toolCall }) => {
-      if (toolCall.toolName === "deleteRecipeTool") {
-        deleteRecipeMutation.mutate();
-      }
-    },
     onFinish: ({ message }) => {
       triggerToolEffects(message, queryClient);
-
-      // Detect recipe deletion and navigate back
-      if (
-        message.parts.some(
-          (part) =>
-            part.type === "tool-deleteRecipeTool" &&
-            "state" in part &&
-            part.state === "output-available"
-        )
-      ) {
-        router.back();
-      }
     },
   });
 

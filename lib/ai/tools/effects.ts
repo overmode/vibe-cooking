@@ -33,10 +33,6 @@ const toolEffects: Record<string, ToolEffect> = {
     void qc.invalidateQueries({ queryKey: queryKeys.recipes.all });
   },
 
-  deleteRecipeTool: (qc) => {
-    void qc.invalidateQueries({ queryKey: queryKeys.recipes.all });
-  },
-
   updateUserProfileTool: (qc) => {
     void qc.invalidateQueries({ queryKey: queryKeys.userProfile.all });
   },

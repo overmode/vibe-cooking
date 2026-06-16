@@ -33,6 +33,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
+    "app/.well-known/**/*",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],

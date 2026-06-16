@@ -3,7 +3,6 @@ import { tool } from "ai";
 import {
   getRecipesMetadataDefinition,
   createRecipeDefinition,
-  deleteRecipeDefinition,
   getRecipeByIdDefinition,
   updateRecipeDefinition,
   updateUserProfileDefinition,
@@ -13,51 +12,48 @@ import {
 import {
   getRecipesMetadataExecute,
   createRecipeExecute,
-  deleteRecipeExecute,
   getRecipeByIdExecute,
   updateRecipeExecute,
   updateUserProfileExecute,
   renderRecipeSuggestionExecute,
 } from "@/lib/ai/tools/execution";
 
-export const getRecipesMetadataTool = tool({
-  description: getRecipesMetadataDefinition.description,
-  inputSchema: getRecipesMetadataDefinition.inputSchema,
-  execute: getRecipesMetadataExecute,
-});
+// Tools close over the authenticated userId resolved at the route boundary,
+// so tool execution never re-resolves identity.
+export const buildAssistantTools = (userId: string) => ({
+  getRecipesMetadataTool: tool({
+    description: getRecipesMetadataDefinition.description,
+    inputSchema: getRecipesMetadataDefinition.inputSchema,
+    execute: () => getRecipesMetadataExecute(userId),
+  }),
 
-export const getRecipeByIdTool = tool({
-  description: getRecipeByIdDefinition.description,
-  inputSchema: getRecipeByIdDefinition.inputSchema,
-  execute: getRecipeByIdExecute,
-});
+  getRecipeByIdTool: tool({
+    description: getRecipeByIdDefinition.description,
+    inputSchema: getRecipeByIdDefinition.inputSchema,
+    execute: (parameters) => getRecipeByIdExecute(userId, parameters),
+  }),
 
-export const createRecipeTool = tool({
-  description: createRecipeDefinition.description,
-  inputSchema: createRecipeDefinition.inputSchema,
-  execute: createRecipeExecute,
-});
+  createRecipeTool: tool({
+    description: createRecipeDefinition.description,
+    inputSchema: createRecipeDefinition.inputSchema,
+    execute: (parameters) => createRecipeExecute(userId, parameters),
+  }),
 
-export const updateRecipeTool = tool({
-  description: updateRecipeDefinition.description,
-  inputSchema: updateRecipeDefinition.inputSchema,
-  execute: updateRecipeExecute,
-});
+  updateRecipeTool: tool({
+    description: updateRecipeDefinition.description,
+    inputSchema: updateRecipeDefinition.inputSchema,
+    execute: (parameters) => updateRecipeExecute(userId, parameters),
+  }),
 
-export const deleteRecipeTool = tool({
-  description: deleteRecipeDefinition.description,
-  inputSchema: deleteRecipeDefinition.inputSchema,
-  execute: deleteRecipeExecute,
-});
+  renderRecipeSuggestionTool: tool({
+    description: renderRecipeSuggestionDefinition.description,
+    inputSchema: renderRecipeSuggestionDefinition.inputSchema,
+    execute: renderRecipeSuggestionExecute,
+  }),
 
-export const renderRecipeSuggestionTool = tool({
-  description: renderRecipeSuggestionDefinition.description,
-  inputSchema: renderRecipeSuggestionDefinition.inputSchema,
-  execute: renderRecipeSuggestionExecute,
-});
-
-export const updateUserProfileTool = tool({
-  description: updateUserProfileDefinition.description,
-  inputSchema: updateUserProfileDefinition.inputSchema,
-  execute: updateUserProfileExecute,
+  updateUserProfileTool: tool({
+    description: updateUserProfileDefinition.description,
+    inputSchema: updateUserProfileDefinition.inputSchema,
+    execute: (parameters) => updateUserProfileExecute(userId, parameters),
+  }),
 });

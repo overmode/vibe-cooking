@@ -139,8 +139,6 @@
     "generatingSuggestion": "Generating recipe suggestion...",
     "creatingRecipe": "Creating recipe...",
     "recipeCreated": "Recipe \"{name}\" created successfully!",
-    "deletingRecipe": "Deleting recipe...",
-    "recipeDeleted": "Recipe deleted successfully!",
     "retrievingRecipesMetadata": "Retrieving recipes metadata...",
     "recipesMetadataRetrieved": "Retrieved {count, plural, one {# recipe} other {# recipes}} metadata!",
     "updatingRecipe": "Updating recipe...",
@@ -149,7 +147,6 @@
     "recipeRetrieved": "Recipe retrieved successfully!",
     "updatingProfile": "Updating your profile...",
     "profileUpdated": "Updated your profile",
-    "profileUpdateFailed": "Couldn't update your profile",
     "executionFailed": "Tool execution failed",
     "unknownState": "Unknown tool state"
   }

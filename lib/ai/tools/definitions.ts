@@ -39,14 +39,6 @@ export const updateRecipeDefinition = defineTool({
   result: asTypedSchema<Recipe>(),
 });
 
-export const deleteRecipeDefinition = defineTool({
-  description: "Delete a Recipe object.",
-  inputSchema: z.object({
-    id: z.string().describe("The id of the recipe to be deleted"),
-  }),
-  result: asTypedSchema<string>(),
-});
-
 export const updateUserProfileDefinition = defineTool({
   description:
     "Save the user profile. Merge with existing. Only include information explicitly stated by the user — no inference or extrapolation. Ask before saving in normal chat; save incrementally during profile setup.",

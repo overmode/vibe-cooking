@@ -7,7 +7,6 @@ import {
 import {
   type getRecipesMetadataDefinition,
   type createRecipeDefinition,
-  type deleteRecipeDefinition,
   type getRecipeByIdDefinition,
   type updateRecipeDefinition,
   type updateUserProfileDefinition,
@@ -16,7 +15,6 @@ import {
 
 import {
   createRecipeAction,
-  deleteRecipeAction,
   getRecipeByIdAction,
   getRecipesMetadataAction,
   updateRecipeAction,
@@ -26,11 +24,11 @@ import { updateUserProfileAction } from "@/lib/actions/user-profile";
 type GetRecipesMetadataResult = ToolRawResult<
   typeof getRecipesMetadataDefinition
 >;
-export const getRecipesMetadataExecute = async (): Promise<
-  ToolResult<GetRecipesMetadataResult>
-> => {
+export const getRecipesMetadataExecute = async (
+  userId: string
+): Promise<ToolResult<GetRecipesMetadataResult>> => {
   try {
-    const recipes = await getRecipesMetadataAction();
+    const recipes = await getRecipesMetadataAction(userId);
     return { success: true, data: recipes };
   } catch (error) {
     return {
@@ -46,10 +44,11 @@ export const getRecipesMetadataExecute = async (): Promise<
 type CreateRecipeParams = ToolParameters<typeof createRecipeDefinition>;
 type CreateRecipeResult = ToolRawResult<typeof createRecipeDefinition>;
 export const createRecipeExecute = async (
+  userId: string,
   parameters: CreateRecipeParams
 ): Promise<ToolResult<CreateRecipeResult>> => {
   try {
-    const recipe = await createRecipeAction(parameters, "ASSISTANT");
+    const recipe = await createRecipeAction(userId, parameters, "ASSISTANT");
     return { success: true, data: recipe };
   } catch (error) {
     return {
@@ -59,29 +58,14 @@ export const createRecipeExecute = async (
   }
 };
 
-type DeleteRecipeParams = ToolParameters<typeof deleteRecipeDefinition>;
-type DeleteRecipeResult = ToolRawResult<typeof deleteRecipeDefinition>;
-export const deleteRecipeExecute = async (
-  parameters: DeleteRecipeParams
-): Promise<ToolResult<DeleteRecipeResult>> => {
-  try {
-    await deleteRecipeAction({ recipeId: parameters.id });
-    return { success: true, data: "Recipe deleted successfully" };
-  } catch (error) {
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "Error deleting recipe",
-    };
-  }
-};
-
 type GetRecipeByIdParams = ToolParameters<typeof getRecipeByIdDefinition>;
 type GetRecipeByIdResult = ToolRawResult<typeof getRecipeByIdDefinition>;
 export const getRecipeByIdExecute = async (
+  userId: string,
   parameters: GetRecipeByIdParams
 ): Promise<ToolResult<GetRecipeByIdResult>> => {
   try {
-    const recipe = await getRecipeByIdAction(parameters.id);
+    const recipe = await getRecipeByIdAction(userId, parameters.id);
     return { success: true, data: recipe };
   } catch (error) {
     return {
@@ -95,10 +79,11 @@ export const getRecipeByIdExecute = async (
 type UpdateRecipeParams = ToolParameters<typeof updateRecipeDefinition>;
 type UpdateRecipeResult = ToolRawResult<typeof updateRecipeDefinition>;
 export const updateRecipeExecute = async (
+  userId: string,
   parameters: UpdateRecipeParams
 ): Promise<ToolResult<UpdateRecipeResult>> => {
   try {
-    const recipe = await updateRecipeAction(parameters, "ASSISTANT");
+    const recipe = await updateRecipeAction(userId, parameters, "ASSISTANT");
     return { success: true, data: recipe };
   } catch (error) {
     return {
@@ -127,10 +112,12 @@ type UpdateUserProfileResult = ToolRawResult<
   typeof updateUserProfileDefinition
 >;
 export const updateUserProfileExecute = async (
+  userId: string,
   parameters: UpdateUserProfileParams
 ): Promise<ToolResult<UpdateUserProfileResult>> => {
   try {
     const profile = await updateUserProfileAction(
+      userId,
       parameters.profile,
       "ASSISTANT"
     );

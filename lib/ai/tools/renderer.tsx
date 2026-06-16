@@ -129,10 +129,6 @@ toolRenderers.createRecipeTool = toolMessageRenderer<Recipe>({
   loading: (t) => t("creatingRecipe"),
   success: (t, data) => t("recipeCreated", { name: data.name }),
 });
-toolRenderers.deleteRecipeTool = toolMessageRenderer<Recipe>({
-  loading: (t) => t("deletingRecipe"),
-  success: (t) => t("recipeDeleted"),
-});
 toolRenderers.getRecipesMetadataTool = toolMessageRenderer<RecipeMetadata[]>({
   loading: (t) => t("retrievingRecipesMetadata"),
   success: (t, data) => t("recipesMetadataRetrieved", { count: data.length }),
@@ -145,25 +141,7 @@ toolRenderers.getRecipeByIdTool = toolMessageRenderer<Recipe>({
   loading: (t) => t("retrievingRecipe"),
   success: (t) => t("recipeRetrieved"),
 });
-toolRenderers.updateUserProfileTool = (part, t) => {
-  switch (part.state) {
-    case "input-streaming":
-    case "input-available":
-      return (
-        <p className="text-muted-foreground py-2">{t("updatingProfile")}</p>
-      );
-    case "output-available": {
-      const result = part.output as ToolResult<UserProfile>;
-      if (!result.success) {
-        return <ToolError message={result.error} />;
-      }
-      return (
-        <p className="text-muted-foreground py-2">{t("profileUpdated")}</p>
-      );
-    }
-    case "output-error":
-      return <ToolError message={t("profileUpdateFailed")} />;
-    default:
-      return null;
-  }
-};
+toolRenderers.updateUserProfileTool = toolMessageRenderer<UserProfile>({
+  loading: (t) => t("updatingProfile"),
+  success: (t) => t("profileUpdated"),
+});

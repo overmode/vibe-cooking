@@ -1,14 +1,17 @@
 import { deleteRecipeAction, getRecipeByIdAction } from "@/lib/actions/recipe";
+import { requireUserId } from "@/lib/auth/require-user-id";
 import { type NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { userId, response } = await requireUserId();
+  if (response) return response;
+
   const { id } = await params;
   try {
-    //Auth is done in the action
-    const recipe = await getRecipeByIdAction(id);
+    const recipe = await getRecipeByIdAction(userId, id);
     return NextResponse.json(recipe);
   } catch (error) {
     // Handle recipe not found vs other errors
@@ -30,10 +33,12 @@ export async function DELETE(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { userId, response } = await requireUserId();
+  if (response) return response;
+
   const { id } = await params;
   try {
-    //Auth is done in the action
-    await deleteRecipeAction({ recipeId: id });
+    await deleteRecipeAction(userId, id);
     return NextResponse.json({ success: true });
   } catch {
     // TODO better error handling with custom error classes and status codes

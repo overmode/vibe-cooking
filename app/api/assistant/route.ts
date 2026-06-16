@@ -8,15 +8,7 @@ import {
   type UIMessage,
 } from "ai";
 import { v7 as uuidv7 } from "uuid";
-import {
-  createRecipeTool,
-  deleteRecipeTool,
-  getRecipeByIdTool,
-  getRecipesMetadataTool,
-  renderRecipeSuggestionTool,
-  updateRecipeTool,
-  updateUserProfileTool,
-} from "@/lib/ai/tools/tools";
+import { buildAssistantTools } from "@/lib/ai/tools/tools";
 import { compileAssistantPrompt } from "@/lib/ai/prompts/assistant";
 import { truncateMessagesToTokenLimit } from "@/lib/ai/truncate-messages";
 import {
@@ -131,6 +123,7 @@ export async function POST(req: Request) {
     return new Response("Failed to save message", { status: 500 });
   }
 
+  const assistantTools = buildAssistantTools(userId);
   const result = streamText({
     model: openai.responses("gpt-5.4-nano"),
     providerOptions: { openai: { parallelToolCalls: false, store: false } },
@@ -143,13 +136,7 @@ export async function POST(req: Request) {
     messages: await convertToModelMessages(modelMessages),
     tools: {
       webSearch: openai.tools.webSearch({}),
-      getRecipesMetadataTool,
-      createRecipeTool,
-      updateRecipeTool,
-      updateUserProfileTool,
-      getRecipeByIdTool,
-      renderRecipeSuggestionTool,
-      deleteRecipeTool: { ...deleteRecipeTool, execute: undefined },
+      ...assistantTools,
     },
   });
 
