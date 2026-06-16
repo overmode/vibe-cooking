@@ -2,7 +2,7 @@ export type LegalBlock =
   | { type: "paragraph"; text: string }
   | { type: "list"; items: string[] };
 
-export interface LegalSection {
+interface LegalSection {
   heading: string;
   blocks: LegalBlock[];
 }
