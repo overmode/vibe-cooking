@@ -16,6 +16,7 @@ import {
   getUserProfileAction,
   updateUserProfileAction,
 } from "@/lib/actions/user-profile";
+import { stripCreatedAt } from "@/lib/ai/tools/execution";
 
 // External MCP clients act on the user's behalf, so writes are attributed to
 // the assistant author, matching the in-app AI tools.
@@ -67,7 +68,10 @@ export function registerMCPTools(server: McpServer): void {
         openWorldHint: false,
       },
     },
-    (extra) => run(() => getRecipesMetadataAction(userIdFrom(extra)))
+    (extra) =>
+      run(async () =>
+        (await getRecipesMetadataAction(userIdFrom(extra))).map(stripCreatedAt)
+      )
   );
 
   server.registerTool(
@@ -84,7 +88,10 @@ export function registerMCPTools(server: McpServer): void {
         openWorldHint: false,
       },
     },
-    ({ id }, extra) => run(() => getRecipeByIdAction(userIdFrom(extra), id))
+    ({ id }, extra) =>
+      run(async () =>
+        stripCreatedAt(await getRecipeByIdAction(userIdFrom(extra), id))
+      )
   );
 
   server.registerTool(
@@ -102,7 +109,11 @@ export function registerMCPTools(server: McpServer): void {
       },
     },
     (input, extra) =>
-      run(() => createRecipeAction(userIdFrom(extra), input, AUTHORED_BY))
+      run(async () =>
+        stripCreatedAt(
+          await createRecipeAction(userIdFrom(extra), input, AUTHORED_BY)
+        )
+      )
   );
 
   server.registerTool(
@@ -120,7 +131,11 @@ export function registerMCPTools(server: McpServer): void {
       },
     },
     (input, extra) =>
-      run(() => updateRecipeAction(userIdFrom(extra), input, AUTHORED_BY))
+      run(async () =>
+        stripCreatedAt(
+          await updateRecipeAction(userIdFrom(extra), input, AUTHORED_BY)
+        )
+      )
   );
 
   server.registerTool(

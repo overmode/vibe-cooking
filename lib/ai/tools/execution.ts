@@ -29,7 +29,7 @@ export const getRecipesMetadataExecute = async (
 ): Promise<ToolResult<GetRecipesMetadataResult>> => {
   try {
     const recipes = await getRecipesMetadataAction(userId);
-    return { success: true, data: recipes };
+    return { success: true, data: recipes.map(stripCreatedAt) };
   } catch (error) {
     return {
       success: false,
@@ -49,7 +49,7 @@ export const createRecipeExecute = async (
 ): Promise<ToolResult<CreateRecipeResult>> => {
   try {
     const recipe = await createRecipeAction(userId, parameters, "ASSISTANT");
-    return { success: true, data: recipe };
+    return { success: true, data: stripCreatedAt(recipe) };
   } catch (error) {
     return {
       success: false,
@@ -66,7 +66,7 @@ export const getRecipeByIdExecute = async (
 ): Promise<ToolResult<GetRecipeByIdResult>> => {
   try {
     const recipe = await getRecipeByIdAction(userId, parameters.id);
-    return { success: true, data: recipe };
+    return { success: true, data: stripCreatedAt(recipe) };
   } catch (error) {
     return {
       success: false,
@@ -84,7 +84,7 @@ export const updateRecipeExecute = async (
 ): Promise<ToolResult<UpdateRecipeResult>> => {
   try {
     const recipe = await updateRecipeAction(userId, parameters, "ASSISTANT");
-    return { success: true, data: recipe };
+    return { success: true, data: stripCreatedAt(recipe) };
   } catch (error) {
     return {
       success: false,
@@ -129,4 +129,14 @@ export const updateUserProfileExecute = async (
         error instanceof Error ? error.message : "Error updating user profile",
     };
   }
+};
+
+// Tools don't expose createdAt: the model doesn't need timestamps and OpenAI's
+// app review flags them. Kept in the domain types for the web app's sort.
+export const stripCreatedAt = <T extends { createdAt: Date }>(
+  value: T
+): Omit<T, "createdAt"> => {
+  const rest = { ...value };
+  delete (rest as Partial<T>).createdAt;
+  return rest;
 };

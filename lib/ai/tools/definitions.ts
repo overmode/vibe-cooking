@@ -15,7 +15,7 @@ import { MAX_USER_PROFILE_LENGTH } from "@/lib/constants/app_validation";
 export const getRecipesMetadataDefinition = defineTool({
   description: "Get the metadata of all recipes belonging to the user.",
   inputSchema: z.object({}),
-  result: asTypedSchema<RecipeMetadata[]>(),
+  result: asTypedSchema<Omit<RecipeMetadata, "createdAt">[]>(),
 });
 
 export const getRecipeByIdDefinition = defineTool({
@@ -23,20 +23,20 @@ export const getRecipeByIdDefinition = defineTool({
   inputSchema: z.object({
     id: z.string().describe("The ID of the recipe to get"),
   }),
-  result: asTypedSchema<Recipe>(),
+  result: asTypedSchema<Omit<Recipe, "createdAt">>(),
 });
 
 export const createRecipeDefinition = defineTool({
   description:
     "Persist a recipe to the user's library. Precondition: the recipe must have been shown via renderRecipeSuggestionTool and the user must have explicitly agreed to save it. Never call this directly from a user request — render a suggestion first, ask, then save. To change an existing recipe, use updateRecipeTool instead.",
   inputSchema: createRecipeInputSchema,
-  result: asTypedSchema<Recipe>(),
+  result: asTypedSchema<Omit<Recipe, "createdAt">>(),
 });
 
 export const updateRecipeDefinition = defineTool({
   description: "Update a Recipe object.",
   inputSchema: updateRecipeInputSchema,
-  result: asTypedSchema<Recipe>(),
+  result: asTypedSchema<Omit<Recipe, "createdAt">>(),
 });
 
 export const updateUserProfileDefinition = defineTool({
