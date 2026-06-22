@@ -41,7 +41,16 @@
     "failedToLoadConversation": "Failed to load conversation",
     "errorTitle": "Error",
     "rateLimit": "You've reached the daily limit of {max} messages. Please try again tomorrow.",
-    "genericError": "An error occurred"
+    "genericError": "An error occurred",
+    "send": "Send message",
+    "voiceStart": "Record a voice message",
+    "voiceStop": "Stop recording",
+    "voiceRecording": "Recording…",
+    "voiceTranscribing": "Transcribing…",
+    "voicePermissionDenied": "Microphone access denied. Enable it in your browser settings.",
+    "voiceUnsupported": "Voice input isn't supported on this device.",
+    "voiceRateLimit": "You've reached the daily limit of {max} minutes of voice messages. Please try again tomorrow.",
+    "voiceError": "Couldn't transcribe your recording. Please try again."
   },
   "chatHistory": {
     "today": "Today",

@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { type Recipe } from "@/lib/types";
 import { triggerToolEffects } from "@/lib/ai/tools/effects";
 import { useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/lib/api/query-keys";
 import { useDeleteRecipeById } from "@/lib/api/hooks/recipes";
 import { ChatCanva } from "@/components/chat/chat-canva";
 import { useRecipeChatSuggestions } from "@/lib/hooks/use-chat-suggestions";
@@ -66,6 +67,9 @@ export function RecipeChatView({ recipe }: RecipeChatViewProps) {
     generateId: uuidv7,
     onFinish: ({ message }) => {
       triggerToolEffects(message, queryClient);
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.rateLimit.all,
+      });
     },
   });
 

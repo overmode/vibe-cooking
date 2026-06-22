@@ -18,8 +18,17 @@ import {
 import { getLocale } from "next-intl/server";
 import { getCurrentUserId } from "@/lib/auth/get-current-user-id";
 import { DENIAL_STATUS } from "@/lib/api/denial";
-import { chatLimiter } from "@/lib/rate-limiter";
-import { MAX_USER_MESSAGE_LENGTH } from "@/lib/constants/app_validation";
+import {
+  getLimits,
+  incrementMessageCount,
+  incrementSearchCount,
+} from "@/lib/rate-limiter";
+import {
+  MAX_ASSISTANT_STEPS,
+  MAX_CONTEXT_TOKENS,
+  MAX_SEARCHES_PER_DAY,
+  MAX_USER_MESSAGE_LENGTH,
+} from "@/lib/constants/app_validation";
 import { getLatestUserProfileRevision } from "@/lib/data-access/user-profile";
 import { getRecipeById } from "@/lib/data-access/recipe";
 import {
@@ -74,8 +83,8 @@ export async function POST(req: Request) {
   if (!userId)
     return new Response("Unauthorized", { status: DENIAL_STATUS.unauthorized });
 
-  const [{ success }, profileRevision, recipe, thread] = await Promise.all([
-    chatLimiter.limit(userId),
+  const [limits, profileRevision, recipe, thread] = await Promise.all([
+    getLimits(userId),
     getLatestUserProfileRevision({ userId }),
     appContext.kind === "recipeView"
       ? getRecipeById({ id: appContext.recipeId, userId }).catch(() => null)
@@ -87,7 +96,9 @@ export async function POST(req: Request) {
     return new Response("Forbidden", { status: DENIAL_STATUS.forbidden });
   }
 
-  if (!success) return new Response("Rate Limit Exceeded", { status: 429 });
+  if (limits.messageLimitReached) {
+    return new Response("Rate Limit Exceeded", { status: 429 });
+  }
 
   // Server-authoritative: client posts only the new turn; prior history comes
   // from the DB.
@@ -103,7 +114,10 @@ export async function POST(req: Request) {
 
   // Chats stay short in practice; 100k is a generous ceiling with headroom for
   // system prompt, tools, and model output.
-  const modelMessages = truncateMessagesToTokenLimit(messages, 100_000);
+  const modelMessages = truncateMessagesToTokenLimit(
+    messages,
+    MAX_CONTEXT_TOKENS
+  );
   if (messages.length > 0 && modelMessages.length === 0) {
     return new Response("Conversation exceeds token limit.", { status: 400 });
   }
@@ -123,7 +137,21 @@ export async function POST(req: Request) {
     return new Response("Failed to save message", { status: 500 });
   }
 
+  // Committed to answering: record the message against today's quota.
+  await incrementMessageCount(userId);
+
+  // Web search is the dominant per-user cost. Free users get a daily budget;
+  // `prepareStep` drops the tool once the remaining budget is spent, so a
+  // multi-step turn can't exceed the cap. "low" context keeps each search lean.
+  const searchBudget = Math.max(0, MAX_SEARCHES_PER_DAY - limits.searchCount);
+
   const assistantTools = buildAssistantTools(userId);
+  const tools = {
+    webSearch: openai.tools.webSearch({ searchContextSize: "low" }),
+    ...assistantTools,
+  };
+  const nonSearchTools = Object.keys(assistantTools) as (keyof typeof tools)[];
+
   const result = streamText({
     model: openai.responses("gpt-5.4-nano"),
     providerOptions: { openai: { parallelToolCalls: false, store: false } },
@@ -132,11 +160,19 @@ export async function POST(req: Request) {
       userProfile: profileRevision?.content ?? null,
       locale: await getLocale(),
     }),
-    stopWhen: stepCountIs(10),
+    stopWhen: stepCountIs(MAX_ASSISTANT_STEPS),
     messages: await convertToModelMessages(modelMessages),
-    tools: {
-      webSearch: openai.tools.webSearch({}),
-      ...assistantTools,
+    tools,
+    // Provider-executed searches don't each get their own step, so this can't
+    // gate within a step — but once prior steps have spent the budget, it stops
+    // any further searching. onFinish records the real total.
+    prepareStep: ({ steps }) => {
+      const used = steps.reduce(
+        (n, step) =>
+          n + step.toolCalls.filter((c) => c.toolName === "webSearch").length,
+        0
+      );
+      return used >= searchBudget ? { activeTools: nonSearchTools } : undefined;
     },
   });
 
@@ -157,7 +193,14 @@ export async function POST(req: Request) {
     // Assistant save is best-effort but loud: it's post-stream so it can't 500,
     // and a reload reconciles from the DB. Title is cosmetic, self-heals.
     onFinish: async ({ responseMessage }) => {
+      const searchCalls = responseMessage.parts.filter(
+        (p) =>
+          p.type === "tool-webSearch" &&
+          "state" in p &&
+          p.state === "output-available"
+      ).length;
       try {
+        await incrementSearchCount(userId, searchCalls);
         await saveThreadMessages({
           userId,
           threadId,

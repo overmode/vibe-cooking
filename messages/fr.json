@@ -41,7 +41,16 @@
     "failedToLoadConversation": "Échec du chargement de la conversation",
     "errorTitle": "Erreur",
     "rateLimit": "Tu as atteint la limite quotidienne de {max} messages. Réessaie demain.",
-    "genericError": "Une erreur s'est produite"
+    "genericError": "Une erreur s'est produite",
+    "send": "Envoyer le message",
+    "voiceStart": "Enregistrer un message vocal",
+    "voiceStop": "Arrêter l'enregistrement",
+    "voiceRecording": "Enregistrement…",
+    "voiceTranscribing": "Transcription en cours…",
+    "voicePermissionDenied": "Accès au micro refusé. Active-le dans les réglages de ton navigateur.",
+    "voiceUnsupported": "La saisie vocale n'est pas prise en charge sur cet appareil.",
+    "voiceRateLimit": "Tu as atteint la limite quotidienne de {max} minutes de messages vocaux. Réessaie demain.",
+    "voiceError": "Impossible de transcrire ton enregistrement. Réessaie."
   },
   "chatHistory": {
     "today": "Aujourd'hui",

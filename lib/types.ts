@@ -31,6 +31,17 @@ export interface UserProfile {
   content: string;
 }
 
+// Today's usage plus per-dimension verdicts. The single source of truth for
+// rate-limit decisions, shared by server gates and the client's proactive UI.
+export interface Limits {
+  messageCount: number;
+  voiceSeconds: number;
+  searchCount: number;
+  messageLimitReached: boolean;
+  voiceLimitReached: boolean;
+  searchLimitReached: boolean;
+}
+
 // Sidebar list row: thread identity + label + recency, no message payload.
 export interface ThreadMetadata {
   id: string;
