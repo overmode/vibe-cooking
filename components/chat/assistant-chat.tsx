@@ -62,6 +62,11 @@ export function AssistantChat({
       void queryClient.invalidateQueries({
         queryKey: queryKeys.chatThreads.all,
       });
+      // The turn consumed a message; refresh the daily usage so the input
+      // disables itself once the cap is reached.
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.rateLimit.all,
+      });
     },
   });
 

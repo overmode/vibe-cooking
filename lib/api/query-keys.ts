@@ -10,4 +10,7 @@ export const queryKeys = {
     all: ["chat-threads"] as const,
     byId: (threadId: string) => ["chat-threads", threadId] as const,
   },
+  rateLimit: {
+    all: ["rate-limit"] as const,
+  },
 };

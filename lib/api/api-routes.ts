@@ -4,6 +4,8 @@ export const apiRoutes = {
     byId: (id: string) => `/api/recipe/${id}`,
   },
   assistant: "/api/assistant",
+  transcribe: "/api/transcribe",
+  rateLimit: "/api/rate-limit",
   chatThread: {
     all: "/api/chat-threads",
     byId: (threadId: string) => `/api/chat-threads/${threadId}`,

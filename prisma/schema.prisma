@@ -61,6 +61,8 @@ model RateLimit {
   userId       String
   day          DateTime @db.Date
   messageCount Int      @default(0)
+  voiceSeconds Int      @default(0)
+  searchCount  Int      @default(0)
 
   @@id([userId, day])
 }

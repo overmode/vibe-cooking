@@ -2,6 +2,7 @@ import { type UIMessage } from "ai";
 import { apiRoutes } from "@/lib/api/api-routes";
 import { del, get, post } from "@/lib/api/fetchers";
 import {
+  type Limits,
   type Recipe,
   type RecipeMetadata,
   type ThreadMetadata,
@@ -34,8 +35,33 @@ export const getUserProfile = async () => {
   return get<UserProfile | null>(apiRoutes.userProfile.all);
 };
 
+export const getLimits = async () => {
+  return get<Limits>(apiRoutes.rateLimit);
+};
+
 export const updateUserProfile = async (content: string) => {
   return post<UserProfile>(apiRoutes.userProfile.all, {
     content,
   });
+};
+
+// Posts the raw recording; the server sniffs the container and resolves the
+// language from the user's locale. Surfaces the daily-cap rejection with the
+// same "Rate Limit Exceeded" message the chat path uses.
+export const transcribeAudio = async (
+  audio: Blob,
+  durationMs: number
+): Promise<string> => {
+  const res = await fetch(apiRoutes.transcribe, {
+    method: "POST",
+    body: audio,
+    headers: { "x-voice-duration-ms": String(Math.round(durationMs)) },
+  });
+  if (!res.ok) {
+    throw new Error(
+      res.status === 429 ? "Rate Limit Exceeded" : "Transcription failed"
+    );
+  }
+  const { text } = (await res.json()) as { text: string };
+  return text;
 };
